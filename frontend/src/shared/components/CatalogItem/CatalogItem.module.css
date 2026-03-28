@@ -1,0 +1,80 @@
+.catalogItem {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    padding: 1rem;
+    overflow: hidden; /* Important for keeping wave background inside */
+}
+
+.catalogItem:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary);
+}
+
+/* Overlay für den Titel */
+.catalogTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary);
+    text-shadow: none;
+    font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: none;
+    -webkit-text-fill-color: initial;
+    background-clip: border-box;
+}
+
+
+.catalogDescription {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+}
+
+.catalogItem:hover .catalogDescription {
+    opacity: 1;
+}
+
+.waveBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 0%;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+    z-index: -5;
+    transition: all 0.3s ease;
+}
+
+.catalogItem:hover .waveBackground {
+    opacity: 0.5;
+    top: -30%;
+    left: 0%;
+    width: 150%;
+    height: 150%;
+    animation: waveAnimation 8s infinite;
+}
+
+@keyframes waveAnimation {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateX(-10px) translateY(5px) rotate(180deg);
+    }
+
+    100% {
+        transform: translateX(0) translateY(0) rotate(360deg);
+    }
+}

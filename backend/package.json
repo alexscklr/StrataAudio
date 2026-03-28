@@ -1,0 +1,18 @@
+{
+  "devDependencies": {
+    "supabase": "^2.76.11"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.99.3",
+    "dotenv": "^17.3.1",
+    "glob": "^13.0.6",
+    "mime": "^4.1.0",
+    "mime-types": "^3.0.2"
+  },
+  "scripts": {
+    "db:reset": "supabase db reset && node storage-seed.js",
+    "backend:start": "supabase start && supabase db reset && node storage-seed.js",
+    "backend:stop": "supabase stop",
+    "backend:restart": "npm run backend:stop && npm run backend:start"
+  }
+}

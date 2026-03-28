@@ -1,0 +1,7 @@
+node_modules/
+supabase/.branches
+supabase/.temp
+supabase/snippets
+supabase/storage-seed/*/*/*
+.env
+.env.*

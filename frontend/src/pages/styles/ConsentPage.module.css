@@ -1,0 +1,91 @@
+section {
+    width: stretch;
+}
+
+div.mainWrapper {
+    counter-reset: section-counter;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--gap));
+    align-items: center;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: max(1%, 25px) 5%;
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--gap);
+    width: stretch;
+    max-width: var(--max-width);
+}
+
+section>h2:not(.noNumber)::before {
+    counter-increment: section-counter;
+    content: counter(section-counter) ". ";
+}
+
+section>*:not(h2) {
+    margin-left: 1.5rem;
+}
+
+section>ul {
+    padding-left: 1.2rem;
+    list-style-type: disc;
+    list-style-position: outside;
+}
+
+section p+ul {
+    margin-top: -0.5rem;
+}
+
+.projectInfo {
+    width: 100%;
+}
+
+.consentInput {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: stretch;
+}
+
+.consentInput label,
+.consentInput input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.consentInput input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--primary);
+    background-color: var(--bg-card);
+    border-radius: 4px;
+
+    display: inline-grid;
+    place-content: center;
+    vertical-align: middle;
+}
+
+.consentInput input[type="checkbox"]:checked {
+    background-color: var(--primary);
+
+}
+
+.consentInput input[type="checkbox"]:checked::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.9rem;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    margin-bottom: 0.2rem;
+}
+
+p {
+    text-align: left;
+}
+
+.subheader {
+    color: var(--text-muted);
+}

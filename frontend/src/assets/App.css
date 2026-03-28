@@ -1,0 +1,139 @@
+:root {
+    /* Brand Colors - Audio Tech Style */
+    --primary: #10b981;      /* Tech Green */
+    --primary-hover: #059669;
+    --bg-dark: #121212;      /* Deep Dark Grey */
+    --bg-card: #1e1e1e;      /* Card Grey */
+    --text-main: #e5e5e5;
+    --text-muted: #a3a3a3;
+    --strata-accent: #9395F6;
+    --audio-wave: #38bdf8;
+    --audio-glow: #f59e42;
+    --audio-note: #f472b6;
+    --border-color: #333333;
+
+    /* Spacing & Radius */
+    --radius: 8px;           /* Sharper corners for tech look */
+    --gap: 16px;             /* Smaller gap for mobile */
+    --max-width: 1400px;
+    --main-width: 100vw;
+    --main-padding: 24px 16px; /* Smaller padding for mobile */
+    --shadow-main: 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-card: 0 4px 12px rgba(0,0,0,0.3);
+    --shadow-hover: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+@media (min-width: 768px) {
+    :root {
+        --gap: 24px;
+        --main-padding: 48px 24px;
+    }
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    margin-bottom: var(--gap);
+    color: var(--strata-accent);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+h2 {
+    font-size: clamp(1.1rem, 1.3vw, 1.3rem);
+    margin-bottom: var(--gap);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+h3 {
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    margin-bottom: var(--gap);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+h4 {
+    font-size: clamp(0.875rem, 1vw, 1rem);
+    margin-bottom: var(--gap);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+p {
+    font-size: clamp(0.875rem, 1vw, 1rem);
+    margin-bottom: var(--gap);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    width: min(fit-content, 50%);
+}
+
+button.primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    font-size: 1rem;
+}
+
+button.active {
+    background: white;
+    color: var(--primary);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background-color: var(--primary-hover);
+}
+
+button:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 10%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(-150%) skewX(-20deg);
+    transition: all 300ms ease;
+}
+
+button:hover::after {
+    left: 100%;
+    transform: translateX(-100%) skewX(-20deg);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}

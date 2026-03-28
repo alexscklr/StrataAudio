@@ -1,0 +1,99 @@
+.catalogSection {
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+.catalogList {
+    width: 100%;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: auto;
+    list-style: none;
+    justify-content: center; /* Center items on mobile */
+}
+
+@media (min-width: 768px) {
+    .catalogList {
+        width: 90%;
+        justify-content: flex-start;
+    }
+}
+
+@media (min-width: 1024px) {
+    .catalogList {
+        width: 80%;
+    }
+}
+
+.catalogListItem {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 400px;
+    min-width: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    z-index: 1;
+}
+
+@media (min-width: 600px) {
+    .catalogListItem {
+        flex: 1 1 30%; /* Start grid behavior earlier */
+        max-width: 30%;
+    }
+}
+
+.thumbnail {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
+
+.catalogTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+@media (min-width: 768px) {
+    .catalogTitle {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.catalogDescription {
+    font-size: 0.9rem;
+    color: white;
+    margin-top: 0.5rem;
+    /* On mobile, we might want to show description always or handle differently.
+       For now, let's keep the hover but ensure it doesn't break layout */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+/* On desktop, keep hover effect */
+@media (hover: hover) {
+    *:hover:has(> .catalogDescription)>.catalogDescription {
+        opacity: 1;
+        max-height: 200px; /* Use px limit instead of fit-content for smoother transition if possible, or keep fit-content */
+        max-height: fit-content;
+    }
+}
+
+/* On mobile (touch), maybe show it always? or on active? */
+@media (hover: none) {
+    .catalogDescription {
+        opacity: 0.7;
+        max-height: fit-content;
+        margin-top: 0.25rem;
+    }
+}

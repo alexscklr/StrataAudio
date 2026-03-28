@@ -1,0 +1,21 @@
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.brandname {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    font-family: monospace;
+}
+
+.tagline {
+    font-size: 0.9rem;
+    color: var(--strata-accent);
+    font-family: monospace;
+}

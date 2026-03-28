@@ -1,0 +1,89 @@
+.loginPopupBackdrop {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  align-content: center;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+.loginPopup {
+  background: rgba(255,255,255,0.1);
+  padding: 2rem;
+  border-radius: inherit;
+  width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 4px 12px rgba(0,255,0,0.3);
+  position: relative;
+}
+
+.loginPopupH2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.loginPopupForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.loginPopupLabel {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+.loginPopupInput {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.loginPopupButton[type="submit"] {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.loginPopupButton[type="submit"]:disabled {
+  background-color: #a3cdfd;
+  cursor: not-allowed;
+}
+
+.closeBtn {
+  width: fit-content;
+  height: fit-content;
+  padding: 0.75rem;
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--primary);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.error {
+  color: red;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}

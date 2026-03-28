@@ -1,0 +1,14 @@
+.video {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
+@media (min-width: 640px) {
+    .video {
+        max-width: max(500px, 50%);
+    }
+}
