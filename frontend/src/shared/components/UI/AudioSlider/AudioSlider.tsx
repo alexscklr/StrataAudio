@@ -1,10 +1,11 @@
-
+import styles from './AudioSlider.module.css';
 
 function AudioSlider({ audioId, volume, onVolumeChange }: { audioId: string; volume: number; onVolumeChange: (id: string, val: number) => void }) {
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <label htmlFor={`slider-${audioId}`}>Volume:</label>
+        <div className={styles.sliderContainer}>
+            <label htmlFor={`slider-${audioId}`} className={styles.srOnly}>Volume</label>
             <input
+                className={styles.slider}
                 id={`slider-${audioId}`}
                 type="range"
                 min={0}

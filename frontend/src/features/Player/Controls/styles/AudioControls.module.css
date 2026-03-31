@@ -1,0 +1,108 @@
+.audioControlsBox {
+    --audio-controls-max-width: min(58vw, 26rem);
+    --audio-controls-padding-block: clamp(0.375rem, 0.6vw, 0.5rem);
+    --audio-controls-padding-inline: clamp(0.5rem, 0.8vw, 0.75rem);
+    --audio-controls-gap: clamp(0.5rem, 1vw, 0.75rem);
+    --audio-icon-size: clamp(1.6rem, 1vw + 1.2rem, 2rem);
+    --audio-slider-height: clamp(5rem, 11vw, 6rem);
+    --audio-slider-width: clamp(0.875rem, 0.6vw + 0.5rem, 1.125rem);
+    display: flex;
+    align-items: center;
+    max-width: var(--audio-controls-max-width, min(52vw, 400px));
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: clamp(0.875rem, 1vw, 1.125rem);
+    background: rgba(0, 0, 0, 0.61);
+    padding: var(--audio-controls-padding-block, 0.375rem) var(--audio-controls-padding-inline, 0.5rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    cursor: pointer;
+    position: relative;
+}
+
+.audioControlsBoxFullscreen {
+    --audio-controls-max-width: min(62vw, 34rem);
+    --audio-controls-padding-block: clamp(0.5rem, 0.8vw, 0.75rem);
+    --audio-controls-padding-inline: clamp(0.625rem, 1vw, 1rem);
+    --audio-controls-gap: clamp(0.625rem, 1vw, 0.9rem);
+    --audio-icon-size: clamp(1.85rem, 1vw + 1.5rem, 2.5rem);
+    --audio-slider-height: clamp(5.75rem, 10vw, 7rem);
+    --audio-slider-width: clamp(1rem, 0.7vw + 0.55rem, 1.25rem);
+}
+
+.audioControlsBoxExpanded {
+    align-items: flex-end;
+    background: rgba(0, 0, 0, 0.68);
+}
+
+.audioControlsToggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+.audioControlsToggle.audioControlsBoxExpanded {
+    display: none;
+    opacity: 0;
+}
+
+.audioControlsRow {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--audio-controls-gap, 0.625rem);
+    width: max-content;
+}
+
+.audioControlWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: clamp(0.375rem, 0.8vw, 0.5rem);
+}
+
+.audioIconButton {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.audioIconButton .icon {
+    display: block;
+    width: var(--audio-icon-size, 2rem);
+    height: var(--audio-icon-size, 2rem);
+}
+
+.audioIconButton .muteIcon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: stretch;
+    height: stretch;
+}
+
+@media (max-width: 768px) {
+    .audioControlsBox {
+        --audio-controls-max-width: min(100%, 18rem);
+        --audio-icon-size: clamp(1.4rem, 5vw, 1.8rem);
+        --audio-slider-height: clamp(4.5rem, 18vw, 5.5rem);
+        --audio-slider-width: clamp(0.875rem, 3vw, 1rem);
+        min-width: 0;
+    }
+
+    .audioControlsRow {
+        gap: var(--audio-controls-gap, 0.5rem);
+    }
+}

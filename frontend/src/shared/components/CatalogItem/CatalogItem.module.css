@@ -3,10 +3,10 @@
     border-radius: var(--radius);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     position: relative;
     padding: 1rem;
-    overflow: hidden; /* Important for keeping wave background inside */
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 .catalogItem:hover {
@@ -15,32 +15,76 @@
     border-color: var(--primary);
 }
 
-/* Overlay für den Titel */
-.catalogTitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--primary);
-    text-shadow: none;
-    font-family: monospace;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background: none;
-    -webkit-text-fill-color: initial;
-    background-clip: border-box;
+.catalogItem.watched:hover {
+    transform: translateY(0);
+    box-shadow: var(--shadow-muted);
+    border-color: var(--text-muted);
 }
 
+.catalogTitle {
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.catalogTitle.watched {
+    color: var(--text-muted);
+}
+
+.descriptionWrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-out;
+    overflow: hidden;
+}
+
+.catalogItem:hover .descriptionWrapper {
+    grid-template-rows: 1fr;
+}
 
 .catalogDescription {
+    min-height: 0;
+    opacity: 0;
+    margin: 0;
+    padding-top: 0.5rem;
+    transition: opacity 0.3s ease-out;
     font-size: 1rem;
     color: var(--text-muted);
-    margin-top: 0.5rem;
-    opacity: 0.85;
-    transition: opacity 0.3s;
 }
 
 .catalogItem:hover .catalogDescription {
     opacity: 1;
+}
+
+.thumbnailContainer {
+    position: relative;
+}
+
+.thumbnail {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    object-fit: cover;
+}
+
+.thumbnail.watched {
+    filter: grayscale(100%) brightness(80%);
+}
+
+.watchedBadge {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: var(--bg-card);
+    color: var(--text-muted);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0 var(--radius) 0 var(--radius);
+    box-shadow: 5px -5px 10px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    font-weight: 500;
+    z-index: 1;
 }
 
 .waveBackground {

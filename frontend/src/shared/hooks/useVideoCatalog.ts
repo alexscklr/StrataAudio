@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchVideoCatalog } from "@/shared/lib/videoCatalog";
 
-
 export const useVideoCatalog = () => {
     return useQuery({
         queryKey: ['video-catalog'],

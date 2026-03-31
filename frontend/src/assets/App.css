@@ -92,6 +92,12 @@ button {
     width: min(fit-content, 50%);
 }
 
+button.normal {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
 button.primary {
     background: var(--primary);
     border-color: var(--primary);
@@ -103,10 +109,18 @@ button.active {
     color: var(--primary);
 }
 
-button:hover {
+button:hover,
+button:focus,
+button:focus-visible {
     transform: translateY(-2px);
     box-shadow: var(--shadow-hover);
     background-color: var(--primary-hover);
+}
+
+button.normal:hover,
+button.normal:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 button:disabled {
@@ -122,13 +136,14 @@ button::after {
     left: 0;
     top: 0;
     height: 100%;
-    width: 10%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateX(-150%) skewX(-20deg);
+    width: 15%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0.4) 100%);
+    transform: translateX(-200%) skewX(-20deg);
     transition: all 300ms ease;
 }
 
-button:hover::after {
+button:hover::after,
+button:focus::after {
     left: 100%;
     transform: translateX(-100%) skewX(-20deg);
 }
