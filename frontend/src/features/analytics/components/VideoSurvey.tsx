@@ -1,6 +1,5 @@
 import { useContext, useMemo, useState, type FormEvent } from 'react';
 import { QuestionType } from '@/shared/types/survey';
-import { type VideoWatchMode } from '@/shared/types/media';
 import LinearRating from './questions/LinearRating';
 import OptionSelect from './questions/OptionSelect';
 import styles from './styles/VideoSurvey.module.css';
@@ -18,12 +17,11 @@ import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
 interface VideoSurveyProps {
     videoId: string;
     videoTitle: string;
-    watchMode: VideoWatchMode;
     audioConfigurationSnapshot: AudioConfigurationSnapshot | null;
     unlocked: boolean;
 }
 
-function VideoSurvey({ videoId, videoTitle, watchMode, audioConfigurationSnapshot, unlocked }: VideoSurveyProps) {
+function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked }: VideoSurveyProps) {
     const { participantId } = useContext(AuthContext);
     const queryClient = useQueryClient();
     const [answers, setAnswers] = useState<SurveyAnswers>(() => createInitialAnswers(videoSurvey));
@@ -85,7 +83,6 @@ function VideoSurvey({ videoId, videoTitle, watchMode, audioConfigurationSnapsho
                 participantId,
                 configId: configurationId,
                 videoId,
-                watchMode,
                 survey: videoSurvey,
                 answers,
             });

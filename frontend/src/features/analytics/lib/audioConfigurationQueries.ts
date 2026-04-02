@@ -20,7 +20,6 @@ export const saveAudioConfiguration = async ({
       id: configurationId,
       participant_id: participantId,
       video_id: videoId,
-      test_condition: 'mixer',
       final_settings: snapshot.final_settings,
       interaction_log: snapshot.interaction_log,
       total_interactions: snapshot.total_interactions,

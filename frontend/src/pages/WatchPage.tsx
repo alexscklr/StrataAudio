@@ -97,7 +97,6 @@ function WatchPage() {
             <VideoSurvey
                 videoId={videoid!}
                 videoTitle={video?.title || "Unknown Video"}
-                watchMode={VideoWatchMode.Mixer}
                 audioConfigurationSnapshot={audioConfigurationSnapshots[VideoWatchMode.Mixer] ?? null}
                 unlocked={surveyUnlocked && hasTrackingConsent}
             />

@@ -1,13 +1,11 @@
 import { supabase } from '@/api/supabaseClient';
 import type { Survey } from '@/shared/types/survey';
-import type { VideoWatchMode } from '@/shared/types/media';
 import type { SurveyAnswers } from './surveyUtils';
 
 interface SubmitSurveyResponseInput {
     participantId: string;
     configId: string | null;
     videoId: string;
-    watchMode: VideoWatchMode;
     survey: Survey;
     answers: SurveyAnswers;
 }
@@ -16,7 +14,6 @@ export const submitSurveyResponse = async ({
     participantId,
     configId,
     videoId,
-    watchMode,
     survey,
     answers,
 }: SubmitSurveyResponseInput): Promise<void> => {
@@ -26,7 +23,6 @@ export const submitSurveyResponse = async ({
             participant_id: participantId,
             config_id: configId,
             video_id: videoId,
-            watch_mode: watchMode,
             survey_type: 'single',
             responses: {
                 survey_id: survey.id,
