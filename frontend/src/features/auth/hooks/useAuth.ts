@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/api/supabaseClient";
-import type { User } from "@supabase/supabase-js";
+import type { Session, User } from "@supabase/supabase-js";
 import { signOut } from "../lib/authQueries";
+import { ensureParticipantExists, getStoredParticipantId } from '../lib/participantTracking';
 
 export const useAuth = () => {
     const [user, setUser] = useState<User | null>(null);
+    const [participantId, setParticipantId] = useState<string | null>(() => getStoredParticipantId());
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let isMounted = true;
 
         // Helper function to set user
-        const updateAuthState = async (session: any) => {
+        const updateAuthState = (session: Session | null) => {
             if (!isMounted) return;
 
             const currentUser = session?.user ?? null;
@@ -20,7 +22,6 @@ export const useAuth = () => {
             setLoading(false);
         };
 
-        // 1. Get current session on mount
         supabase.auth.getSession().then(({ data: { session } }) => {
             updateAuthState(session);
         });
@@ -49,5 +50,11 @@ export const useAuth = () => {
         }
     };
 
-    return { user, loading, logout };
+    const initializeParticipant = async () => {
+        const createdParticipantId = await ensureParticipantExists();
+        setParticipantId(createdParticipantId);
+        return createdParticipantId;
+    };
+
+    return { user, participantId, loading, initializeParticipant, logout };
 };

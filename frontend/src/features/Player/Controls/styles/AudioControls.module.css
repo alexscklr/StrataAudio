@@ -93,6 +93,20 @@
     height: stretch;
 }
 
+.masterIcon {
+    width: var(--audio-icon-size, 2rem);
+    height: var(--audio-icon-size, 2rem);
+    color: var(--text-main);
+}
+
+.trackDivider {
+    width: 1px;
+    align-self: stretch;
+    background: rgba(255, 255, 255, 0.3);
+    margin-inline: clamp(0.125rem, 0.3vw, 0.25rem);
+    flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
     .audioControlsBox {
         --audio-controls-max-width: min(100%, 18rem);

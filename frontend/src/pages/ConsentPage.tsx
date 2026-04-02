@@ -1,17 +1,31 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/ConsentPage.module.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/features/auth/context/AuthContext";
 
 
 function ConsentPage() {
     const [consentGiven, setConsentGiven] = useState(false);
+    const [isSubmittingConsent, setIsSubmittingConsent] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const { initializeParticipant } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
-    const handleConsent = () => {
-        localStorage.setItem('user-consent', 'true');
+    const handleConsent = async () => {
+        setSubmitError(null);
+        setIsSubmittingConsent(true);
 
-        navigate('/videos');
+        try {
+            await initializeParticipant();
+            localStorage.setItem('user-consent', 'true');
+            navigate('/videos');
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Teilnehmer konnte nicht angelegt werden.';
+            setSubmitError(errorMessage);
+        } finally {
+            setIsSubmittingConsent(false);
+        }
     };
 
     useEffect(() => {
@@ -78,8 +92,12 @@ function ConsentPage() {
                 <label htmlFor="consentCheckbox">Ich stimme zu</label>
             </div>
 
+            {submitError && <p>{submitError}</p>}
+
             {consentGiven ?
-                <button type="button" onClick={handleConsent} className="primary">Einverstanden und Fortfahren</button>
+                <button type="button" onClick={handleConsent} className="primary" disabled={isSubmittingConsent}>
+                    {isSubmittingConsent ? 'Bitte warten...' : 'Einverstanden und Fortfahren'}
+                </button>
                 : <button type="button" className="primary" disabled>Bitte zustimmen</button>}
 
         </div>

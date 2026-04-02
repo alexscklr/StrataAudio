@@ -8,10 +8,33 @@ export interface Video extends BaseEntity {
   thumbnail_url?: string;
 }
 
+export interface VideoCatalogItem extends Video {
+  watched: boolean;
+}
+
 export interface Audio extends Omit<BaseEntity, "created_at"> {
   title: string;
   hls_url: string;
   type: string;
   icon_url?: string;
   default_volume: number;
+}
+
+export interface VideoControlPermissions {
+  seek: boolean;
+  rewind: boolean;
+  pause: boolean;
+  fullscreen: boolean;
+}
+
+export const VideoWatchMode = {
+  Standard: "standard",
+  Mixer: "mixer"
+}
+
+export type VideoWatchMode = typeof VideoWatchMode[keyof typeof VideoWatchMode];
+
+export interface AudioControlPermissions {
+  changeSingleTracksVolume: boolean;
+  muteSingleTracks: boolean;
 }

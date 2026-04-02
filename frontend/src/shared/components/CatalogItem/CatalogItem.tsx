@@ -28,7 +28,7 @@ function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description,
                 {description && (
                     <div className={styles.descriptionWrapper}>
                         <p className={styles.catalogDescription}>
-                            {description.length > 100 ? description.substring(0, 100) + "..." : description}
+                            {description.length > 103 ? description.substring(0, 100) + "..." : description}
                         </p>
                     </div>
                 )}

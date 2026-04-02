@@ -10,15 +10,16 @@ interface StemControlProps {
     isAudioControlsOpen: boolean;
     trackState: AudioTrackState;
     onVolumeChange: (id: string, val: number) => void;
+    onVolumeCommit: (id: string, val: number) => void;
     onToggleMute: (id: string) => void;
 }
 
-function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, onToggleMute }: StemControlProps) {
+function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, onVolumeCommit, onToggleMute }: StemControlProps) {
 
     return (
         <div key={audio.id} className={styles.audioControlWrapper}>
             {isAudioControlsOpen && (
-                <AudioSlider audioId={audio.id} volume={trackState.volume} onVolumeChange={onVolumeChange} />
+                <AudioSlider audioId={audio.id} volume={trackState.volume} onVolumeChange={onVolumeChange} onVolumeCommit={onVolumeCommit} />
             )}
             <button
                 type="button"

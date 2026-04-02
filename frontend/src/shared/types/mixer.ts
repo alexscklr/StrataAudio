@@ -5,6 +5,23 @@ export interface AudioTrackState {
     //isSolo: boolean;
 }
 
+export interface MixerInteractionEntry {
+    t: number;
+    label: string;
+    val: number | boolean;
+}
+
+export interface AudioConfigurationSnapshot {
+    final_settings: {
+        masterVolume: number;
+        isMasterMuted: boolean;
+        trackstates: Record<string, AudioTrackState>;
+    };
+    interaction_log: MixerInteractionEntry[];
+    total_interactions: number;
+    time_to_mix_ms: number;
+}
+
 export interface MixerState {
     masterVolume: number;
     trackstates: Record<string, AudioTrackState>; 

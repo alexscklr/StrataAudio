@@ -1,0 +1,59 @@
+.surveyContainer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--text-main);
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.lockedMessage {
+    color: var(--text-muted);
+}
+
+.surveyForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    margin: 0;
+}
+
+.surveyForm h3 {
+    color: var(--primary);
+}
+
+.questionDivider {
+    width: 31%;
+    border: 1px solid;
+    border-image: linear-gradient(to right, transparent, var(--primary), transparent) 1;
+}
+
+.spacer {
+    height: 2rem;
+}
+
+.submitError {
+    color: #a22020;
+    margin: 0;
+}
+
+.submitSuccess {
+    color: #1f7a1f;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .surveyContainer {
+        width: 100%;
+        border: none;
+        padding: 0;
+    }
+
+    .spacer {
+        height: 0.5rem;
+    }
+}

@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS "public"."audios" (
     "hls_url" text NOT NULL,
     "type" text NOT NULL,
     "icon_url" text,
+    "default_volume" float4 DEFAULT 1.0,
     PRIMARY KEY ("id")
 );
 ALTER TABLE "public"."audios" ENABLE ROW LEVEL SECURITY;

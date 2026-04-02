@@ -1,11 +1,14 @@
 import { useVideoCatalog } from "@/shared/hooks/useVideoCatalog";
 import styles from "./styles/VideoCatalogPage.module.css";
 import CatalogItem from "@/shared/components/CatalogItem/CatalogItem";
+import { useContext } from "react";
+import { AuthContext } from "@/features/auth/context/AuthContext";
 
 
 
 function VideoCatalogPage() {
-    const { data: videoCatalog, isLoading, error } = useVideoCatalog();
+    const { participantId } = useContext(AuthContext);
+    const { data: videoCatalog, isLoading, error } = useVideoCatalog(participantId);
 
 
     return (
@@ -23,6 +26,7 @@ function VideoCatalogPage() {
                                 hlsUrl={video.hls_url}
                                 genre={video.genre}
                                 description={video.description || undefined}
+                                watched={video.watched}
                             />
                         </li>
                     ))}

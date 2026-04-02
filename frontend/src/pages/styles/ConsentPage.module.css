@@ -17,7 +17,7 @@ div.mainWrapper {
     max-width: var(--max-width);
 }
 
-section>h2:not(.noNumber)::before {
+.mainWrapper section>h2:not(.noNumber)::before {
     counter-increment: section-counter;
     content: counter(section-counter) ". ";
 }

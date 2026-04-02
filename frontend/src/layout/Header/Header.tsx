@@ -13,6 +13,12 @@ function Header() {
                     <span className={styles.tagline}>udio</span>
                 </Link>
             </div>
+            <nav className={styles.nav}>
+                <ul>
+                    <li><Link to="/videos">Videoauswahl</Link></li>
+                    <li><Link to="/endumfrage" className={styles.accentLink}>Endumfrage</Link></li>
+                </ul>
+            </nav>
         </header>
     );
 }

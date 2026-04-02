@@ -1,9 +1,8 @@
 import { useRef } from 'react';
-import type { Audio } from '@/shared/types/media';
+import type { Audio, VideoControlPermissions } from '@/shared/types/media';
 import styles from './VideoPlayer.module.css';
 import { PlayPauseButton } from '../Controls/PlayPauseButton';
 import VideoTimeDisplay from '../Controls/VideoTimeDisplay';
-import { toggleFullscreen } from '@/shared/utils/fullscreen';
 import ScreenModeButton from '../Controls/ScreenModeButton';
 import RewindButton from '../Controls/RewindButton';
 import TimeSlider from '../Controls/TimeSlider';
@@ -11,6 +10,8 @@ import AudioEngine from './AudioEngine';
 import AudioControls from '../Controls/AudioControls';
 import { useVideoControls } from '../hooks/useVideoControls';
 import useMixer from '../hooks/useMixer';
+import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
+import type { VideoWatchMode } from '@/shared/types/media';
 
 interface VideoPlayerProps {
     videoId: string;
@@ -18,10 +19,13 @@ interface VideoPlayerProps {
     title: string;
     audios: Audio[] | undefined;
     autoplay?: boolean;
-    
+    canControlVideo?: VideoControlPermissions;
+    onVideoEnd?: () => void;
+    onAudioConfigurationReady?: (snapshot: AudioConfigurationSnapshot) => void;
+    watchMode: VideoWatchMode;
 }
 
-function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios }: VideoPlayerProps) {
+function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canControlVideo, onVideoEnd, onAudioConfigurationReady, watchMode }: VideoPlayerProps) {
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -31,19 +35,36 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios }: Vid
         handleTogglePlay,
         handleRewind,
         handleSeek,
+        handleToggleFullscreen,
         currentTime,
         duration,
         isFullscreen,
         isInitialOpen,
         setIsInitialOpen,
-    } = useVideoControls({ videoId, videoRef, videoUrl, autoplay });
+    } = useVideoControls({
+        videoId,
+        videoRef,
+        playerContainerRef,
+        videoUrl,
+        autoplay,
+        canControlVideo,
+    });
 
     const {
         mixerState,
         handleVolumeChange,
+        handleVolumeCommit,
+        handleMasterVolumeChange,
+        handleMasterVolumeCommit,
         handleMuteToggle,
         calculateEffectiveVolume,
+        getAudioConfigurationSnapshot,
     } = useMixer(audios);
+
+    const handleVideoEnded = () => {
+        onAudioConfigurationReady?.(getAudioConfigurationSnapshot());
+        onVideoEnd?.();
+    };
 
     const containerClassName = [
         styles.videoContainer,
@@ -53,7 +74,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios }: Vid
 
     return (
         <div ref={playerContainerRef} className={containerClassName}>
-            <video ref={videoRef} muted playsInline className={styles.video} >
+            <video ref={videoRef} muted playsInline className={styles.video} onEnded={handleVideoEnded}>
                 Your browser does not support the video tag.
             </video>
             <AudioEngine videoId={videoId} audios={audios} masterVideoRef={videoRef} calculateEffectiveVolume={calculateEffectiveVolume} />
@@ -78,8 +99,18 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios }: Vid
                         <VideoTimeDisplay currentTime={currentTime} duration={duration} />
                     </div>
                     <div className={styles.uiBottomRight}>
-                        <AudioControls audios={audios} mixerState={mixerState} isFullscreen={isFullscreen} onVolumeChange={handleVolumeChange} onMuteToggle={handleMuteToggle} />
-                        <ScreenModeButton onClick={() => toggleFullscreen(playerContainerRef.current)} isFullscreen={isFullscreen} />
+                        <AudioControls
+                            audios={audios}
+                            mixerState={mixerState}
+                            isFullscreen={isFullscreen}
+                            onVolumeChange={handleVolumeChange}
+                            onVolumeCommit={handleVolumeCommit}
+                            onMasterVolumeChange={handleMasterVolumeChange}
+                            onMasterVolumeCommit={handleMasterVolumeCommit}
+                            onMuteToggle={handleMuteToggle}
+                            watchMode={watchMode}
+                        />
+                        <ScreenModeButton onClick={handleToggleFullscreen} isFullscreen={isFullscreen} />
                     </div>
                 </div>
             </div>

@@ -1,0 +1,30 @@
+.radioInput {
+    display: none;
+}
+
+.optionsWrapper {
+    display: flex;
+    gap: 1rem;
+    margin: auto;
+}
+
+.optionLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.optionLabel:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.optionLabel.selected {
+    background-color: var(--primary);
+    color: white;
+}
