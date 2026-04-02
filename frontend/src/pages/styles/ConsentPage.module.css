@@ -1,4 +1,4 @@
-section {
+.mainWrapper section {
     width: stretch;
 }
 
@@ -22,17 +22,17 @@ div.mainWrapper {
     content: counter(section-counter) ". ";
 }
 
-section>*:not(h2) {
+.mainWrapper section>*:not(h2) {
     margin-left: 1.5rem;
 }
 
-section>ul {
+.mainWrapper section>ul {
     padding-left: 1.2rem;
     list-style-type: disc;
     list-style-position: outside;
 }
 
-section p+ul {
+.mainWrapper section p+ul {
     margin-top: -0.5rem;
 }
 
@@ -82,7 +82,7 @@ section p+ul {
     margin-bottom: 0.2rem;
 }
 
-p {
+.mainWrapper p {
     text-align: left;
 }
 

@@ -19,7 +19,6 @@
     align-items: center;
     gap: 1.5rem;
     width: 100%;
-    margin: 0;
 }
 
 .surveyForm h3 {
@@ -38,19 +37,16 @@
 
 .submitError {
     color: #a22020;
-    margin: 0;
 }
 
 .submitSuccess {
     color: #1f7a1f;
-    margin: 0;
 }
 
 @media (max-width: 768px) {
     .surveyContainer {
         width: 100%;
         border: none;
-        padding: 0;
     }
 
     .spacer {
