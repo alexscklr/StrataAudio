@@ -63,3 +63,12 @@ export const markWatchModeCompleted = (videoId: string, mode: WatchMode): WatchM
     localStorage.setItem(storageKey, JSON.stringify(nextCompletedModes));
     return nextCompletedModes;
 };
+
+export const clearWatchModeProgress = (videoId: string): void => {
+    localStorage.removeItem(getProgressStorageKey(videoId));
+};
+
+export const clearWatchModeState = (videoId: string): void => {
+    localStorage.removeItem(getProgressStorageKey(videoId));
+    localStorage.removeItem(getSequenceStorageKey(videoId));
+};

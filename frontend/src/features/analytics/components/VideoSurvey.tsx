@@ -1,18 +1,20 @@
-import { useContext, useMemo, useState, type FormEvent } from 'react';
-import { QuestionType } from '@/shared/types/survey';
-import LinearRating from './questions/LinearRating';
-import OptionSelect from './questions/OptionSelect';
+import { Fragment, useContext, useMemo, useState, type FormEvent } from 'react';
 import styles from './styles/VideoSurvey.module.css';
 import { videoSurvey } from '@/constants/videoSurvey';
-import TextAnswerQuestion from './questions/TextAnswer';
 import { AuthContext } from '@/features/auth/context/AuthContext';
-import React from 'react';
 import { submitSurveyResponse } from '../lib/surveyQueries';
 import { saveAudioConfiguration } from '../lib/audioConfigurationQueries';
-import { createInitialAnswers, getAllQuestions, type SurveyAnswers } from '../lib/surveyUtils';
+import { createInitialAnswers, getAllQuestions, hasMissingRequiredAnswers, type SurveyAnswers } from '../lib/surveyUtils';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
+import { clearWatchModeState } from '@/shared/lib/watchModeSequence';
+import SurveyQuestionRenderer from './questions/SurveyQuestionRenderer';
+
+const MISSING_PARTICIPANT_ERROR = 'Participant-ID fehlt. Bitte Einverstaendnis erneut bestaetigen.';
+const MISSING_ANSWERS_ERROR = 'Bitte beantworte alle Fragen, bevor du absendest.';
+const MISSING_AUDIO_CONFIG_ERROR = 'Audio-Konfiguration fehlt. Bitte schaue das Video vollstaendig an, bevor du absendest.';
+const SUBMIT_FAILED_ERROR = 'Umfrage konnte nicht gespeichert werden.';
 
 interface VideoSurveyProps {
     videoId: string;
@@ -24,13 +26,14 @@ interface VideoSurveyProps {
 function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked }: VideoSurveyProps) {
     const { participantId } = useContext(AuthContext);
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
     const [answers, setAnswers] = useState<SurveyAnswers>(() => createInitialAnswers(videoSurvey));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [submitted, setSubmitted] = useState(false);
-    const surveyQuestions = useMemo(() => getAllQuestions(videoSurvey), []);
 
-    const navigate = useNavigate();
+    const surveyQuestions = useMemo(() => getAllQuestions(videoSurvey), []);
 
     const updateAnswer = (questionId: string, value: string | number) => {
         setAnswers((currentAnswers) => ({
@@ -44,29 +47,17 @@ function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked
         setSubmitError(null);
 
         if (!participantId) {
-            setSubmitError('Participant-ID fehlt. Bitte Einverständnis erneut bestätigen.');
+            setSubmitError(MISSING_PARTICIPANT_ERROR);
             return;
         }
 
-        const hasMissingAnswers = surveyQuestions.some((question) => {
-            if (question.optional) return false;
-
-            const value = answers[question.id];
-
-            if (question.type === QuestionType.LinearRating) {
-                return typeof value !== 'number';
-            }
-
-            return typeof value !== 'string' || value.trim().length === 0;
-        });
-
-        if (hasMissingAnswers) {
-            setSubmitError('Bitte beantworte alle Fragen, bevor du absendest.');
+        if (hasMissingRequiredAnswers(surveyQuestions, answers)) {
+            setSubmitError(MISSING_ANSWERS_ERROR);
             return;
         }
 
         if (!audioConfigurationSnapshot) {
-            setSubmitError('Audio-Konfiguration fehlt. Bitte schaue das Video vollständig an, bevor du absendest.');
+            setSubmitError(MISSING_AUDIO_CONFIG_ERROR);
             return;
         }
 
@@ -87,6 +78,8 @@ function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked
                 answers,
             });
 
+            clearWatchModeState(videoId);
+
             await queryClient.invalidateQueries({
                 queryKey: ['video-catalog', participantId],
             });
@@ -94,8 +87,7 @@ function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked
             setSubmitted(true);
             navigate(-1);
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Umfrage konnte nicht gespeichert werden.';
-            setSubmitError(errorMessage);
+            setSubmitError(error instanceof Error ? error.message : SUBMIT_FAILED_ERROR);
         } finally {
             setIsSubmitting(false);
         }
@@ -103,69 +95,33 @@ function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked
 
     return (
         <section className={styles.surveyContainer}>
-            <h2>Umfrage zum Video „{videoTitle}“</h2>
-            <p>Vielen Dank, dass du an der Videoumfrage teilnimmst! Deine Meinung ist uns sehr wichtig und hilft uns, genauere Einblicke zu gewinnen. Bitte beantworte die folgenden Fragen so ehrlich wie möglich. Es gibt keine richtigen oder falschen Antworten, ich möchte einfach nur Deine ehrliche Meinung hören.</p>
+            <h2>Umfrage zum Video "{videoTitle}"</h2>
+            <p>Vielen Dank, dass du an der Videoumfrage teilnimmst! Deine Meinung ist uns sehr wichtig und hilft uns, genauere Einblicke zu gewinnen. Bitte beantworte die folgenden Fragen so ehrlich wie moeglich. Es gibt keine richtigen oder falschen Antworten, ich moechte einfach nur Deine ehrliche Meinung hoeren.</p>
             {!unlocked && <p className={styles.lockedMessage}>Die Umfrage wird freigeschaltet, sobald Sie das Video angeschaut haben.</p>}
             {unlocked && (
                 <form onSubmit={handleSurveySubmit} className={styles.surveyForm}>
-                    {
-                        videoSurvey.sections.map(section => (
-                            <React.Fragment key={section.id}>
-                                <h3>{section.title}</h3>
-                                {section.description && <p>{section.description}</p>}
-                                {section.questions.map(question => {
-                                    switch (question.type) {
-                                        case QuestionType.LinearRating:
-                                            return (
-                                                <LinearRating
-                                                    key={question.id}
-                                                    question={question.question}
-                                                    optional={question.optional}
-                                                    minValue={question.minValue ?? 1}
-                                                    minDescription={question.minDescription ?? ''}
-                                                    maxValue={question.maxValue ?? 7}
-                                                    maxDescription={question.maxDescription ?? ''}
-                                                    onChange={(value) => updateAnswer(question.id, value)}
-                                                    value={Number(answers[question.id] ?? question.minValue ?? 1)}
-                                                />
-                                            );
-                                        case QuestionType.OptionSelect:
-                                            return (
-                                                <OptionSelect
-                                                    key={question.id}
-                                                    question={question.question}
-                                                    optional={question.optional}
-                                                    options={question.options ?? []}
-                                                    onChange={(value) => updateAnswer(question.id, value)}
-                                                    value={String(answers[question.id] ?? '')}
-                                                    noAnswerOption={false}
-                                                />
-                                            );
-                                        case QuestionType.TextAnswer:
-                                            return (
-                                                <TextAnswerQuestion
-                                                    key={question.id}
-                                                    question={question.question}
-                                                    optional={question.optional}
-                                                    onChange={(value) => updateAnswer(question.id, value)}
-                                                    value={String(answers[question.id] ?? '')}
-                                                />
-                                            );
-                                        default:
-                                            return null;
-                                    }
-                                })}
-                                <div className={styles.spacer} />
-                                <hr className={styles.questionDivider} />
-                                <div className={styles.spacer} />
-                            </React.Fragment>
-                        ))
-                    }
+                    {videoSurvey.sections.map((section) => (
+                        <Fragment key={section.id}>
+                            <h3>{section.title}</h3>
+                            {section.description && <p>{section.description}</p>}
+                            {section.questions.map((question) => (
+                        <SurveyQuestionRenderer
+                            key={question.id}
+                            question={question}
+                            answers={answers}
+                            onAnswer={updateAnswer}
+                        />
+                    ))}
+                            <div className={styles.spacer} />
+                            <hr className={styles.questionDivider} />
+                            <div className={styles.spacer} />
+                        </Fragment>
+                    ))}
 
                     {submitError && <p className={styles.submitError}>{submitError}</p>}
                     {submitted && <p className={styles.submitSuccess}>Vielen Dank! Deine Antworten wurden gespeichert.</p>}
 
-                    <button type="submit" className='primary' disabled={isSubmitting || submitted}>
+                    <button type="submit" className="primary" disabled={isSubmitting || submitted}>
                         {isSubmitting ? 'Speichere...' : submitted ? 'Gespeichert' : 'Umfrage absenden'}
                     </button>
                 </form>
