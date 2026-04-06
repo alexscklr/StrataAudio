@@ -8,6 +8,6 @@ INSERT INTO audios (id, video_id, title, hls_url, type, icon_url, default_volume
 ('d1b2c3e4-5678-90ab-cdef-1234567890ad', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'Test Audio 3', 'output_audio3.m3u8', 'voice chat', 'phone.png', 0.5),
 ('d1b2c3e4-5678-90ab-cdef-1234567890ae', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'Test Audio 4', 'output_audio4.m3u8', 'game sound', 'game.png', 0.5),
 
-('d1b2c3e4-5678-90ab-cdef-1234567890ad', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'Background Music', 'output_audio3.m3u8', 'voice chat', 'phone.png', 0.5),
-('d1b2c3e4-5678-90ab-cdef-1234567890ad', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'Robot Motions', 'output_audio3.m3u8', 'voice chat', 'phone.png', 0.5),
-('d1b2c3e4-5678-90ab-cdef-1234567890ad', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'SFX', 'output_audio3.m3u8', 'voice chat', 'sfx.png', 1);
+('e1b2c3e4-5678-90ab-cdef-1234567890aa', '78ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'Background Music', 'stream_1/playlist.m3u8', 'music', 'music.png', 1),
+('e1b2c3e4-5678-90ab-cdef-1234567890ab', '78ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'Robot Motions', 'stream_2/playlist.m3u8', 'motion', 'phone.png', 1),
+('e1b2c3e4-5678-90ab-cdef-1234567890ac', '78ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'SFX', 'stream_3/playlist.m3u8', 'sound effects', 'sfx.png', 1);
