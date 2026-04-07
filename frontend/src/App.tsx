@@ -7,6 +7,7 @@ import ConsentPage from './pages/ConsentPage';
 import WatchPage from './pages/WatchPage';
 import EndSurveyPage from './pages/EndSurveyPage';
 import Footer from './layout/Footer/Footer';
+import { ProtectedRoute } from './features/auth/components/ProtectedRoute';
 
 function App() {
 
@@ -16,9 +17,9 @@ function App() {
       <Main>
         <Routes>
           <Route path="/" element={<ConsentPage />} />
-          <Route path="/videos" element={<VideoCatalogPage />} />
-          <Route path="/videos/:videoid" element={<WatchPage />} />
-          <Route path="/endumfrage" element={<EndSurveyPage />} />
+          <Route path="/videos" element={<ProtectedRoute><VideoCatalogPage /></ProtectedRoute>} />
+          <Route path="/videos/:videoid" element={<ProtectedRoute><WatchPage /></ProtectedRoute>} />
+          <Route path="/endumfrage" element={<ProtectedRoute><EndSurveyPage /></ProtectedRoute>} />
         </Routes>
       </Main>
       <Footer />

@@ -64,9 +64,11 @@
 .thumbnail {
     width: 100%;
     height: auto;
+    aspect-ratio: 16 / 9;
     border-radius: var(--radius);
     margin-bottom: 1rem;
     object-fit: cover;
+    object-position: center;
 }
 
 .thumbnail.watched {
