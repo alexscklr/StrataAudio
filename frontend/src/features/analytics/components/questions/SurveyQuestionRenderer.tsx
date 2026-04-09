@@ -15,6 +15,7 @@ function SurveyQuestionRenderer({ question, answers, onAnswer }: SurveyQuestionR
         case QuestionType.LinearRating:
             return (
                 <LinearRating
+                    questionId={question.id}
                     question={question.question}
                     optional={question.optional}
                     minValue={question.minValue ?? 1}
@@ -28,6 +29,7 @@ function SurveyQuestionRenderer({ question, answers, onAnswer }: SurveyQuestionR
         case QuestionType.OptionSelect:
             return (
                 <OptionSelect
+                    questionId={question.id}
                     question={question.question}
                     optional={question.optional}
                     options={question.options ?? []}

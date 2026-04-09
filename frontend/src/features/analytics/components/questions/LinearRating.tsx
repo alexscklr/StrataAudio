@@ -3,6 +3,7 @@ import styles from '../styles/LinearRating.module.css';
 import SurveyQuestion from '@/shared/components/SurveyQuestion/SurveyQuestion';
 
 interface LinearRatingQuestionProps {
+    questionId: string;
     question?: string;
     description?: string;
     optional?: boolean;
@@ -14,7 +15,7 @@ interface LinearRatingQuestionProps {
     onChange: (value: number) => void;
 }
 
-function LinearRatingQuestion({ question, description, optional, minValue, maxValue, minDescription, maxDescription, value, onChange }: LinearRatingQuestionProps) {
+function LinearRatingQuestion({ questionId, question, description, optional, minValue, maxValue, minDescription, maxDescription, value, onChange }: LinearRatingQuestionProps) {
     const steps = Array.from({ length: maxValue - minValue + 1 }, (_, i) => minValue + i);
 
     return (
@@ -25,15 +26,15 @@ function LinearRatingQuestion({ question, description, optional, minValue, maxVa
                         <React.Fragment key={step}>
                             <input
                                 type="radio"
-                                id={`${question}-${step}`}
-                                name={question}
+                                id={`${questionId}-${step}`}
+                                name={questionId}
                                 value={step}
                                 checked={value === step}
                                 onChange={() => onChange(step)}
                                 className={styles.radioInput}
                             />
                             <label
-                                htmlFor={`${question}-${step}`}
+                                htmlFor={`${questionId}-${step}`}
                                 className={`${styles.block} ${value === step ? styles.selected : ''}`}
                             >
                                 {step}
