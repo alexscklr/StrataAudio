@@ -4,7 +4,7 @@ import type { Video, VideoCatalogItem } from "../types/media";
 export const fetchVideoCatalog = async (): Promise<Video[]> => {
   const { data, error } = await supabase
     .from('videos')
-    .select(`id, title, hls_url, thumbnail_url, created_at, description, genre`)
+    .select(`*`)
     .order('created_at', { ascending: false });
 
   if (error) {

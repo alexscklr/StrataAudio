@@ -6,11 +6,14 @@ export interface Video extends BaseEntity {
   hls_url: string;
   genre: string;
   thumbnail_url?: string;
+  is_mandatory: boolean;
 }
 
 export interface VideoCatalogItem extends Video {
   watched: boolean;
 }
+
+export type CatalogItemStatus = "unlocked" | "locked" | "watched";
 
 export interface Audio extends Omit<BaseEntity, "created_at"> {
   title: string;

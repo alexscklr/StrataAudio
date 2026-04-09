@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import styles from './CatalogItem.module.css';
 import waveSVG from '@/assets/audio-curves-around-square.svg';
 import { getPublicUrl } from '@/shared/utils/storage';
+import type { CatalogItemStatus } from '@/shared/types/media';
 
 interface CatalogItemProps {
     thumbnailUrl?: string;
@@ -10,21 +11,31 @@ interface CatalogItemProps {
     hlsUrl: string;
     genre: string;
     description?: string;
-    watched?: boolean;
+    status?: CatalogItemStatus;
 }
 
-function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description, watched = false }: CatalogItemProps) {
+function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description, status = "unlocked" }: CatalogItemProps) {
+    const isLocked = status === "locked";
+    const isWatched = status === "watched";
+    const isInactive = isLocked || isWatched;
+    const badgeLabel = isLocked ? "Gesperrt" : isWatched ? "Angeschaut" : null;
+
     return (
-        <div className={styles.catalogItem + ' ' + (watched ? styles.watched : '')}>
-            <Link to={watched ? "#" : `/videos/${videoid}`} state={{ videoUrl: getPublicUrl(`${videoid}/${hlsUrl}`, "videos") }}>
+        <div className={styles.catalogItem + ' ' + (isInactive ? styles.inactive : '') + ' ' + (isLocked ? styles.locked : '')}>
+            <Link
+                to={isInactive ? "#" : `/videos/${videoid}`}
+                state={isInactive ? undefined : { videoUrl: getPublicUrl(`${videoid}/${hlsUrl}`, "videos") }}
+                aria-disabled={isInactive}
+                className={styles.catalogLink}
+            >
                 {thumbnailUrl && (
                     <div className={styles.thumbnailContainer}>
-                        <img src={getPublicUrl(`${videoid}/${thumbnailUrl}`, "videos")} alt={`${title} thumbnail`} className={styles.thumbnail + ' ' + (watched ? styles.watched : '')} />
-                        {watched && <span className={styles.watchedBadge}>Angeschaut</span>}
+                        <img src={getPublicUrl(`${videoid}/${thumbnailUrl}`, "videos")} alt={`${title} thumbnail`} className={styles.thumbnail + ' ' + (isInactive ? styles.inactive : '')} />
+                        {badgeLabel && <span className={styles.statusBadge + ' ' + (isLocked ? styles.lockedBadge : styles.watchedBadge)}>{badgeLabel}</span>}
                     </div>
                 )}
-                <h2 className={styles.catalogTitle + ' ' + (watched ? styles.watched : '')}>{title}</h2>
-                <span>{genre}</span>
+                <h2 className={styles.catalogTitle + ' ' + (isInactive ? styles.inactive : '')}>{title}</h2>
+                <span className={styles.genreBadge + ' ' + (isInactive ? styles.inactiveBadge : '')}>{genre}</span>
                 {description && (
                     <div className={styles.descriptionWrapper}>
                         <p className={styles.catalogDescription}>
