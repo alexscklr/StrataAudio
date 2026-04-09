@@ -14,6 +14,15 @@ interface OsInfo {
   osVersion: string;
 }
 
+export interface ClientEnvironmentInfo {
+  browserName: string;
+  browserVersion: string;
+  osName: string;
+  osVersion: string;
+  screenWidth: number;
+  screenHeight: number;
+}
+
 const parseBrowserInfo = (userAgent: string): BrowserInfo => {
   const normalizedUa = userAgent.toLowerCase();
 
@@ -85,13 +94,26 @@ export const getStoredUserHash = (): string | null => {
   return localStorage.getItem(USER_HASH_STORAGE_KEY);
 };
 
+export const getClientEnvironmentInfo = (): ClientEnvironmentInfo => {
+  const userAgent = navigator.userAgent;
+  const { browserName, browserVersion } = parseBrowserInfo(userAgent);
+  const { osName, osVersion } = parseOsInfo(userAgent);
+
+  return {
+    browserName,
+    browserVersion,
+    osName,
+    osVersion,
+    screenWidth: window.screen.width,
+    screenHeight: window.screen.height,
+  };
+};
+
 export const ensureParticipantExists = async (): Promise<string> => {
   const storedParticipantId = getStoredParticipantId();
   const userHash = getOrCreateUserHash();
   const participantId = storedParticipantId ?? crypto.randomUUID();
-  const userAgent = navigator.userAgent;
-  const { browserName, browserVersion } = parseBrowserInfo(userAgent);
-  const { osName, osVersion } = parseOsInfo(userAgent);
+  const environmentInfo = getClientEnvironmentInfo();
 
   const { error } = await supabase
     .from('participants')
@@ -99,12 +121,12 @@ export const ensureParticipantExists = async (): Promise<string> => {
       id: participantId,
       created_at: new Date().toISOString(),
       user_hash: userHash,
-      browser_name: browserName,
-      browser_version: browserVersion,
-      os_name: osName,
-      os_version: osVersion,
-      screen_res_width: window.screen.width,
-      screen_res_height: window.screen.height,
+      browser_name: environmentInfo.browserName,
+      browser_version: environmentInfo.browserVersion,
+      os_name: environmentInfo.osName,
+      os_version: environmentInfo.osVersion,
+      screen_res_width: environmentInfo.screenWidth,
+      screen_res_height: environmentInfo.screenHeight,
     });
 
   if (error) {

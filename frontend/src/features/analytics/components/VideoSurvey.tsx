@@ -4,7 +4,7 @@ import { videoSurvey } from '@/constants/videoSurvey';
 import { AuthContext } from '@/features/auth/context/AuthContext';
 import { submitSurveyResponse } from '../lib/surveyQueries';
 import { saveAudioConfiguration } from '../lib/audioConfigurationQueries';
-import { createInitialAnswers, getAllQuestions, hasMissingRequiredAnswers, type SurveyAnswers } from '../lib/surveyUtils';
+import { createInitialAnswers, getAllQuestions, hasMissingRequiredAnswers, type SurveyAnswers } from '../utils/surveyUtils';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
@@ -105,13 +105,13 @@ function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked
                             <h3>{section.title}</h3>
                             {section.description && <p>{section.description}</p>}
                             {section.questions.map((question) => (
-                        <SurveyQuestionRenderer
-                            key={question.id}
-                            question={question}
-                            answers={answers}
-                            onAnswer={updateAnswer}
-                        />
-                    ))}
+                                <SurveyQuestionRenderer
+                                    key={question.id}
+                                    question={question}
+                                    answers={answers}
+                                    onAnswer={updateAnswer}
+                                />
+                            ))}
                             <div className={styles.spacer} />
                             <hr className={styles.questionDivider} />
                             <div className={styles.spacer} />

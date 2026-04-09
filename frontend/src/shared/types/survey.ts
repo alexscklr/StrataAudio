@@ -13,6 +13,7 @@ export interface Question {
     description?: string;
     optional?: boolean;
     options?: string[]; // Nur für optionSelect
+    noAnswerOption?: boolean;
     minValue?: number; // Nur für linearRating
     maxValue?: number; // Nur für linearRating
     minDescription?: string; // Nur für linearRating

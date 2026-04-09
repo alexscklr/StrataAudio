@@ -1,0 +1,117 @@
+.surveyShell {
+    width: min(100%, 960px);
+    margin: 0 auto;
+    padding: clamp(1.25rem, 2vw, 2rem);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    background:
+        radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 35%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+    box-shadow: var(--shadow-card);
+}
+
+.hero {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+    width: fit-content;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hero h2 {
+    margin-bottom: 0;
+}
+
+.hero p {
+    margin-bottom: 0;
+    max-width: 70ch;
+}
+
+.transparencyCard {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 0.9rem;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.transparencyTitle {
+    margin-bottom: 0.35rem;
+}
+
+.transparencyText {
+    color: var(--text-muted);
+}
+
+.metaGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+}
+
+.metaItem {
+    padding: 0.85rem;
+    border-radius: 0.8rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.metaLabel {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.metaValue {
+    color: rgba(229, 229, 229, 0.72);
+    filter: grayscale(0.15);
+}
+
+.surveyForm {
+    display: grid;
+    gap: 1rem;
+}
+
+.submitRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+}
+
+.submitHint {
+    color: var(--text-muted);
+    margin-bottom: 0;
+    max-width: 48ch;
+}
+
+.submitError {
+    margin-bottom: 0;
+    color: #fca5a5;
+}
+
+@media (max-width: 640px) {
+    .surveyShell {
+        padding: 1rem;
+    }
+
+    .submitRow {
+        align-items: stretch;
+    }
+}

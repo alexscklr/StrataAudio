@@ -19,7 +19,7 @@ function ConsentPage() {
         try {
             await initializeParticipant();
             localStorage.setItem('user-consent', 'true');
-            navigate('/videos');
+            navigate('/demografie');
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Teilnehmer konnte nicht angelegt werden.';
             setSubmitError(errorMessage);
@@ -30,7 +30,7 @@ function ConsentPage() {
 
     useEffect(() => {
         if (localStorage.getItem('user-consent') === 'true') {
-            navigate('/videos');
+            navigate('/demografie');
         }
     }, [navigate]);
 

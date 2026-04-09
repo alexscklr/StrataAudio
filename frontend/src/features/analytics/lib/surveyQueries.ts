@@ -1,6 +1,6 @@
 import { supabase } from '@/api/supabaseClient';
 import type { Survey } from '@/shared/types/survey';
-import type { SurveyAnswers } from './surveyUtils';
+import type { SurveyAnswers } from '../utils/surveyUtils';
 
 interface SubmitSurveyResponseInput {
     participantId: string;

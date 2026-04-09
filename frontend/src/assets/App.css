@@ -1,9 +1,9 @@
 :root {
-    /* Brand Colors - Audio Tech Style */
-    --primary: #10b981;      /* Tech Green */
+    /* Brand Colors */
+    --primary: #10b981;
     --primary-hover: #059669;
-    --bg-dark: #121212;      /* Deep Dark Grey */
-    --bg-card: #1e1e1e;      /* Card Grey */
+    --bg-dark: #121212;
+    --bg-card: #1e1e1e;
     --text-main: #e5e5e5;
     --text-muted: #a3a3a3;
     --strata-accent: #9395F6;
@@ -13,11 +13,11 @@
     --border-color: #333333;
 
     /* Spacing & Radius */
-    --radius: 8px;           /* Sharper corners for tech look */
-    --gap: 16px;             /* Smaller gap for mobile */
+    --radius: 8px;
+    --gap: 16px;
     --max-width: 1400px;
     --main-width: 100vw;
-    --main-padding: 24px 16px; /* Smaller padding for mobile */
+    --main-padding: 24px 16px;
     --shadow-main: 0 4px 20px rgba(0,0,0,0.4);
     --shadow-card: 0 4px 12px rgba(0,0,0,0.3);
     --shadow-hover: 0 8px 24px rgba(0,0,0,0.5);

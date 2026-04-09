@@ -4,19 +4,26 @@
 
 .optionsWrapper {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
-    margin: auto;
+    margin: 0;
+    width: 100%;
 }
 
 .optionLabel {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
     border: 2px solid var(--primary);
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
+    flex: 1 1 220px;
+    min-width: 0;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
 .optionLabel:hover {
@@ -27,4 +34,14 @@
 .optionLabel.selected {
     background-color: var(--primary);
     color: white;
+}
+
+@media (max-width: 640px) {
+    .optionsWrapper {
+        gap: 0.75rem;
+    }
+
+    .optionLabel {
+        flex-basis: 100%;
+    }
 }

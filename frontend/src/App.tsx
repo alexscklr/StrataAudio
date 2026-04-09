@@ -6,8 +6,10 @@ import VideoCatalogPage from './pages/VideoCatalogPage';
 import ConsentPage from './pages/ConsentPage';
 import WatchPage from './pages/WatchPage';
 import EndSurveyPage from './pages/EndSurveyPage';
+import DemographicsPage from './pages/DemographicsPage';
 import Footer from './layout/Footer/Footer';
 import { ProtectedRoute } from './features/auth/components/ProtectedRoute';
+import DemographicsRequiredRoute from './features/analytics/components/DemographicsRequiredRoute';
 
 function App() {
 
@@ -17,9 +19,10 @@ function App() {
       <Main>
         <Routes>
           <Route path="/" element={<ConsentPage />} />
-          <Route path="/videos" element={<ProtectedRoute><VideoCatalogPage /></ProtectedRoute>} />
-          <Route path="/videos/:videoid" element={<ProtectedRoute><WatchPage /></ProtectedRoute>} />
-          <Route path="/endumfrage" element={<ProtectedRoute><EndSurveyPage /></ProtectedRoute>} />
+          <Route path="/demografie" element={<ProtectedRoute><DemographicsPage /></ProtectedRoute>} />
+          <Route path="/videos" element={<ProtectedRoute><DemographicsRequiredRoute><VideoCatalogPage /></DemographicsRequiredRoute></ProtectedRoute>} />
+          <Route path="/videos/:videoid" element={<ProtectedRoute><DemographicsRequiredRoute><WatchPage /></DemographicsRequiredRoute></ProtectedRoute>} />
+          <Route path="/endumfrage" element={<ProtectedRoute><DemographicsRequiredRoute><EndSurveyPage /></DemographicsRequiredRoute></ProtectedRoute>} />
         </Routes>
       </Main>
       <Footer />

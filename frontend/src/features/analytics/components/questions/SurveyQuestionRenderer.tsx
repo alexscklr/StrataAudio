@@ -1,5 +1,5 @@
 import { QuestionType, type Question } from '@/shared/types/survey';
-import type { SurveyAnswers } from '../../lib/surveyUtils';
+import type { SurveyAnswers } from '../../utils/surveyUtils';
 import LinearRating from './LinearRating';
 import OptionSelect from './OptionSelect';
 import TextAnswerQuestion from './TextAnswer';
@@ -33,7 +33,7 @@ function SurveyQuestionRenderer({ question, answers, onAnswer }: SurveyQuestionR
                     options={question.options ?? []}
                     onChange={(value) => onAnswer(question.id, value)}
                     value={String(answers[question.id] ?? '')}
-                    noAnswerOption={false}
+                    noAnswerOption={question.noAnswerOption ?? false}
                 />
             );
         case QuestionType.TextAnswer:

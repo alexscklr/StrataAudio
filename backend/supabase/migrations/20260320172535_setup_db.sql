@@ -86,17 +86,11 @@ CREATE TABLE IF NOT EXISTS "public"."audio_configurations" (
     "id" "uuid" DEFAULT "gen_random_uuid"() PRIMARY KEY,
     "participant_id" "uuid" NOT NULL REFERENCES "public"."participants"("id") ON DELETE CASCADE,
     "video_id" "uuid" NOT NULL REFERENCES "public"."videos"("id"),
-    -- 'mixer' (manuell) oder 'preset' (vordefiniert)
     "test_condition" "test_condition_type" NOT NULL,
-    -- Finaler Zustand der Regler (z.B. {"vocals": -3, "music": -15, "fx": -10})
     "final_settings" "jsonb" NOT NULL DEFAULT '{}'::jsonb,
-    -- Deine Idee: Array von Zeitpunkten & Aktionen
-    -- Format: [{"t": 1500, "label": "vocals", "val": -5}, ...]
     "interaction_log" "jsonb" NOT NULL DEFAULT '[]'::jsonb,
-    -- Metriken für die kognitive Last (Cognitive Load)
     "total_interactions" int4 DEFAULT 0,
     "time_to_mix_ms" int4,
-    -- Dauer vom Start bis zum 'Confirm'
     "created_at" timestamptz DEFAULT now()
 );
 ALTER TABLE "public"."audio_configurations" ENABLE ROW LEVEL SECURITY;
@@ -107,17 +101,12 @@ CREATE TABLE IF NOT EXISTS "public"."survey_responses" (
     "id" "uuid" DEFAULT "gen_random_uuid"() PRIMARY KEY,
     "participant_id" "uuid" NOT NULL REFERENCES "public"."participants"("id") ON DELETE CASCADE,
     
-    -- Optional: Verknüpfung zur Config (nur bei Einzelbewertung)
     "config_id" "uuid" REFERENCES "public"."audio_configurations"("id"),
     
-    -- Typ der Umfrage: 'single' (nach Video) oder 'final' (ganz am Ende)
     "survey_type" text NOT NULL CHECK (survey_type IN ('single', 'final')),
     
-    -- Die Antworten als JSONB (macht dich flexibel für verschiedene Fragen)
-    -- Vorteil: Du kannst Likert-Skalen (1-7) einfach als Key-Value speichern
     "responses" "jsonb" NOT NULL,
     
-    -- Ein Freitext-Feld für qualitativen Input (sehr wichtig für Diskussion in Thesis!)
     "feedback_text" text,
     
     "created_at" timestamptz DEFAULT now()
