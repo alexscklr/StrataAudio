@@ -33,6 +33,9 @@ function OptionSelectQuestion({ question, description, optional, options, value,
                 </React.Fragment>
             ))}
             </div>
+            {!optional && value === '' && !noAnswerOption && (
+                <p className={styles.hint}>Bitte beantworte diese Frage</p>
+            )}
         </SurveyQuestion>
     );
 }

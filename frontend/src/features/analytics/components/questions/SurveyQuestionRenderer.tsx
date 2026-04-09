@@ -22,7 +22,7 @@ function SurveyQuestionRenderer({ question, answers, onAnswer }: SurveyQuestionR
                     maxValue={question.maxValue ?? 7}
                     maxDescription={question.maxDescription ?? ''}
                     onChange={(value) => onAnswer(question.id, value)}
-                    value={Number(answers[question.id] ?? question.minValue ?? 1)}
+                    value={answers[question.id] !== undefined ? Number(answers[question.id]) : undefined}
                 />
             );
         case QuestionType.OptionSelect:

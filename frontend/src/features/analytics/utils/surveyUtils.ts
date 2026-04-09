@@ -1,12 +1,12 @@
 import { QuestionType, type Question, type Survey } from '@/shared/types/survey';
 
-export type SurveyAnswers = Record<string, string | number>;
+export type SurveyAnswers = Record<string, string | number | undefined>;
 
 export const createInitialAnswers = (survey: Survey): SurveyAnswers => {
     return survey.sections.reduce<SurveyAnswers>((accumulator, section) => {
         section.questions.forEach((question) => {
             if (question.type === QuestionType.LinearRating) {
-                accumulator[question.id] = question.minValue ?? 1;
+                accumulator[question.id] = undefined;
                 return;
             }
 

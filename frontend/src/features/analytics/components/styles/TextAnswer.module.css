@@ -7,3 +7,10 @@
     background: transparent;
     color: var(--text-main);
 }
+
+.hint {
+    font-size: 0.8rem;
+    color: #f59e0b;
+    margin: 0.25rem 0 0;
+    text-align: left;
+}

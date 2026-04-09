@@ -17,6 +17,9 @@ function TextAnswerQuestion({ question, description, optional, value, onChange }
     return (
         <SurveyQuestion question={question} description={description} optional={optional}>
             <textarea value={value} onChange={handleChange} className={styles.textInput} rows={4} />
+            {!optional && value.trim() === '' && (
+                <p className={styles.hint}>Bitte beantworte diese Frage</p>
+            )}
         </SurveyQuestion>
     );
 }

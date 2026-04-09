@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from '../styles/LinearRating.module.css';
 import SurveyQuestion from '@/shared/components/SurveyQuestion/SurveyQuestion';
 
@@ -9,24 +10,45 @@ interface LinearRatingQuestionProps {
     maxValue: number;
     minDescription: string;
     maxDescription: string;
-    value: number;
+    value: number | undefined;
     onChange: (value: number) => void;
 }
 
 function LinearRatingQuestion({ question, description, optional, minValue, maxValue, minDescription, maxDescription, value, onChange }: LinearRatingQuestionProps) {
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(Number(event.target.value));
-    };
+    const steps = Array.from({ length: maxValue - minValue + 1 }, (_, i) => minValue + i);
 
     return (
         <SurveyQuestion question={question} description={description} optional={optional}>
-            <div className={styles.sliderContainer}>
-                <input type="range" min={minValue} max={maxValue} value={value} onChange={handleChange} className={styles.slider} step={1} />
+            <div className={styles.ratingContainer}>
+                <div className={styles.blocks}>
+                    {steps.map((step) => (
+                        <React.Fragment key={step}>
+                            <input
+                                type="radio"
+                                id={`${question}-${step}`}
+                                name={question}
+                                value={step}
+                                checked={value === step}
+                                onChange={() => onChange(step)}
+                                className={styles.radioInput}
+                            />
+                            <label
+                                htmlFor={`${question}-${step}`}
+                                className={`${styles.block} ${value === step ? styles.selected : ''}`}
+                            >
+                                {step}
+                            </label>
+                        </React.Fragment>
+                    ))}
+                </div>
                 <div className={styles.labelWrapper}>
-                    <span className={styles.minLabel}>{minDescription}</span>
-                    <span className={styles.maxLabel}>{maxDescription}</span>
+                    <span>{minDescription}</span>
+                    <span>{maxDescription}</span>
                 </div>
             </div>
+            {!optional && value === undefined && (
+                <p className={styles.hint}>Bitte beantworte diese Frage</p>
+            )}
         </SurveyQuestion>
     );
 }
