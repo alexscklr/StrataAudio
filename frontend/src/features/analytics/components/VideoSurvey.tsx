@@ -96,7 +96,7 @@ function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked
     return (
         <section className={styles.surveyContainer}>
             <h2>Umfrage zum Video "{videoTitle}"</h2>
-            <p>Vielen Dank, dass du an der Videoumfrage teilnimmst! Deine Meinung ist uns sehr wichtig und hilft uns, genauere Einblicke zu gewinnen. Bitte beantworte die folgenden Fragen so ehrlich wie moeglich. Es gibt keine richtigen oder falschen Antworten, ich moechte einfach nur Deine ehrliche Meinung hoeren.</p>
+            <p>Vielen Dank, dass du an der Videoumfrage teilnimmst! Deine Meinung ist mir sehr wichtig und hilft mir, genauere Einblicke zu gewinnen. Bitte beantworte die folgenden Fragen so ehrlich wie möglich. Es gibt keine richtigen oder falschen Antworten, ich möchte einfach nur Deine ehrliche Meinung hören.</p>
             {!unlocked && <p className={styles.lockedMessage}>Die Umfrage wird freigeschaltet, sobald Sie das Video angeschaut haben.</p>}
             {unlocked && (
                 <form onSubmit={handleSurveySubmit} className={styles.surveyForm}>

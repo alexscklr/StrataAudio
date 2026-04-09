@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Audio, VideoControlPermissions } from '@/shared/types/media';
 import styles from './VideoPlayer.module.css';
 import { PlayPauseButton } from '../Controls/PlayPauseButton';
@@ -66,10 +66,16 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
         onVideoEnd?.();
     };
 
+    useEffect(() => {
+        if (isPlaying && isInitialOpen) {
+            setIsInitialOpen(false);
+        }
+    }, [isPlaying, isInitialOpen, setIsInitialOpen]);
+
     const containerClassName = [
         styles.videoContainer,
         isFullscreen ? styles.fullscreen : '',
-        isInitialOpen ? 'initialOpen' : '',
+        isInitialOpen ? styles.initialOpen : '',
     ].filter(Boolean).join(' ');
 
     return (
@@ -81,7 +87,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
 
             
             <div className={styles.overlay} >
-                <div className={styles.invisiblePlayArea} onClick={() => { handleTogglePlay(); setIsInitialOpen(false); }} />
+                <div className={styles.invisiblePlayArea} onClick={() => { handleTogglePlay(); }} />
                 <TimeSlider currentTime={currentTime} duration={duration} onSeek={handleSeek} videoRef={videoRef} />
                 <div className={styles.uiTop}>
                     <p className={styles.videoTitle}>{title}</p>
