@@ -20,7 +20,6 @@ export const fetchParticipantWatchedVideoIds = async (participantId: string): Pr
     .from('survey_responses')
     .select('video_id')
     .eq('participant_id', participantId)
-    .eq('survey_type', 'single')
     .not('video_id', 'is', null);
 
   if (error) {

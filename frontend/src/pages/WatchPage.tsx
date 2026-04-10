@@ -34,6 +34,7 @@ function WatchPage() {
     const completedCount = completedModes.length;
     const totalModes = modeSequence.length;
     const nextRequiredMode = modeSequence.find((mode) => !completedModes.includes(mode));
+    const firstWatchMode = modeSequence[0] ?? VideoWatchMode.Mixer;
 
     const handleVideoEnd = () => {
         if (!resolvedVideoId) return;
@@ -97,6 +98,7 @@ function WatchPage() {
             <VideoSurvey
                 videoId={videoid!}
                 videoTitle={video?.title || "Unknown Video"}
+                firstWatchMode={firstWatchMode}
                 audioConfigurationSnapshot={audioConfigurationSnapshots[VideoWatchMode.Mixer] ?? null}
                 unlocked={surveyUnlocked && hasTrackingConsent}
             />

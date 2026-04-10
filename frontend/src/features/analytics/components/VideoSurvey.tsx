@@ -10,6 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
 import { clearWatchModeState } from '@/shared/lib/watchModeSequence';
 import SurveyQuestionRenderer from './questions/SurveyQuestionRenderer';
+import type { VideoWatchMode } from '@/shared/types/media';
 
 const MISSING_PARTICIPANT_ERROR = 'Participant-ID fehlt. Bitte Einverstaendnis erneut bestaetigen.';
 const MISSING_ANSWERS_ERROR = 'Bitte beantworte alle Fragen, bevor du absendest.';
@@ -19,11 +20,12 @@ const SUBMIT_FAILED_ERROR = 'Umfrage konnte nicht gespeichert werden.';
 interface VideoSurveyProps {
     videoId: string;
     videoTitle: string;
+    firstWatchMode: VideoWatchMode;
     audioConfigurationSnapshot: AudioConfigurationSnapshot | null;
     unlocked: boolean;
 }
 
-function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked }: VideoSurveyProps) {
+function VideoSurvey({ videoId, videoTitle, firstWatchMode, audioConfigurationSnapshot, unlocked }: VideoSurveyProps) {
     const { participantId } = useContext(AuthContext);
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -74,6 +76,7 @@ function VideoSurvey({ videoId, videoTitle, audioConfigurationSnapshot, unlocked
                 participantId,
                 configId: configurationId,
                 videoId,
+                firstWatchMode,
                 survey: videoSurvey,
                 answers,
             });
