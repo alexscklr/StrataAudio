@@ -1,6 +1,6 @@
 import { useConsent } from '../hooks/useConsent';
 import { Navigate } from 'react-router-dom';
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 interface ProtectedRouteProps {
