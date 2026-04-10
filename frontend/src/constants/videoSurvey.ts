@@ -2,47 +2,47 @@ import { QuestionType, type Survey } from "@/shared/types/survey";
 
 export const videoSurvey: Survey = {
     id: "video-survey",
-    title: "Umfrage zum Video",
+    title: "surveys.video.title",
     sections: [
         {
             id: "section-1",
-            title: "Fragen zum Thema Synchronisation",
+            title: "surveys.video.sections.section1",
             questions: [
                 {
                     id: "sync-1",
                     type: QuestionType.LinearRating,
-                    question: "Wie synchron waren die Tonspuren mit dem Video?",
+                    question: "surveys.video.questions.sync1.question",
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Sehr unsynchron",
-                    maxDescription: "Perfekt synchron"
+                    minDescription: "surveys.video.questions.sync1.minDescription",
+                    maxDescription: "surveys.video.questions.sync1.maxDescription"
                 },
                 {
                     id: "sync-2",
                     type: QuestionType.OptionSelect,
-                    question: "Gab es Störungen wie Tonaussetzer oder Ruckeln während des Tonmischens?",
-                    options: ["Ja", "Nein"]
+                    question: "surveys.video.questions.sync2.question",
+                    options: ["yes", "no"]
                 }
             ]
         },
         {
             id: "section-2",
-            title: "Fragen zum Thema Erlebnis",
+            title: "surveys.video.sections.section2",
             questions: [
                 {
                     id: "experience-1",
                     type: QuestionType.LinearRating,
-                    question: "Inwiefern hat die Möglichkeit, den Mix selbst zu bestimmen, Ihr Interesse am Video gesteigert?",
+                    question: "surveys.video.questions.experience1.question",
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Gar nicht",
-                    maxDescription: "Sehr stark"
+                    minDescription: "surveys.video.questions.experience1.minDescription",
+                    maxDescription: "surveys.video.questions.experience1.maxDescription"
                 },
                 {
                     id: "experience-2",
                     type: QuestionType.OptionSelect,
-                    question: "Welchen Modus haben Sie beim Ansehen des Videos bevorzugt?",
-                    options: ["Standard", "Mixer"]
+                    question: "surveys.video.questions.experience2.question",
+                    options: ["standard", "mixer"]
                 }
             ]
         }

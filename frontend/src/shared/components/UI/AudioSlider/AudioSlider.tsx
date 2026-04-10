@@ -1,4 +1,5 @@
 import styles from './AudioSlider.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface AudioSliderProps {
     audioId: string;
@@ -8,13 +9,15 @@ interface AudioSliderProps {
 }
 
 function AudioSlider({ audioId, volume, onVolumeChange, onVolumeCommit }: AudioSliderProps) {
+    const { t } = useTranslation();
+
     const handleCommit = (value: number) => {
         onVolumeCommit?.(audioId, value);
     };
 
     return (
         <div className={styles.sliderContainer}>
-            <label htmlFor={`slider-${audioId}`} className={styles.srOnly}>Volume</label>
+            <label htmlFor={`slider-${audioId}`} className={styles.srOnly}>{t('common.volume')}</label>
             <input
                 className={styles.slider}
                 id={`slider-${audioId}`}

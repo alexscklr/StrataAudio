@@ -6,13 +6,10 @@ import { fetchEndSurveyResponse, submitEndSurveyResponse } from '@/features/anal
 import SurveyQuestionRenderer from '@/features/analytics/components/questions/SurveyQuestionRenderer';
 import { createInitialAnswers, getAllQuestions, hasMissingRequiredAnswers, type SurveyAnswers } from '@/features/analytics/utils/surveyUtils';
 import styles from '@/features/analytics/components/styles/VideoSurvey.module.css';
-
-const MISSING_PARTICIPANT_ERROR = 'Participant-ID fehlt. Bitte Einverstaendnis erneut bestaetigen.';
-const MISSING_ANSWERS_ERROR = 'Bitte beantworte alle Pflichtfragen, bevor du absendest.';
-const LOAD_FAILED_ERROR = 'Bestehende Endumfrage konnte nicht geladen werden.';
-const SUBMIT_FAILED_ERROR = 'Endumfrage konnte nicht gespeichert werden.';
+import { useTranslation } from 'react-i18next';
 
 function EndSurveyPage() {
+    const { t } = useTranslation();
     const { participantId } = useContext(AuthContext);
 
     const [answers, setAnswers] = useState<SurveyAnswers>(() => createInitialAnswers(endSurvey));
@@ -56,7 +53,7 @@ function EndSurveyPage() {
                 setHasExistingResponse(true);
             } catch {
                 if (isMounted) {
-                    setSubmitError(LOAD_FAILED_ERROR);
+                    setSubmitError(t('endSurvey.loadFailed'));
                 }
             } finally {
                 if (isMounted) {
@@ -77,12 +74,12 @@ function EndSurveyPage() {
         setSubmitError(null);
 
         if (!participantId) {
-            setSubmitError(MISSING_PARTICIPANT_ERROR);
+            setSubmitError(t('endSurvey.missingParticipant'));
             return;
         }
 
         if (hasMissingRequiredAnswers(surveyQuestions, answers)) {
-            setSubmitError(MISSING_ANSWERS_ERROR);
+            setSubmitError(t('endSurvey.missingAnswers'));
             return;
         }
 
@@ -98,7 +95,7 @@ function EndSurveyPage() {
             setSubmitted(true);
             setHasExistingResponse(true);
         } catch (error) {
-            setSubmitError(error instanceof Error ? error.message : SUBMIT_FAILED_ERROR);
+            setSubmitError(error instanceof Error ? error.message : t('endSurvey.submitFailed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -106,19 +103,16 @@ function EndSurveyPage() {
 
     return (
         <section className={styles.surveyContainer}>
-            <h2>Abschliessende Umfrage</h2>
-            <p>
-                Vielen Dank, dass du bis hierhin teilgenommen hast. Diese abschliessenden Fragen helfen,
-                das gesamte Nutzungserlebnis zu bewerten.
-            </p>
-            {hasExistingResponse && <p>Du kannst deine Endumfrage jederzeit anpassen und erneut speichern.</p>}
-            {isLoadingExisting && <p>Lade bestehende Endumfrage...</p>}
+            <h2>{t('endSurvey.title')}</h2>
+            <p>{t('endSurvey.intro')}</p>
+            {hasExistingResponse && <p>{t('endSurvey.editableHint')}</p>}
+            {isLoadingExisting && <p>{t('endSurvey.loadingExisting')}</p>}
 
             <form onSubmit={handleSubmit} className={styles.surveyForm}>
                 {endSurvey.sections.map((section) => (
                     <Fragment key={section.id}>
-                        <h3>{section.title}</h3>
-                        {section.description && <p>{section.description}</p>}
+                        <h3>{t(section.title, { defaultValue: section.title })}</h3>
+                        {section.description && <p>{t(section.description, { defaultValue: section.description })}</p>}
                         {section.questions.map((question) => (
                             <SurveyQuestionRenderer
                                 key={question.id}
@@ -134,10 +128,10 @@ function EndSurveyPage() {
                 ))}
 
                 {submitError && <p className={styles.submitError}>{submitError}</p>}
-                {submitted && <p className={styles.submitSuccess}>Vielen Dank! Deine Endumfrage wurde gespeichert.</p>}
+                {submitted && <p className={styles.submitSuccess}>{t('endSurvey.submitSuccess')}</p>}
 
                 <button type="submit" className="primary" disabled={isSubmitting || isLoadingExisting}>
-                    {isSubmitting ? 'Speichere...' : hasExistingResponse ? 'Endumfrage aktualisieren' : 'Endumfrage absenden'}
+                    {isSubmitting ? t('common.saveInProgress') : hasExistingResponse ? t('endSurvey.updateButton') : t('endSurvey.submitButton')}
                 </button>
             </form>
         </section>

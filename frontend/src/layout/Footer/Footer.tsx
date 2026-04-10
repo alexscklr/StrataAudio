@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.css';
+import { useTranslation } from 'react-i18next';
 
 function Footer() {
+    const { t } = useTranslation();
 
 
     return (
@@ -11,10 +13,10 @@ function Footer() {
                 <span className={styles.tagline}>udio</span>
             </div>
             <ul className={styles.links}>
-                    <li><Link to="/impressum">Impressum</Link></li>
-                    <li><Link to="/datenschutz">Datenschutz</Link></li>
+                    <li><Link to="/impressum">{t('footer.imprint')}</Link></li>
+                    <li><Link to="/datenschutz">{t('footer.privacy')}</Link></li>
             </ul>
-            <p className={styles.copyright}>&copy; 2026 Alexander Sickler - StrataAudio | Bachelorarbeit HSHL</p>
+            <p className={styles.copyright}>{t('footer.copyright')}</p>
         </footer>
     );
 }

@@ -6,9 +6,11 @@ import ProgressBar from "@/shared/components/ProgressBar/ProgressBar";
 import { useContext, useMemo } from "react";
 import { AuthContext } from "@/features/auth/context/AuthContext";
 import type { CatalogItemStatus, VideoCatalogItem } from "@/shared/types/media";
+import { useTranslation } from 'react-i18next';
 
 
 function VideoCatalogPage() {
+    const { t } = useTranslation();
     const { participantId } = useContext(AuthContext);
     const { data: videoCatalog, isLoading, error } = useVideoCatalog(participantId);
 
@@ -53,14 +55,14 @@ function VideoCatalogPage() {
 
     return (
         <section className={mainPageStyles.pageGrid}>
-            {isLoading && <p>Loading...</p>}
-            {error && <p>Error loading video catalog: {error.message}</p>}
+            {isLoading && <p>{t('videoCatalog.loading')}</p>}
+            {error && <p>{t('videoCatalog.loadError', { message: error.message })}</p>}
 
             <section className={styles.sectionCard}>
                 <header className={styles.sectionHeader}>
                     <div>
-                        <h2>Erforderliche Videos</h2>
-                        <p className={styles.sectionHint}>Diese Videos müssen zuerst abgeschlossen werden.</p>
+                        <h2>{t('videoCatalog.mandatoryTitle')}</h2>
+                        <p className={styles.sectionHint}>{t('videoCatalog.mandatoryHint')}</p>
                     </div>
                     <span className={styles.counter}>{mandatoryWatched}/{mandatoryTotal}</span>
                 </header>
@@ -68,7 +70,7 @@ function VideoCatalogPage() {
                 <div className={styles.progressBarWrapper}>
                     <ProgressBar
                         percentage={mandatoryProgress}
-                        label="Fortschritt"
+                        label={t('videoCatalog.progress')}
                         counter={`${mandatoryWatched}/${mandatoryTotal}`}
                     />
                 </div>
@@ -91,17 +93,17 @@ function VideoCatalogPage() {
                         ))}
                     </ul>
                 ) : (
-                    <p className={styles.emptyState}>Alle erforderlichen Videos sind abgeschlossen.</p>
+                    <p className={styles.emptyState}>{t('videoCatalog.mandatoryEmpty')}</p>
                 )}
             </section>
 
             <section className={styles.sectionCard}>
                 <header className={styles.sectionHeader}>
                     <div>
-                        <h2>Optionale Videos</h2>
+                        <h2>{t('videoCatalog.optionalTitle')}</h2>
                         {!optionalUnlocked && (
                             <p className={styles.unlockHint}>
-                                Optionale Videos werden freigeschaltet, sobald alle erforderlichen Videos angesehen wurden.
+                                {t('videoCatalog.optionalLockedHint')}
                             </p>
                         )}
                     </div>
@@ -126,15 +128,15 @@ function VideoCatalogPage() {
                         ))}
                     </ul>
                 ) : (
-                    <p className={styles.emptyState}>Keine optionalen Videos verfügbar.</p>
+                    <p className={styles.emptyState}>{t('videoCatalog.optionalEmpty')}</p>
                 )}
             </section>
 
             <section className={styles.sectionCard}>
                 <header className={styles.sectionHeader}>
                     <div>
-                        <h2>Gesehene Videos</h2>
-                        <p className={styles.sectionHint}>Bereits abgeschlossene Inhalte.</p>
+                        <h2>{t('videoCatalog.watchedTitle')}</h2>
+                        <p className={styles.sectionHint}>{t('videoCatalog.watchedHint')}</p>
                     </div>
                     <span className={styles.counter}>{watchedVideos.length}</span>
                 </header>
@@ -157,7 +159,7 @@ function VideoCatalogPage() {
                         ))}
                     </ul>
                 ) : (
-                    <p className={styles.emptyState}>Noch keine Videos angesehen.</p>
+                    <p className={styles.emptyState}>{t('videoCatalog.watchedEmpty')}</p>
                 )}
             </section>
         </section>

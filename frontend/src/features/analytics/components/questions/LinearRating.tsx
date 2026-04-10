@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../styles/LinearRating.module.css';
 import SurveyQuestion from '@/shared/components/SurveyQuestion/SurveyQuestion';
+import { useTranslation } from 'react-i18next';
 
 interface LinearRatingQuestionProps {
     questionId: string;
@@ -16,6 +17,7 @@ interface LinearRatingQuestionProps {
 }
 
 function LinearRatingQuestion({ questionId, question, description, optional, minValue, maxValue, minDescription, maxDescription, value, onChange }: LinearRatingQuestionProps) {
+    const { t } = useTranslation();
     const steps = Array.from({ length: maxValue - minValue + 1 }, (_, i) => minValue + i);
 
     return (
@@ -48,7 +50,7 @@ function LinearRatingQuestion({ questionId, question, description, optional, min
                 </div>
             </div>
             {!optional && value === undefined && (
-                <p className={styles.hint}>Bitte beantworte diese Frage</p>
+                <p className={styles.hint}>{t('common.pleaseAnswerQuestion')}</p>
             )}
         </SurveyQuestion>
     );

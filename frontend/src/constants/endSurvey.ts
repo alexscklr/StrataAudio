@@ -2,120 +2,120 @@ import { QuestionType, type Survey } from "@/shared/types/survey";
 
 export const endSurvey: Survey = {
     id: "endSurvey",
-    title: "Abschließende Umfrage",
+    title: "surveys.end.title",
     sections: [
         {
             id: "section-1",
-            title: "Fragen zur Benutzbarkeit",
-            description: "Bitte bewerten Sie die folgenden Aussagen zur Benutzbarkeit des Mischpults.",
+            title: "surveys.end.sections.section1.title",
+            description: "surveys.end.sections.section1.description",
             questions: [
                 {
                     id: "sus-1",
                     type: QuestionType.LinearRating,
-                    question: "Ich fand das Mischpult-System einfach zu bedienen.",
+                    question: "surveys.end.questions.sus1.question",
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Stimme überhaupt nicht zu",
-                    maxDescription: "Stimme voll und ganz zu"
+                    minDescription: "surveys.end.questions.sus1.minDescription",
+                    maxDescription: "surveys.end.questions.sus1.maxDescription"
                 },
                 {
                     id: "sus-2",
                     type: QuestionType.LinearRating,
-                    question: "Ich glaube, dass man die Bedienung des Mischpults sehr schnell lernt.",
+                    question: "surveys.end.questions.sus2.question",
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Stimme überhaupt nicht zu",
-                    maxDescription: "Stimme voll und ganz zu"
+                    minDescription: "surveys.end.questions.sus2.minDescription",
+                    maxDescription: "surveys.end.questions.sus2.maxDescription"
                 },
                 {
                     id: "sus-3",
                     type: QuestionType.LinearRating,
-                    question: "Ich fühlte mich bei der Benutzung des Mischpults sehr sicher.",
+                    question: "surveys.end.questions.sus3.question",
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Stimme überhaupt nicht zu",
-                    maxDescription: "Stimme voll und ganz zu"
+                    minDescription: "surveys.end.questions.sus3.minDescription",
+                    maxDescription: "surveys.end.questions.sus3.maxDescription"
                 },
                 {
                     id: "sus-4",
                     type: QuestionType.LinearRating,
-                    question: "Ich fand die verschiedenen Funktionen (Volume, Mute) im Player gut integriert.",
+                    question: "surveys.end.questions.sus4.question",
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Stimme überhaupt nicht zu",
-                    maxDescription: "Stimme voll und ganz zu"
+                    minDescription: "surveys.end.questions.sus4.minDescription",
+                    maxDescription: "surveys.end.questions.sus4.maxDescription"
                 }
             ]
         },
         {
             id: "section-2",
-            title: "Fragen zur Benutzererfahrung",
-            description: "Wie bewerten Sie Ihr Erlebnis beim Mischen des Tons?",
+            title: "surveys.end.sections.section2.title",
+            description: "surveys.end.sections.section2.description",
             questions: [
                 {
                     id: "ueq-1",
                     type: QuestionType.LinearRating,
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Unerfreulich",
-                    maxDescription: "Erfreulich"
+                    minDescription: "surveys.end.questions.ueq1.minDescription",
+                    maxDescription: "surveys.end.questions.ueq1.maxDescription"
                 },
                 {
                     id: "ueq-2",
                     type: QuestionType.LinearRating,
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Überladen",
-                    maxDescription: "Übersichtlich"
+                    minDescription: "surveys.end.questions.ueq2.minDescription",
+                    maxDescription: "surveys.end.questions.ueq2.maxDescription"
                 },
                 {
                     id: "ueq-3",
                     type: QuestionType.LinearRating,
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Ineffizient",
-                    maxDescription: "Effizient"
+                    minDescription: "surveys.end.questions.ueq3.minDescription",
+                    maxDescription: "surveys.end.questions.ueq3.maxDescription"
                 },
                 {
                     id: "ueq-4",
                     type: QuestionType.LinearRating,
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Phantasielos",
-                    maxDescription: "Kreativ"
+                    minDescription: "surveys.end.questions.ueq4.minDescription",
+                    maxDescription: "surveys.end.questions.ueq4.maxDescription"
                 },
                 {
                     id: "ueq-5",
                     type: QuestionType.LinearRating,
                     minValue: 1,
                     maxValue: 7,
-                    minDescription: "Herkömmlich",
-                    maxDescription: "Neuartig"
+                    minDescription: "surveys.end.questions.ueq5.minDescription",
+                    maxDescription: "surveys.end.questions.ueq5.maxDescription"
                 }
             ]
         },
         {
             id: "section-3",
-            title: "Weiterempfehlung",
+            title: "surveys.end.sections.section3.title",
             questions: [
                 {
                     id: "nps-1",
                     type: QuestionType.LinearRating,
                     minValue: 1,
                     maxValue: 10,
-                    minDescription: "Sehr unwahrscheinlich",
-                    maxDescription: "Sehr wahrscheinlich"
+                    minDescription: "surveys.end.questions.nps1.minDescription",
+                    maxDescription: "surveys.end.questions.nps1.maxDescription"
                 }
             ]
         },
         {
             id: "section-4",
-            title: "Offenes Feedback",
+            title: "surveys.end.sections.section4.title",
             questions: [
                 {
                     id: "feedback-1",
                     type: QuestionType.TextAnswer,
-                    question: "Haben Sie weitere Anmerkungen oder Verbesserungsvorschläge zum Mischpult oder dem Video?",
+                    question: "surveys.end.questions.feedback1.question",
                     optional: true
                 }
             ]

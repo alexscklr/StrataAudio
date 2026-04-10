@@ -10,8 +10,10 @@ import type { AudioConfigurationSnapshot } from "@/shared/types/mixer";
 import { VideoWatchMode, type VideoWatchMode as WatchMode } from "@/shared/types/media";
 import { getCompletedWatchModes, getOrCreateWatchModeSequence, markWatchModeCompleted } from "@/shared/lib/watchModeSequence";
 import WatchModeProgressCard from "@/shared/components/WatchModeProgressCard/WatchModeProgressCard";
+import { useTranslation } from 'react-i18next';
 
 function WatchPage() {
+    const { t } = useTranslation();
     const { videoid } = useParams<{ videoid: string }>();
     const hasTrackingConsent = localStorage.getItem('user-consent') === 'true';
 
@@ -67,9 +69,9 @@ function WatchPage() {
         <>
             <h1>{video?.title}</h1>
             
-            <p>Hinweis: Das Video wird zwei mal abgespielt, einmal im Mixer-Modus und einmal im Standard-Modus. Die Umfrage wird anschließend freigeschaltet.</p>
-            {isVideoLoading && <p>Loading video...</p>}
-            {videoError && <WarningPopup title="Error" message={`Error loading video: ${videoError?.message}`} onClose={() => { navigate(-1) }} />}
+            <p>{t('watchPage.playbackNote')}</p>
+            {isVideoLoading && <p>{t('watchPage.loadingVideo')}</p>}
+            {videoError && <WarningPopup title={t('watchPage.errorTitle')} message={t('watchPage.errorLoadingVideo', { message: videoError?.message })} closeBtnText={t('common.close')} onClose={() => { navigate(-1) }} />}
             {video && (
                 <>
                     <VideoPlayer
@@ -83,8 +85,8 @@ function WatchPage() {
                         onAudioConfigurationReady={handleAudioConfigurationReady}
                         onVideoEnd={handleVideoEnd}
                     />
-                    {isAudioLoading && <p>Loading audio...</p>}
-                    {audioError && <WarningPopup title="Error" message={`Error loading audio: ${audioError.message}`} onClose={() => { navigate(-1) }} />}
+                    {isAudioLoading && <p>{t('watchPage.loadingAudio')}</p>}
+                    {audioError && <WarningPopup title={t('watchPage.errorTitle')} message={t('watchPage.errorLoadingAudio', { message: audioError.message })} closeBtnText={t('common.close')} onClose={() => { navigate(-1) }} />}
 
                 </>
             )}
@@ -98,7 +100,7 @@ function WatchPage() {
             />
             <VideoSurvey
                 videoId={videoid!}
-                videoTitle={video?.title || "Unknown Video"}
+                videoTitle={video?.title || t('watchPage.unknownVideo')}
                 firstWatchMode={firstWatchMode}
                 audioConfigurationSnapshot={audioConfigurationSnapshots[VideoWatchMode.Mixer] ?? null}
                 unlocked={surveyUnlocked && hasTrackingConsent}

@@ -4,6 +4,7 @@ import AudioSlider from "../../../shared/components/UI/AudioSlider/AudioSlider";
 import { getPublicUrl } from "@/shared/utils/storage";
 import type { AudioTrackState } from "@/shared/types/mixer";
 import { LuSlash } from "react-icons/lu";
+import { useTranslation } from 'react-i18next';
 
 interface StemControlProps {
     audio: Audio;
@@ -15,6 +16,7 @@ interface StemControlProps {
 }
 
 function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, onVolumeCommit, onToggleMute }: StemControlProps) {
+    const { t } = useTranslation();
 
     return (
         <div key={audio.id} className={styles.audioControlWrapper}>
@@ -24,7 +26,7 @@ function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, o
             <button
                 type="button"
                 className={'normal ' +styles.audioIconButton}
-                aria-label={`${audio.title} volume`}
+                aria-label={t('player.trackVolume', { title: audio.title })}
                 title={audio.title}
                 onClick={() => { onToggleMute(audio.id); }}
             >

@@ -80,6 +80,27 @@
     transform: scaleX(0) !important;
 }
 
+.languageSwitch {
+    display: inline-flex;
+    gap: 0.3rem;
+}
+
+.languageButton {
+    border: 1px solid var(--border-soft);
+    background: transparent;
+    color: var(--text-main);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+}
+
+.languageButtonActive {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 @media (max-width: 760px) {
     .header {
         flex-direction: column;

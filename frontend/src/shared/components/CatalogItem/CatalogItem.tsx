@@ -4,6 +4,7 @@ import waveSVG from '@/assets/audio-curves-around-square.svg';
 import { getPublicUrl } from '@/shared/utils/storage';
 import type { CatalogItemStatus } from '@/shared/types/media';
 import { formatDuration } from '@/shared/utils/timeFormating';
+import { useTranslation } from 'react-i18next';
 
 
 interface CatalogItemProps {
@@ -18,10 +19,11 @@ interface CatalogItemProps {
 }
 
 function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description, status = "unlocked", duration }: CatalogItemProps) {
+    const { t } = useTranslation();
     const isLocked = status === "locked";
     const isWatched = status === "watched";
     const isInactive = isLocked || isWatched;
-    const badgeLabel = isLocked ? "Gesperrt" : isWatched ? "Angeschaut" : null;
+    const badgeLabel = isLocked ? t('videoCatalog.statusLocked') : isWatched ? t('videoCatalog.statusWatched') : null;
 
     return (
         <div className={styles.catalogItem + ' ' + (isInactive ? styles.inactive : '') + ' ' + (isLocked ? styles.locked : '')}>
@@ -33,7 +35,7 @@ function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description,
             >
                 {thumbnailUrl && (
                     <div className={styles.thumbnailContainer}>
-                        <img src={getPublicUrl(`${videoid}/${thumbnailUrl}`, "videos")} alt={`${title} thumbnail`} className={styles.thumbnail + ' ' + (isInactive ? styles.inactive : '')} />
+                        <img src={getPublicUrl(`${videoid}/${thumbnailUrl}`, "videos")} alt={t('videoCatalog.thumbnailAlt', { title })} className={styles.thumbnail + ' ' + (isInactive ? styles.inactive : '')} />
                         {badgeLabel && <span className={styles.statusBadge + ' ' + (isLocked ? styles.lockedBadge : styles.watchedBadge)}>{badgeLabel}</span>}
                         {duration && <span className={styles.durationBadge}>2x {formatDuration(duration)}</span>}
                     </div>
@@ -48,7 +50,7 @@ function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description,
                     </div>
                 )}
             </Link>
-            <img src={waveSVG} alt="Audio Wave" className={styles.waveBackground} />
+            <img src={waveSVG} alt={t('videoCatalog.audioWaveAlt')} className={styles.waveBackground} />
         </div>
     );
 }

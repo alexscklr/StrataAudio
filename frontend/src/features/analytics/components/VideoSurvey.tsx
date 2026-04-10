@@ -11,11 +11,7 @@ import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
 import { clearWatchModeState } from '@/shared/lib/watchModeSequence';
 import SurveyQuestionRenderer from './questions/SurveyQuestionRenderer';
 import type { VideoWatchMode } from '@/shared/types/media';
-
-const MISSING_PARTICIPANT_ERROR = 'Participant-ID fehlt. Bitte Einverstaendnis erneut bestaetigen.';
-const MISSING_ANSWERS_ERROR = 'Bitte beantworte alle Fragen, bevor du absendest.';
-const MISSING_AUDIO_CONFIG_ERROR = 'Audio-Konfiguration fehlt. Bitte schaue das Video vollstaendig an, bevor du absendest.';
-const SUBMIT_FAILED_ERROR = 'Umfrage konnte nicht gespeichert werden.';
+import { useTranslation } from 'react-i18next';
 
 interface VideoSurveyProps {
     videoId: string;
@@ -26,6 +22,7 @@ interface VideoSurveyProps {
 }
 
 function VideoSurvey({ videoId, videoTitle, firstWatchMode, audioConfigurationSnapshot, unlocked }: VideoSurveyProps) {
+    const { t } = useTranslation();
     const { participantId } = useContext(AuthContext);
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -49,17 +46,17 @@ function VideoSurvey({ videoId, videoTitle, firstWatchMode, audioConfigurationSn
         setSubmitError(null);
 
         if (!participantId) {
-            setSubmitError(MISSING_PARTICIPANT_ERROR);
+            setSubmitError(t('videoSurvey.missingParticipant'));
             return;
         }
 
         if (hasMissingRequiredAnswers(surveyQuestions, answers)) {
-            setSubmitError(MISSING_ANSWERS_ERROR);
+            setSubmitError(t('videoSurvey.missingAnswers'));
             return;
         }
 
         if (!audioConfigurationSnapshot) {
-            setSubmitError(MISSING_AUDIO_CONFIG_ERROR);
+            setSubmitError(t('videoSurvey.missingAudioConfiguration'));
             return;
         }
 
@@ -90,7 +87,7 @@ function VideoSurvey({ videoId, videoTitle, firstWatchMode, audioConfigurationSn
             setSubmitted(true);
             navigate(-1);
         } catch (error) {
-            setSubmitError(error instanceof Error ? error.message : SUBMIT_FAILED_ERROR);
+            setSubmitError(error instanceof Error ? error.message : t('videoSurvey.submitFailed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -98,15 +95,15 @@ function VideoSurvey({ videoId, videoTitle, firstWatchMode, audioConfigurationSn
 
     return (
         <section className={styles.surveyContainer}>
-            <h2>Umfrage zum Video "{videoTitle}"</h2>
-            <p>Vielen Dank, dass du an der Videoumfrage teilnimmst! Deine Meinung ist mir sehr wichtig und hilft mir, genauere Einblicke zu gewinnen. Bitte beantworte die folgenden Fragen so ehrlich wie möglich. Es gibt keine richtigen oder falschen Antworten, ich möchte einfach nur Deine ehrliche Meinung hören.</p>
-            {!unlocked && <p className={styles.lockedMessage}>Die Umfrage wird freigeschaltet, sobald Sie das Video angeschaut haben.</p>}
+            <h2>{t('videoSurvey.title', { title: videoTitle })}</h2>
+            <p>{t('videoSurvey.intro')}</p>
+            {!unlocked && <p className={styles.lockedMessage}>{t('videoSurvey.lockedMessage')}</p>}
             {unlocked && (
                 <form onSubmit={handleSurveySubmit} className={styles.surveyForm}>
                     {videoSurvey.sections.map((section) => (
                         <Fragment key={section.id}>
-                            <h3>{section.title}</h3>
-                            {section.description && <p>{section.description}</p>}
+                            <h3>{t(section.title, { defaultValue: section.title })}</h3>
+                            {section.description && <p>{t(section.description, { defaultValue: section.description })}</p>}
                             {section.questions.map((question) => (
                                 <SurveyQuestionRenderer
                                     key={question.id}
@@ -122,10 +119,10 @@ function VideoSurvey({ videoId, videoTitle, firstWatchMode, audioConfigurationSn
                     ))}
 
                     {submitError && <p className={styles.submitError}>{submitError}</p>}
-                    {submitted && <p className={styles.submitSuccess}>Vielen Dank! Deine Antworten wurden gespeichert.</p>}
+                    {submitted && <p className={styles.submitSuccess}>{t('videoSurvey.submitSuccess')}</p>}
 
                     <button type="submit" className="primary" disabled={isSubmitting || submitted}>
-                        {isSubmitting ? 'Speichere...' : submitted ? 'Gespeichert' : 'Umfrage absenden'}
+                        {isSubmitting ? t('common.saveInProgress') : submitted ? t('videoSurvey.savedButton') : t('videoSurvey.submitButton')}
                     </button>
                 </form>
             )}

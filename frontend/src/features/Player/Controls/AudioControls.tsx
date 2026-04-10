@@ -5,6 +5,7 @@ import StemControl from "./StemControl";
 import type { MixerState } from "@/shared/types/mixer";
 import AudioSlider from "@/shared/components/UI/AudioSlider/AudioSlider";
 import { LuVolume2 } from "react-icons/lu";
+import { useTranslation } from 'react-i18next';
 
 
 interface AudioControlsProps {
@@ -20,6 +21,7 @@ interface AudioControlsProps {
 }
 
 function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode }: AudioControlsProps) {
+    const { t } = useTranslation();
 
 
     const [isAudioControlsOpen, setIsAudioControlsOpen] = useState(false);
@@ -76,8 +78,8 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
                     <button
                         type="button"
                         className={'normal ' + styles.audioIconButton}
-                        aria-label="Master volume"
-                        title="Master volume"
+                        aria-label={t('player.masterVolume')}
+                        title={t('player.masterVolume')}
                     >
                         <LuVolume2 className={styles.masterIcon} />
                     </button>
@@ -102,7 +104,7 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
                 role="button"
                 tabIndex={0}
                 aria-expanded={isAudioControlsOpen}
-                aria-label="Open audio mixer"
+                aria-label={t('player.openAudioMixer')}
                 onClick={() => handleAudioBoxToggle()}>
             </button>
         </div >
