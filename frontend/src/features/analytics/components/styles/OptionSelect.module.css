@@ -15,7 +15,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.62rem 1rem;
     border: 2px solid var(--primary);
     border-radius: 4px;
     cursor: pointer;
@@ -24,6 +24,8 @@
     min-width: 0;
     text-align: center;
     overflow-wrap: anywhere;
+    font-size: 1.02rem;
+    font-weight: 500;
 }
 
 .optionLabel:hover {
@@ -43,6 +45,7 @@
 
     .optionLabel {
         flex-basis: 100%;
+        font-size: 0.96rem;
     }
 }
 

@@ -1,7 +1,8 @@
 import Header from './layout/Header/Header';
 import "@/assets/App.css";
 import Main from './layout/Main/Main';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import VideoCatalogPage from './pages/VideoCatalogPage';
 import ConsentPage from './pages/ConsentPage';
 import WatchPage from './pages/WatchPage';
@@ -14,10 +15,21 @@ import EndSurveyRequiredRoute from './features/analytics/components/EndSurveyReq
 import ImprintPage from './pages/ImprintPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Header />
       <Main>
         <Routes>

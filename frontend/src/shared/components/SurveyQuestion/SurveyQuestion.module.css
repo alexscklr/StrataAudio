@@ -10,12 +10,12 @@
 }
 
 .question {
-    font-size: 1.2rem;
+    font-size: 1.28rem;
     text-align: left;
 }
 
 .description {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--text-muted);
     text-align: left;
 }
