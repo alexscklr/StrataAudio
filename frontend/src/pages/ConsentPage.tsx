@@ -9,7 +9,7 @@ function ConsentPage() {
     const [consentGiven, setConsentGiven] = useState(false);
     const [isSubmittingConsent, setIsSubmittingConsent] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
-    const { initializeParticipant } = useContext(AuthContext);
+    const { initializeParticipant, participantId } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
@@ -30,10 +30,10 @@ function ConsentPage() {
     };
 
     useEffect(() => {
-        if (localStorage.getItem('user-consent') === 'true') {
+        if (localStorage.getItem('user-consent') === 'true' && participantId) {
             navigate('/demografie');
         }
-    }, [navigate]);
+    }, [navigate, participantId]);
 
     return (
         <div className={`${styles.mainWrapper} ${mainPageStyles.sectionCounter} ${mainPageStyles.pageCard} ${mainPageStyles.leftAlignedParagraphs}`}>

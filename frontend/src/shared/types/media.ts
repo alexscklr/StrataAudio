@@ -7,6 +7,7 @@ export interface Video extends BaseEntity {
   genre: string;
   thumbnail_url?: string;
   is_mandatory: boolean;
+  duration_seconds: number | null;
 }
 
 export interface VideoCatalogItem extends Video {

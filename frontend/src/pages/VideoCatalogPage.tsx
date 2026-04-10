@@ -65,11 +65,13 @@ function VideoCatalogPage() {
                     <span className={styles.counter}>{mandatoryWatched}/{mandatoryTotal}</span>
                 </header>
 
-                <ProgressBar
-                    percentage={mandatoryProgress}
-                    label="Fortschritt"
-                    counter={`${mandatoryWatched}/${mandatoryTotal}`}
-                />
+                <div className={styles.progressBarWrapper}>
+                    <ProgressBar
+                        percentage={mandatoryProgress}
+                        label="Fortschritt"
+                        counter={`${mandatoryWatched}/${mandatoryTotal}`}
+                    />
+                </div>
 
                 {mandatoryVideos.length > 0 ? (
                     <ul className={styles.catalogList}>
@@ -83,6 +85,7 @@ function VideoCatalogPage() {
                                     genre={video.genre}
                                     description={video.description || undefined}
                                     status={getVideoStatus(video)}
+                                       duration={video.duration_seconds ?? undefined}
                                 />
                             </li>
                         ))}
@@ -117,6 +120,7 @@ function VideoCatalogPage() {
                                     genre={video.genre}
                                     description={video.description || undefined}
                                     status={getVideoStatus(video, !optionalUnlocked)}
+                                       duration={video.duration_seconds ?? undefined}
                                 />
                             </li>
                         ))}
@@ -147,6 +151,7 @@ function VideoCatalogPage() {
                                     genre={video.genre}
                                     description={video.description || undefined}
                                     status={getVideoStatus(video)}
+                                       duration={video.duration_seconds ?? undefined}
                                 />
                             </li>
                         ))}

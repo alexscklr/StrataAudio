@@ -1,3 +1,4 @@
+import { formatDuration } from "@/shared/utils/timeFormating";
 
 
 interface VideoTimeDisplayProps {
@@ -8,7 +9,7 @@ interface VideoTimeDisplayProps {
 function VideoTimeDisplay ({ currentTime, duration }: VideoTimeDisplayProps) {
     return (
         <span style={{ fontSize: 'var(--player-time-font-size, 0.9rem)', lineHeight: 1.1 }}>
-            {currentTime.toFixed(2)} / {duration.toFixed(2)}
+            {formatDuration(currentTime)} / {formatDuration(duration)}
         </span>
     );
 }

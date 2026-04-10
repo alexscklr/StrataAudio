@@ -47,6 +47,10 @@
     color: var(--text-muted);
 }
 
+.progressBarWrapper {
+    margin-bottom: 1rem;
+}
+
 .catalogList {
     width: 100%;
     padding: 0;

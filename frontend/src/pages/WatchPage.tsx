@@ -67,6 +67,7 @@ function WatchPage() {
         <>
             <h1>{video?.title}</h1>
             
+            <p>Hinweis: Das Video wird zwei mal abgespielt, einmal im Mixer-Modus und einmal im Standard-Modus. Die Umfrage wird anschließend freigeschaltet.</p>
             {isVideoLoading && <p>Loading video...</p>}
             {videoError && <WarningPopup title="Error" message={`Error loading video: ${videoError?.message}`} onClose={() => { navigate(-1) }} />}
             {video && (

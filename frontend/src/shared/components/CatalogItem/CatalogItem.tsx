@@ -3,6 +3,8 @@ import styles from './CatalogItem.module.css';
 import waveSVG from '@/assets/audio-curves-around-square.svg';
 import { getPublicUrl } from '@/shared/utils/storage';
 import type { CatalogItemStatus } from '@/shared/types/media';
+import { formatDuration } from '@/shared/utils/timeFormating';
+
 
 interface CatalogItemProps {
     thumbnailUrl?: string;
@@ -12,9 +14,10 @@ interface CatalogItemProps {
     genre: string;
     description?: string;
     status?: CatalogItemStatus;
+    duration?: number;
 }
 
-function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description, status = "unlocked" }: CatalogItemProps) {
+function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description, status = "unlocked", duration }: CatalogItemProps) {
     const isLocked = status === "locked";
     const isWatched = status === "watched";
     const isInactive = isLocked || isWatched;
@@ -32,6 +35,7 @@ function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description,
                     <div className={styles.thumbnailContainer}>
                         <img src={getPublicUrl(`${videoid}/${thumbnailUrl}`, "videos")} alt={`${title} thumbnail`} className={styles.thumbnail + ' ' + (isInactive ? styles.inactive : '')} />
                         {badgeLabel && <span className={styles.statusBadge + ' ' + (isLocked ? styles.lockedBadge : styles.watchedBadge)}>{badgeLabel}</span>}
+                        {duration && <span className={styles.durationBadge}>2x {formatDuration(duration)}</span>}
                     </div>
                 )}
                 <h2 className={styles.catalogTitle + ' ' + (isInactive ? styles.inactive : '')}>{title}</h2>

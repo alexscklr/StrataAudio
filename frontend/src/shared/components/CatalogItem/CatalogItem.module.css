@@ -130,6 +130,19 @@
     color: var(--text-muted);
 }
 
+.durationBadge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius) 0 var(--radius) 0;
+    box-shadow: -5px -5px 10px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: var(--bg-card);
+    color: var(--text-muted);
+}
+
 .waveBackground {
     position: absolute;
     top: 0;
