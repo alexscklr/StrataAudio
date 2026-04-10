@@ -1,45 +1,3 @@
-.mainWrapper section {
-    width: stretch;
-}
-
-div.mainWrapper {
-    counter-reset: section-counter;
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--gap));
-    align-items: center;
-    background: var(--bg-card);
-    border-radius: var(--radius);
-    padding: max(1%, 25px) 5%;
-    box-shadow: var(--shadow-card);
-    margin-bottom: var(--gap);
-    width: stretch;
-    max-width: var(--max-width);
-}
-
-.mainWrapper section>h2:not(.noNumber)::before {
-    counter-increment: section-counter;
-    content: counter(section-counter) ". ";
-}
-
-.mainWrapper section>*:not(h2) {
-    margin-left: 1.5rem;
-}
-
-.mainWrapper section>ul {
-    padding-left: 1.2rem;
-    list-style-type: disc;
-    list-style-position: outside;
-}
-
-.mainWrapper section p+ul {
-    margin-top: -0.5rem;
-}
-
-.projectInfo {
-    width: 100%;
-}
-
 .consentInput {
     display: flex;
     align-items: center;
@@ -80,10 +38,6 @@ div.mainWrapper {
     border-width: 0 3px 3px 0;
     transform: rotate(45deg);
     margin-bottom: 0.2rem;
-}
-
-.mainWrapper p {
-    text-align: left;
 }
 
 .subheader {

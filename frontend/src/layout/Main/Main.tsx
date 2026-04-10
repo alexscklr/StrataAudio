@@ -5,7 +5,11 @@ interface MainProps {
 }
 
 function Main({ children }: MainProps) {
-    return <main className={styles.main}>{children}</main>;
+    return (
+        <main className={styles.main}>
+            {children}
+        </main>
+    );
 }
 
 export default Main;

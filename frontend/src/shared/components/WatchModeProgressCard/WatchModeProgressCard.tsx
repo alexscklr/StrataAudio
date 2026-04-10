@@ -1,4 +1,5 @@
 import { VideoWatchMode, type VideoWatchMode as WatchMode } from '@/shared/types/media';
+import ProgressBar from '@/shared/components/ProgressBar/ProgressBar';
 import styles from './WatchModeProgressCard.module.css';
 
 interface WatchModeProgressCardProps {
@@ -36,9 +37,10 @@ function WatchModeProgressCard({
                 <span className={styles.modeBadge}>{getModeLabel(currentMode)}</span>
             </div>
 
-            <div className={styles.progressTrack} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progressPercent}>
-                <div className={styles.progressFill} style={{ width: `${progressPercent}%` }} />
-            </div>
+            <ProgressBar
+                percentage={progressPercent}
+                variant="gradient"
+            />
 
             <p className={styles.nextStepText}>
                 {!surveyUnlocked && nextRequiredMode

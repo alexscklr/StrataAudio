@@ -10,6 +10,8 @@ import DemographicsPage from './pages/DemographicsPage';
 import Footer from './layout/Footer/Footer';
 import { ProtectedRoute } from './features/auth/components/ProtectedRoute';
 import DemographicsRequiredRoute from './features/analytics/components/DemographicsRequiredRoute';
+import ImprintPage from './pages/ImprintPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 function App() {
 
@@ -23,6 +25,8 @@ function App() {
           <Route path="/videos" element={<ProtectedRoute><DemographicsRequiredRoute><VideoCatalogPage /></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/videos/:videoid" element={<ProtectedRoute><DemographicsRequiredRoute><WatchPage /></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/endumfrage" element={<ProtectedRoute><DemographicsRequiredRoute><EndSurveyPage /></DemographicsRequiredRoute></ProtectedRoute>} />
+          <Route path="/impressum" element={<ImprintPage />} />
+          <Route path="/datenschutz" element={<PrivacyPolicyPage />} />
         </Routes>
       </Main>
       <Footer />

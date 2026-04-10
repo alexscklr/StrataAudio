@@ -1,0 +1,61 @@
+.pageCard {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--gap) * 2);
+    align-items: center;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: max(3%, 40px) 5%;
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--gap);
+    width: stretch;
+    max-width: var(--max-width);
+}
+
+.pageGrid {
+    width: min(1300px, 100% - 2rem);
+    margin: 1.5rem auto 2.5rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.pageSection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sectionCounter {
+    counter-reset: section-counter;
+}
+
+.sectionCounter section > h2:not(.noNumber)::before {
+    counter-increment: section-counter;
+    content: counter(section-counter) ". ";
+}
+
+.noNumber::before {
+    content: none;
+}
+
+.pageSection > h1,
+.pageSection > h2,
+.pageSection > p,
+.pageSection > ul {
+    margin: 0;
+}
+
+.pageSection > ul {
+    padding-left: 1.2rem;
+    list-style-type: disc;
+    list-style-position: outside;
+}
+
+.sectionIndented > *:not(h2) {
+    margin-left: 1.5rem;
+}
+
+.leftAlignedParagraphs p {
+    text-align: left;
+}

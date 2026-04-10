@@ -1,10 +1,11 @@
 import { useVideoCatalog } from "@/shared/hooks/useVideoCatalog";
 import styles from "./styles/VideoCatalogPage.module.css";
+import mainPageStyles from "./styles/MainPageStyle.module.css";
 import CatalogItem from "@/shared/components/CatalogItem/CatalogItem";
+import ProgressBar from "@/shared/components/ProgressBar/ProgressBar";
 import { useContext, useMemo } from "react";
 import { AuthContext } from "@/features/auth/context/AuthContext";
 import type { CatalogItemStatus, VideoCatalogItem } from "@/shared/types/media";
-
 
 
 function VideoCatalogPage() {
@@ -51,7 +52,7 @@ function VideoCatalogPage() {
 
 
     return (
-        <section className={styles.catalogSection}>
+        <section className={mainPageStyles.pageGrid}>
             {isLoading && <p>Loading...</p>}
             {error && <p>Error loading video catalog: {error.message}</p>}
 
@@ -64,16 +65,11 @@ function VideoCatalogPage() {
                     <span className={styles.counter}>{mandatoryWatched}/{mandatoryTotal}</span>
                 </header>
 
-                <div className={styles.progressContainer}>
-                    <div className={styles.progressBarTrack}>
-                        <div
-                            className={styles.progressBarFill}
-                            style={{ width: `${mandatoryProgress}%` }}
-                            aria-hidden="true"
-                        />
-                    </div>
-                    <p className={styles.progressText}>{mandatoryProgress}% abgeschlossen</p>
-                </div>
+                <ProgressBar
+                    percentage={mandatoryProgress}
+                    label="Fortschritt"
+                    counter={`${mandatoryWatched}/${mandatoryTotal}`}
+                />
 
                 {mandatoryVideos.length > 0 ? (
                     <ul className={styles.catalogList}>

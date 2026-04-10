@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/ConsentPage.module.css";
+import mainPageStyles from "./styles/MainPageStyle.module.css";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/features/auth/context/AuthContext";
 
@@ -35,55 +36,59 @@ function ConsentPage() {
     }, [navigate]);
 
     return (
-        <div className={styles.mainWrapper}>
-
-            <header className={styles.projectInfo}>
+        <div className={`${styles.mainWrapper} ${mainPageStyles.sectionCounter} ${mainPageStyles.pageCard} ${mainPageStyles.leftAlignedParagraphs}`}>
+            <header className={mainPageStyles.pageSection}>
                 <h1 style={{ textAlign: "center" }}>Einverständniserklärung</h1>
                 <h2>Thema: Nutzerzentriertes Audio-Mixing individueller Audio-Tracks für Videos im Web</h2>
-                <p className={styles.subheader}>Studienleitung: Alexander Sickler, Hochschule Hamm-Lippstadt (HSHL)</p>
+                <p className={styles.subheader}>
+                    Studienleitung: Alexander Sickler, Hochschule Hamm-Lippstadt (HSHL)<br />
+                    Kontakt: <a href="mailto:alexander.sickler@stud.hshl.de">alexander.sickler@stud.hshl.de</a>
+                </p>
+                <p className={styles.subheader}>
+                    Der Test dauert je nach Wunsch etwa 10 bis 30 Minuten. Du hast anschließend die Möglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Forschung zu unterstützen.
+                </p>
             </header>
-            <section className={styles.projectInfo}>
+            <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
                 <h2>Zweck der Datenerhebung</h2>
                 <p>Die im Rahmen dieser Umfrage/Anwendung erhobenen Daten dienen ausschließlich der wissenschaftlichen Untersuchung im Rahmen meiner Bachelorarbeit. Ziel ist es, die Anforderungen an einen interaktiven Audio-Mixer im Browser zu evaluieren.</p>
             </section>
-            <section className={styles.projectInfo}>
+            <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
                 <h2>Art der erhobenen Daten</h2>
                 <p>
                     Es werden folgende Daten erhoben:
                 </p>
                 <ul>
-                    <li>Nutzungsdaten: Deine Antworten auf die Fragen zur Audio-Wahrnehmung und Gerätenutzung.</li>
-                    <li>Technische Daten: Browsertyp, jedoch keine direkt identifizierbaren Daten wie Name oder E-Mail-Adresse (Anonyme Erhebung).</li>
-                    <li>IP-Adressen: Diese werden zur Vermeidung von Mehrfachteilnahmen technisch verarbeitet, aber nicht dauerhaft mit deinen Antworten verknüpft gespeichert.</li>
+                    <li>Demografische Daten: Alter, Geschlecht sowie Angaben zu deiner Erfahrung im Umgang mit Audiotechnik.</li>
+                    <li>Nutzungs- und Interaktionsdaten: Deine Bewertungen der Videos sowie automatisierte Protokolle deiner Interaktion mit dem Audio-Mixer (z. B. Zeitpunkt und Intensität von Regler-Bewertungen, finale Audio-Konfiguration).</li>
+                    <li>Technische Daten: Browsertyp und Gerätetyp, jedoch keine direkt identifizierbaren Daten wie Name oder E-Mail-Adresse (Anonyme Erhebung).</li>
+                    <li>Anonymisierung: Zur Vermeidung von Mehrfachteilnahmen wird ein technischer User-Hash generiert. Es werden keine IP-Adressen oder direkt identifizierbaren Daten (wie Name oder E-Mail) gespeichert.</li>
                 </ul>
             </section>
-            <section className={styles.projectInfo}>
+            <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
                 <h2>Speicherung und Sicherheit (Supabase)</h2>
-                <p>
-                    Die Speicherung der Daten erfolgt verschlüsselt in einer Datenbank des Dienstleisters Supabase, Inc.
-
-                </p>
+                <p>Die Speicherung der Daten erfolgt verschlüsselt in einer Datenbank des Dienstleisters Supabase, Inc.</p>
                 <ul>
                     <li>Serverstandort: Die Daten werden in der Region EU (Frankfurt, Deutschland) gespeichert, um an den Anforderungen der DSGVO zu entsprechen.</li>
                     <li>Sicherheit: Supabase nutzt moderne Sicherheitsstandards (AES-256 Verschlüsselung), um die Daten vor unbefugtem Zugriff zu schützen.</li>
                 </ul>
             </section>
-            <section className={styles.projectInfo}>
+            <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
                 <h2>Freiwilligkeit und Widerruf</h2>
                 <p>Die Teilnahme an dieser Umfrage/Anwendung ist freiwillig. Du kannst deine Einwilligung jederzeit widerrufen, indem du die Anwendung schließt oder deine Daten löschst.</p>
             </section>
-            <section className={styles.projectInfo}>
+            <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
                 <h2>Datenweitergabe</h2>
                 <p>Eine Weitergabe der Rohdaten an Dritte erfolgt nicht. Die Ergebnisse der Arbeit werden in aggregierter Form (Statistiken/Grafiken) in der Bachelorarbeit veröffentlicht.</p>
             </section>
             <hr style={{ width: "stretch" }} />
-            <section className={styles.projectInfo}>
-                <h2 className={`${styles.consentHeader} ${styles.noNumber}`}>Einverständnis</h2>
-                <p>Durch das Klicken auf [Ich stimme zu] bestätige ich, dass ich:</p>
+            <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
+                <h2 className={`${styles.consentHeader} ${mainPageStyles.noNumber}`}>Einverständnis</h2>
+                <p>Durch das Klicken auf <a href="#consentCheckbox">[Ich stimme zu]</a> bestätige ich, dass ich:</p>
                 <ul>
                     <li>Das 18. Lebensjahr vollendet habe.</li>
                     <li>Die oben genannten Informationen gelesen und verstanden habe.</li>
                     <li>Mit der anonymisierten Speicherung meiner Daten auf den Servern von Supabase einverstanden bin.</li>
+                    <li>Mit der Datenerhebung unmittelbar nach der Zustimmung einverstanden bin.</li>
                 </ul>
             </section>
 
