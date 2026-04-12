@@ -94,13 +94,11 @@ export const fetchParticipantWatchedVideoIds = async (participantId: string): Pr
 };
 
 export const fetchVideoCatalogWithWatchStatus = async (participantId: string | null): Promise<VideoCatalogItem[]> => {
-  const catalog = await fetchVideoCatalog();
+  const [catalog, watchedVideoIds] = await Promise.all([
+    fetchVideoCatalog(),
+    participantId ? fetchParticipantWatchedVideoIds(participantId) : Promise.resolve([] as string[]),
+  ]);
 
-  if (!participantId) {
-    return catalog.map((video) => ({ ...video, watched: false }));
-  }
-
-  const watchedVideoIds = await fetchParticipantWatchedVideoIds(participantId);
   const watchedSet = new Set(watchedVideoIds);
 
   return catalog.map((video) => ({

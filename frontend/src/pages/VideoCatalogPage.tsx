@@ -15,6 +15,7 @@ function VideoCatalogPage() {
     const { t } = useTranslation();
     const { participantId } = useContext(AuthContext);
     const { data: videoCatalog, isLoading, error } = useVideoCatalog(participantId);
+    const loadingPlaceholders = Array.from({ length: 3 }, (_, index) => `loading-${index}`);
 
     const {
         mandatoryVideos,
@@ -87,7 +88,13 @@ function VideoCatalogPage() {
                     />
                 </div>
 
-                {mandatoryVideos.length > 0 ? (
+                {isLoading ? (
+                    <ul className={`${styles.catalogList} ${styles.catalogListLoading}`} aria-hidden="true">
+                        {loadingPlaceholders.map((placeholderId) => (
+                            <li key={placeholderId} className={`${styles.catalogListItem} ${styles.catalogListItemLoading}`} />
+                        ))}
+                    </ul>
+                ) : mandatoryVideos.length > 0 ? (
                     <ul className={styles.catalogList}>
                         {mandatoryVideos.map((video) => (
                             <li key={video.id} className={styles.catalogListItem}>
@@ -123,7 +130,13 @@ function VideoCatalogPage() {
                     <span className={styles.counter}>{optionalVideos.length}</span>
                 </header>
 
-                {optionalVideos.length > 0 ? (
+                {isLoading ? (
+                    <ul className={`${styles.catalogList} ${styles.catalogListLoading}`} aria-hidden="true">
+                        {loadingPlaceholders.map((placeholderId) => (
+                            <li key={`optional-${placeholderId}`} className={`${styles.catalogListItem} ${styles.catalogListItemLoading}`} />
+                        ))}
+                    </ul>
+                ) : optionalVideos.length > 0 ? (
                     <ul className={styles.catalogList}>
                         {optionalVideos.map((video) => (
                             <li key={video.id} className={styles.catalogListItem}>
@@ -155,7 +168,9 @@ function VideoCatalogPage() {
                     <span className={styles.counter}>{watchedVideos.length}</span>
                 </header>
 
-                {watchedVideos.length > 0 ? (
+                {isLoading ? (
+                    <div className={styles.watchedLoadingSpacer} aria-hidden="true" />
+                ) : watchedVideos.length > 0 ? (
                     <ul className={styles.catalogList}>
                         {watchedVideos.map((video) => (
                             <li key={video.id} className={styles.catalogListItem}>
