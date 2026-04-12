@@ -5,6 +5,7 @@ import { getPublicUrl } from '@/shared/utils/storage';
 import type { CatalogItemStatus } from '@/shared/types/media';
 import { formatDuration } from '@/shared/utils/timeFormating';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
 
 interface CatalogItemProps {
@@ -16,10 +17,12 @@ interface CatalogItemProps {
     description?: string;
     status?: CatalogItemStatus;
     duration?: number;
+    prioritizeImage?: boolean;
 }
 
-function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description, status = "unlocked", duration }: CatalogItemProps) {
+function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description, status = "unlocked", duration, prioritizeImage = false }: CatalogItemProps) {
     const { t } = useTranslation();
+    const [thumbnailLoaded, setThumbnailLoaded] = useState(false);
     const isLocked = status === "locked";
     const isWatched = status === "watched";
     const isInactive = isLocked || isWatched;
@@ -35,7 +38,21 @@ function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description,
             >
                 {thumbnailUrl && (
                     <div className={styles.thumbnailContainer}>
-                        <img src={getPublicUrl(`${videoid}/${thumbnailUrl}`, "videos")} alt={t('videoCatalog.thumbnailAlt', { title })} className={styles.thumbnail + ' ' + (isInactive ? styles.inactive : '')} />
+                        <div className={styles.thumbnailFrame}>
+                            <div
+                                className={`${styles.thumbnailPlaceholder} ${thumbnailLoaded ? styles.thumbnailPlaceholderHidden : ''}`}
+                                aria-hidden="true"
+                            />
+                            <img
+                                src={getPublicUrl(`${videoid}/${thumbnailUrl}`, "videos")}
+                                alt={t('videoCatalog.thumbnailAlt', { title })}
+                                className={`${styles.thumbnail} ${isInactive ? styles.inactive : ''} ${thumbnailLoaded ? styles.thumbnailVisible : ''}`}
+                                loading={prioritizeImage ? 'eager' : 'lazy'}
+                                fetchPriority={prioritizeImage ? 'high' : 'auto'}
+                                decoding="async"
+                                onLoad={() => setThumbnailLoaded(true)}
+                            />
+                        </div>
                         {badgeLabel && <span className={styles.statusBadge + ' ' + (isLocked ? styles.lockedBadge : styles.watchedBadge)}>{badgeLabel}</span>}
                         {duration && <span className={styles.durationBadge}>2x {formatDuration(duration)}</span>}
                     </div>

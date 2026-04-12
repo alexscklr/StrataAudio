@@ -20,9 +20,9 @@ SET
 	label_en = EXCLUDED.label_en;
 
 INSERT INTO videos (id, hls_url, thumbnail_url, genre_id, is_mandatory, duration_seconds) VALUES
-('67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_video.m3u8', 'thumbnail.png', 'test', false, 14),
-('78ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_0/playlist.m3u8', 'thumbnail.png', 'short_film', true, 147),
-('89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_0/playlist.m3u8', 'thumbnail.png', 'gaming', false, 36);
+('67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_video.m3u8', 'thumbnail.webp', 'test', false, 14),
+('78ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_0/playlist.m3u8', 'thumbnail.webp', 'short_film', true, 147),
+('89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_0/playlist.m3u8', 'thumbnail.webp', 'gaming', false, 36);
 
 INSERT INTO video_contents (video_id, title_de, title_en, description_de, description_en) VALUES
 ('67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'Testvideo 1', NULL, 'Dies ist ein Beispielvideo fuer Testzwecke.', NULL),

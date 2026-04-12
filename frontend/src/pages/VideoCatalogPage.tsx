@@ -8,6 +8,7 @@ import { AuthContext } from "@/features/auth/context/AuthContext";
 import type { CatalogItemStatus, VideoCatalogItem } from "@/shared/types/media";
 import { useTranslation } from 'react-i18next';
 import { PageMeta } from "@/shared/components/Seo/PageMeta";
+import { getPublicUrl } from "@/shared/utils/storage";
 
 
 function VideoCatalogPage() {
@@ -53,10 +54,19 @@ function VideoCatalogPage() {
         return "unlocked";
     };
 
+    const firstVisibleVideo = mandatoryVideos[0] ?? optionalVideos[0] ?? watchedVideos[0];
+    const lcpThumbnailUrl = firstVisibleVideo?.thumbnail_url
+        ? getPublicUrl(`${firstVisibleVideo.id}/${firstVisibleVideo.thumbnail_url}`, "videos")
+        : undefined;
+
 
     return (
         <section className={mainPageStyles.pageGrid}>
-            <PageMeta title={t('seo.videoCatalog.title')} description={t('seo.videoCatalog.description')} />
+            <PageMeta
+                title={t('seo.videoCatalog.title')}
+                description={t('seo.videoCatalog.description')}
+                preloadImageHref={lcpThumbnailUrl}
+            />
             {isLoading && <p>{t('videoCatalog.loading')}</p>}
             {error && <p>{t('videoCatalog.loadError', { message: error.message })}</p>}
 
@@ -89,7 +99,8 @@ function VideoCatalogPage() {
                                     genre={video.genre}
                                     description={video.description || undefined}
                                     status={getVideoStatus(video)}
-                                       duration={video.duration_seconds ?? undefined}
+                                    duration={video.duration_seconds ?? undefined}
+                                    prioritizeImage={video.id === firstVisibleVideo?.id}
                                 />
                             </li>
                         ))}
@@ -124,7 +135,8 @@ function VideoCatalogPage() {
                                     genre={video.genre}
                                     description={video.description || undefined}
                                     status={getVideoStatus(video, !optionalUnlocked)}
-                                       duration={video.duration_seconds ?? undefined}
+                                    duration={video.duration_seconds ?? undefined}
+                                    prioritizeImage={video.id === firstVisibleVideo?.id}
                                 />
                             </li>
                         ))}
@@ -155,7 +167,8 @@ function VideoCatalogPage() {
                                     genre={video.genre}
                                     description={video.description || undefined}
                                     status={getVideoStatus(video)}
-                                       duration={video.duration_seconds ?? undefined}
+                                    duration={video.duration_seconds ?? undefined}
+                                    prioritizeImage={video.id === firstVisibleVideo?.id}
                                 />
                             </li>
                         ))}
