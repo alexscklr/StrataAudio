@@ -204,8 +204,8 @@ const en = {
                 sync2: {
                     question: 'Were there issues such as audio dropouts or stuttering while mixing?',
                     options: {
-                        yes: 'Yes',
-                        no: 'No',
+                            Ja: 'Yes',
+                            Nein: 'No',
                     },
                 },
                 experience1: {
@@ -216,8 +216,8 @@ const en = {
                 experience2: {
                     question: 'Which mode did you prefer while watching the video?',
                     options: {
-                        standard: 'Standard',
-                        mixer: 'Mixer',
+                            Standard: 'Standard',
+                            Mixer: 'Mixer',
                     },
                 },
             },

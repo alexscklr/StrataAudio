@@ -21,7 +21,7 @@ export const videoSurvey: Survey = {
                     id: "sync-2",
                     type: QuestionType.OptionSelect,
                     question: "surveys.video.questions.sync2.question",
-                    options: ["yes", "no"]
+                    options: ["Ja", "Nein"]
                 }
             ]
         },
@@ -42,7 +42,7 @@ export const videoSurvey: Survey = {
                     id: "experience-2",
                     type: QuestionType.OptionSelect,
                     question: "surveys.video.questions.experience2.question",
-                    options: ["standard", "mixer"]
+                    options: ["Standard", "Mixer"]
                 }
             ]
         }

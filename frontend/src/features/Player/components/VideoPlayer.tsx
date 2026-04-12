@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Audio, VideoControlPermissions } from '@/shared/types/media';
 import styles from './VideoPlayer.module.css';
 import { PlayPauseButton } from '../Controls/PlayPauseButton';
@@ -29,6 +29,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
+    const [isVideoReady, setIsVideoReady] = useState(false);
 
     const {
         isPlaying,
@@ -80,7 +81,11 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
 
     return (
         <div ref={playerContainerRef} className={containerClassName}>
-            <video ref={videoRef} muted playsInline className={styles.video} onEnded={handleVideoEnded}>
+            <div
+                className={`${styles.playerPlaceholder} ${isVideoReady ? styles.playerPlaceholderHidden : ''}`}
+                aria-hidden="true"
+            />
+            <video ref={videoRef} muted playsInline className={styles.video} onEnded={handleVideoEnded} onCanPlay={() => setIsVideoReady(true)}>
                 Your browser does not support the video tag.
             </video>
             <AudioEngine videoId={videoId} audios={audios} masterVideoRef={videoRef} calculateEffectiveVolume={calculateEffectiveVolume} />

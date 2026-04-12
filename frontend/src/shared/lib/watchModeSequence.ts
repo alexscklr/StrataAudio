@@ -1,10 +1,13 @@
 import { VideoWatchMode, type VideoWatchMode as WatchMode } from '@/shared/types/media';
+import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
 
 const MODE_SEQUENCE_STORAGE_PREFIX = 'watch-mode-sequence';
 const MODE_PROGRESS_STORAGE_PREFIX = 'watch-mode-progress';
+const AUDIO_CONFIGURATION_STORAGE_PREFIX = 'watch-mode-audio-config';
 
 const getSequenceStorageKey = (videoId: string) => `${MODE_SEQUENCE_STORAGE_PREFIX}:${videoId}`;
 const getProgressStorageKey = (videoId: string) => `${MODE_PROGRESS_STORAGE_PREFIX}:${videoId}`;
+const getAudioConfigurationStorageKey = (videoId: string) => `${AUDIO_CONFIGURATION_STORAGE_PREFIX}:${videoId}`;
 
 const isValidMode = (value: unknown): value is WatchMode => {
     return value === VideoWatchMode.Mixer || value === VideoWatchMode.Standard;
@@ -13,6 +16,18 @@ const isValidMode = (value: unknown): value is WatchMode => {
 const sanitizeModeList = (value: unknown): WatchMode[] => {
     if (!Array.isArray(value)) return [];
     return value.filter(isValidMode);
+};
+
+const isValidAudioConfigurationSnapshot = (value: unknown): value is AudioConfigurationSnapshot => {
+    if (!value || typeof value !== 'object') return false;
+
+    const snapshot = value as Partial<AudioConfigurationSnapshot>;
+    return Boolean(
+        snapshot.final_settings &&
+        snapshot.interaction_log &&
+        typeof snapshot.total_interactions === 'number' &&
+        typeof snapshot.time_to_mix_ms === 'number'
+    );
 };
 
 const createRandomModeSequence = (): WatchMode[] => {
@@ -64,6 +79,52 @@ export const markWatchModeCompleted = (videoId: string, mode: WatchMode): WatchM
     return nextCompletedModes;
 };
 
+export const setCompletedWatchModes = (videoId: string, completedModes: WatchMode[]): WatchMode[] => {
+    const storageKey = getProgressStorageKey(videoId);
+    const sanitized = Array.from(new Set(completedModes.filter(isValidMode)));
+    localStorage.setItem(storageKey, JSON.stringify(sanitized));
+    return sanitized;
+};
+
+export const getAudioConfigurationSnapshots = (videoId: string): Partial<Record<WatchMode, AudioConfigurationSnapshot>> => {
+    const rawSnapshots = localStorage.getItem(getAudioConfigurationStorageKey(videoId));
+
+    if (!rawSnapshots) return {};
+
+    try {
+        const parsed = JSON.parse(rawSnapshots) as Record<string, unknown>;
+        const snapshots: Partial<Record<WatchMode, AudioConfigurationSnapshot>> = {};
+
+        for (const mode of [VideoWatchMode.Mixer, VideoWatchMode.Standard] as const) {
+            if (isValidAudioConfigurationSnapshot(parsed?.[mode])) {
+                snapshots[mode] = parsed[mode];
+            }
+        }
+
+        return snapshots;
+    } catch {
+        return {};
+    }
+};
+
+export const saveAudioConfigurationSnapshot = (
+    videoId: string,
+    mode: WatchMode,
+    snapshot: AudioConfigurationSnapshot,
+): void => {
+    const existingSnapshots = getAudioConfigurationSnapshots(videoId);
+    const nextSnapshots = {
+        ...existingSnapshots,
+        [mode]: snapshot,
+    };
+
+    localStorage.setItem(getAudioConfigurationStorageKey(videoId), JSON.stringify(nextSnapshots));
+};
+
+export const clearAudioConfigurationSnapshots = (videoId: string): void => {
+    localStorage.removeItem(getAudioConfigurationStorageKey(videoId));
+};
+
 export const clearWatchModeProgress = (videoId: string): void => {
     localStorage.removeItem(getProgressStorageKey(videoId));
 };
@@ -71,4 +132,5 @@ export const clearWatchModeProgress = (videoId: string): void => {
 export const clearWatchModeState = (videoId: string): void => {
     localStorage.removeItem(getProgressStorageKey(videoId));
     localStorage.removeItem(getSequenceStorageKey(videoId));
+    clearAudioConfigurationSnapshots(videoId);
 };

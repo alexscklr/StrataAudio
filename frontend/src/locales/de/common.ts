@@ -204,8 +204,8 @@ const de = {
                 sync2: {
                     question: 'Gab es Störungen wie Tonaussetzer oder Ruckeln während des Tonmischens?',
                     options: {
-                        yes: 'Ja',
-                        no: 'Nein',
+                            Ja: 'Ja',
+                            Nein: 'Nein',
                     },
                 },
                 experience1: {
@@ -216,8 +216,8 @@ const de = {
                 experience2: {
                     question: 'Welchen Modus haben Sie beim Ansehen des Videos bevorzugt?',
                     options: {
-                        standard: 'Standard',
-                        mixer: 'Mixer',
+                            Standard: 'Standard',
+                            Mixer: 'Mixer',
                     },
                 },
             },
