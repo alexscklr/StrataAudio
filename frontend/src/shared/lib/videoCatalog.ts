@@ -1,4 +1,5 @@
 import { supabase } from "@/api/supabaseClient";
+import i18n from "@/i18n";
 import type { Video, VideoCatalogItem } from "../types/media";
 
 const readRelation = <T>(relation: T | T[] | null | undefined): T | null => {
@@ -9,9 +10,33 @@ const readRelation = <T>(relation: T | T[] | null | undefined): T | null => {
   return Array.isArray(relation) ? (relation[0] ?? null) : relation;
 };
 
+const resolveLocale = (): "de" | "en" => (i18n.language?.toLowerCase().startsWith("en") ? "en" : "de");
+
+const localizedText = (
+  deValue: string | null | undefined,
+  enValue: string | null | undefined,
+  locale: "de" | "en"
+): string => {
+  if (locale === "en") {
+    return enValue ?? deValue ?? "";
+  }
+
+  return deValue ?? enValue ?? "";
+};
+
+const localizedNullableText = (
+  deValue: string | null | undefined,
+  enValue: string | null | undefined,
+  locale: "de" | "en"
+): string | null => {
+  const value = localizedText(deValue, enValue, locale);
+  return value.length > 0 ? value : null;
+};
+
 const mapVideoRow = (row: any): Video => {
-  const content = readRelation<{ title: string; description: string | null }>(row.video_contents);
-  const genre = readRelation<{ label: string }>(row.video_genres);
+  const locale = resolveLocale();
+  const content = readRelation<{ title_de: string; title_en: string | null; description_de: string | null; description_en: string | null }>(row.video_contents);
+  const genre = readRelation<{ label_de: string; label_en: string | null }>(row.video_genres);
 
   return {
     id: row.id,
@@ -20,9 +45,9 @@ const mapVideoRow = (row: any): Video => {
     thumbnail_url: row.thumbnail_url,
     is_mandatory: row.is_mandatory,
     duration_seconds: row.duration_seconds,
-    title: content?.title ?? "",
-    description: content?.description ?? null,
-    genre: genre?.label ?? "",
+    title: localizedText(content?.title_de, content?.title_en, locale),
+    description: localizedNullableText(content?.description_de, content?.description_en, locale),
+    genre: localizedText(genre?.label_de, genre?.label_en, locale),
   };
 };
 
@@ -36,8 +61,8 @@ export const fetchVideoCatalog = async (): Promise<Video[]> => {
       thumbnail_url,
       is_mandatory,
       duration_seconds,
-      video_contents(title, description),
-      video_genres(label)
+      video_contents(title_de, title_en, description_de, description_en),
+      video_genres(label_de, label_en)
     `)
     .order('created_at', { ascending: false });
 
