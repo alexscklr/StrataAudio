@@ -25,6 +25,29 @@ const en = {
         privacy: 'Privacy policy',
         copyright: '© 2026 Alexander Sickler - StrataAudio | Bachelor thesis HSHL',
     },
+    seo: {
+        siteName: 'StrataAudio',
+        consent: {
+            title: 'Consent declaration',
+            description: 'Consent information for taking part in the StrataAudio research study on interactive audio mixing for web videos.',
+        },
+        demographics: {
+            title: 'Demographic survey',
+            description: 'Anonymous demographic questions for participants in the StrataAudio study and their audio usage habits.',
+        },
+        videoCatalog: {
+            title: 'Video catalog',
+            description: 'Browse required and optional study videos in StrataAudio and track your viewing progress.',
+        },
+        watch: {
+            title: 'Watch video: {{title}}',
+            description: 'Watch study videos in mixer and standard mode to evaluate interactive audio controls in StrataAudio.',
+        },
+        endSurvey: {
+            title: 'Final survey',
+            description: 'Final questions about usability and overall experience within the StrataAudio research study.',
+        },
+    },
     videoCatalog: {
         loading: 'Loading...',
         loadError: 'Error loading video catalog: {{message}}',

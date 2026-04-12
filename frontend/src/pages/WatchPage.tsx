@@ -11,6 +11,7 @@ import { VideoWatchMode, type VideoWatchMode as WatchMode } from "@/shared/types
 import { getCompletedWatchModes, getOrCreateWatchModeSequence, markWatchModeCompleted } from "@/shared/lib/watchModeSequence";
 import WatchModeProgressCard from "@/shared/components/WatchModeProgressCard/WatchModeProgressCard";
 import { useTranslation } from 'react-i18next';
+import { PageMeta } from "@/shared/components/Seo/PageMeta";
 
 function WatchPage() {
     const { t } = useTranslation();
@@ -67,6 +68,10 @@ function WatchPage() {
 
     return (
         <>
+            <PageMeta
+                title={t('seo.watch.title', { title: video?.title ?? t('watchPage.unknownVideo') })}
+                description={t('seo.watch.description')}
+            />
             <h1>{video?.title}</h1>
             
             <p>{t('watchPage.playbackNote')}</p>

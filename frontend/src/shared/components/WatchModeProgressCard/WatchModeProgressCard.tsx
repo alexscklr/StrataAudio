@@ -40,6 +40,8 @@ function WatchModeProgressCard({
 
             <ProgressBar
                 percentage={progressPercent}
+                ariaLabel={t('watchMode.unlockTitle')}
+                ariaValueText={`${completedCount}/${totalModes}`}
                 variant="gradient"
             />
 

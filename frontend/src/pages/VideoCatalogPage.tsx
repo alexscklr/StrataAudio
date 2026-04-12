@@ -7,6 +7,7 @@ import { useContext, useMemo } from "react";
 import { AuthContext } from "@/features/auth/context/AuthContext";
 import type { CatalogItemStatus, VideoCatalogItem } from "@/shared/types/media";
 import { useTranslation } from 'react-i18next';
+import { PageMeta } from "@/shared/components/Seo/PageMeta";
 
 
 function VideoCatalogPage() {
@@ -55,6 +56,7 @@ function VideoCatalogPage() {
 
     return (
         <section className={mainPageStyles.pageGrid}>
+            <PageMeta title={t('seo.videoCatalog.title')} description={t('seo.videoCatalog.description')} />
             {isLoading && <p>{t('videoCatalog.loading')}</p>}
             {error && <p>{t('videoCatalog.loadError', { message: error.message })}</p>}
 

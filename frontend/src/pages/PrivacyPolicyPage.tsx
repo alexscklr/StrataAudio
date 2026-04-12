@@ -1,5 +1,6 @@
 import mainPageStyles from "./styles/MainPageStyle.module.css";
 import { useTranslation } from 'react-i18next';
+import { PageMeta } from '@/shared/components/Seo/PageMeta';
 
 function PrivacyPolicyPage() {
     const { i18n } = useTranslation();
@@ -7,6 +8,7 @@ function PrivacyPolicyPage() {
 
     return (
         <div className={`${mainPageStyles.pageCard} ${mainPageStyles.leftAlignedParagraphs} ${mainPageStyles.sectionCounter}`}>
+            <PageMeta title={isEn ? 'Privacy Policy' : 'Datenschutzerklaerung'} description={isEn ? 'Privacy information about data processing within the StrataAudio research study.' : 'Datenschutzhinweise zur Verarbeitung personenbezogener Daten innerhalb der StrataAudio-Forschungsstudie.'} />
             <header className={mainPageStyles.pageSection}>
                 <h1>{isEn ? 'Privacy Policy' : 'Datenschutzerklaerung'}</h1>
                 <p>

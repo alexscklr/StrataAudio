@@ -1,5 +1,6 @@
 import mainPageStyles from "./styles/MainPageStyle.module.css";
 import { useTranslation } from 'react-i18next';
+import { PageMeta } from '@/shared/components/Seo/PageMeta';
 
 function ImprintPage() {
     const { i18n } = useTranslation();
@@ -23,6 +24,7 @@ function ImprintPage() {
 
     return (
         <div className={`${mainPageStyles.pageCard} ${mainPageStyles.leftAlignedParagraphs}`}>
+            <PageMeta title={isEn ? 'Imprint' : 'Impressum'} description={isEn ? 'Legal notice and contact details for the StrataAudio research web application.' : 'Rechtliche Angaben und Kontaktdaten zur Forschungs-Webanwendung StrataAudio.'} />
             <h1>{copy.title}</h1>
             <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
                 <h2>{copy.operator}</h2>

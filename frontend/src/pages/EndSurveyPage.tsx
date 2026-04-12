@@ -7,6 +7,7 @@ import SurveyQuestionRenderer from '@/features/analytics/components/questions/Su
 import { createInitialAnswers, getAllQuestions, hasMissingRequiredAnswers, type SurveyAnswers } from '@/features/analytics/utils/surveyUtils';
 import styles from '@/features/analytics/components/styles/VideoSurvey.module.css';
 import { useTranslation } from 'react-i18next';
+import { PageMeta } from '@/shared/components/Seo/PageMeta';
 
 function EndSurveyPage() {
     const { t } = useTranslation();
@@ -103,6 +104,7 @@ function EndSurveyPage() {
 
     return (
         <section className={styles.surveyContainer}>
+            <PageMeta title={t('seo.endSurvey.title')} description={t('seo.endSurvey.description')} />
             <h2>{t('endSurvey.title')}</h2>
             <p>{t('endSurvey.intro')}</p>
             {hasExistingResponse && <p>{t('endSurvey.editableHint')}</p>}

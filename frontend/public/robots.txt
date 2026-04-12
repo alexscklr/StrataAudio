@@ -1,0 +1,5 @@
+# Baseline policy for the public frontend.
+# If this study instance should not appear in search results,
+# change this to `Disallow: /` before deployment.
+User-agent: *
+Disallow: /

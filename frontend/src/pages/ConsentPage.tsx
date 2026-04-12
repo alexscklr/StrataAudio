@@ -4,6 +4,7 @@ import mainPageStyles from "./styles/MainPageStyle.module.css";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/features/auth/context/AuthContext";
 import { useTranslation } from 'react-i18next';
+import { PageMeta } from "@/shared/components/Seo/PageMeta";
 
 
 function ConsentPage() {
@@ -18,6 +19,7 @@ function ConsentPage() {
     const content = isEn
         ? {
             title: 'Consent Declaration',
+            metaDescription: t('seo.consent.description'),
             topic: 'Topic: User-centered audio mixing of individual audio tracks for web videos',
             lead: 'Study lead: Alexander Sickler, Hamm-Lippstadt University of Applied Sciences (HSHL)',
             duration: 'Depending on your preference, this test takes about 10 to 30 minutes. Afterwards, you can continue watching and rating additional videos to support the research.',
@@ -57,6 +59,7 @@ function ConsentPage() {
         }
         : {
             title: 'Einverstaendniserklaerung',
+            metaDescription: t('seo.consent.description'),
             topic: 'Thema: Nutzerzentriertes Audio-Mixing individueller Audio-Tracks fuer Videos im Web',
             lead: 'Studienleitung: Alexander Sickler, Hochschule Hamm-Lippstadt (HSHL)',
             duration: 'Der Test dauert je nach Wunsch etwa 10 bis 30 Minuten. Du hast anschliessend die Moeglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Forschung zu unterstuetzen.',
@@ -121,6 +124,7 @@ function ConsentPage() {
 
     return (
         <div className={`${styles.mainWrapper} ${mainPageStyles.sectionCounter} ${mainPageStyles.pageCard} ${mainPageStyles.leftAlignedParagraphs}`}>
+            <PageMeta title={t('seo.consent.title')} description={content.metaDescription} />
             <header className={mainPageStyles.pageSection}>
                 <h1 style={{ textAlign: "center" }}>{content.title}</h1>
                 <h2>{content.topic}</h2>

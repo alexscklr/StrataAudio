@@ -13,9 +13,7 @@
 	cursor: pointer;
 	writing-mode: vertical-lr;
 	direction: rtl;
-	appearance: slider-vertical;
-	-webkit-appearance: slider-vertical;
-    accent-color: var(--primary);
+	accent-color: var(--primary);
 }
 
 .srOnly {
