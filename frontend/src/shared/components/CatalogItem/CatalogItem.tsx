@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import styles from './CatalogItem.module.css';
-import waveSVG from '@/assets/audio-curves-around-square.svg';
+import waveSVG from '@/assets/audio-curves.svg';
 import { getPublicUrl } from '@/shared/utils/storage';
 import type { CatalogItemStatus } from '@/shared/types/media';
 import { formatDuration } from '@/shared/utils/timeFormating';
