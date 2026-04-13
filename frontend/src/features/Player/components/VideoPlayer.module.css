@@ -172,7 +172,6 @@
     align-items: flex-end;
     gap: var(--player-row-gap);
     min-width: 0;
-    margin-left: auto;
     flex-wrap: wrap;
     justify-content: flex-end;
 }
@@ -204,7 +203,7 @@
         --player-center-gap: clamp(1rem, 10vw, 2rem);
         --player-bottom-gap: clamp(0.5rem, 2.4vw, 0.75rem);
         --player-row-gap: clamp(0.375rem, 1.8vw, 0.625rem);
-        --player-slider-offset: clamp(3rem, 14vw, 5.25rem);
+        --player-slider-offset: clamp(3.5rem, 15vw, 5rem);
         max-height: none;
     }
 
@@ -217,7 +216,7 @@
     }
 
     .uiBottom {
-        align-items: center;
+        align-items: flex-end;
         flex-wrap: nowrap;
     }
 
@@ -229,9 +228,8 @@
 
     .uiBottomRight {
         width: auto;
-        margin-left: auto;
         justify-content: flex-end;
-        align-items: center;
+        align-items: flex-end;
         flex-wrap: nowrap;
     }
 

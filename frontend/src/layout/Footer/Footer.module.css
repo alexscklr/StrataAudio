@@ -5,6 +5,7 @@
     padding: 2rem;
 
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 2rem;
     flex-wrap: wrap;
@@ -62,6 +63,7 @@
 }
 
 .copyright {
+    margin: 0;
     font-size: 0.8rem;
     color: var(--strata-accent);
 }

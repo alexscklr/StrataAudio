@@ -98,14 +98,14 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
                     <p className={styles.videoTitle}>{title}</p>
                 </div>
                 <div className={styles.uiCenter}>
-                    <RewindButton rewindMode="backward" onClick={() => handleRewind(-5)} />
-                    <PlayPauseButton isPlaying={isPlaying} onClick={handleTogglePlay} scale={2} />
-                    <RewindButton rewindMode="forward" onClick={() => handleRewind(5)} />
+                    {canControlVideo?.rewind && <RewindButton rewindMode="backward" onClick={() => handleRewind(-5)} />}
+                    {canControlVideo?.pause && <PlayPauseButton isPlaying={isPlaying} onClick={handleTogglePlay} scale={2} />}
+                    {canControlVideo?.rewind && <RewindButton rewindMode="forward" onClick={() => handleRewind(5)} />}
                 </div>
                 <div className={styles.uiBottom}>
                     <div className={styles.uiBottomLeft}>
                         <div className={styles.mobileHideBottomPlayButton}>
-                            <PlayPauseButton isPlaying={isPlaying} onClick={handleTogglePlay} />
+                            {canControlVideo?.pause && <PlayPauseButton isPlaying={isPlaying} onClick={handleTogglePlay} />}
                         </div>
                         <VideoTimeDisplay currentTime={currentTime} duration={duration} />
                     </div>

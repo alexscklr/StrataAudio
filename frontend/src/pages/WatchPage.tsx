@@ -109,7 +109,11 @@ function WatchPage() {
                         title={video.title}
                         audios={audios}
                         key={`${videoid}-${currentMode}`}
-                        canControlVideo={{ seek: true, rewind: true, pause: true, fullscreen: false }}
+                        canControlVideo={{ 
+                            seek: import.meta.env.VITE_VIDEO_CONTROLS_CAN_SEEK === 'true',
+                            rewind: import.meta.env.VITE_VIDEO_CONTROLS_CAN_REWIND === 'true', 
+                            pause: import.meta.env.VITE_VIDEO_CONTROLS_CAN_PAUSE === 'true', 
+                            fullscreen: import.meta.env.VITE_VIDEO_CONTROLS_CAN_FULLSCREEN === 'true' }}
                         watchMode={currentMode}
                         onAudioConfigurationReady={handleAudioConfigurationReady}
                         onVideoEnd={handleVideoEnd}

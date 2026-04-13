@@ -8,7 +8,7 @@ interface VideoTimeDisplayProps {
 
 function VideoTimeDisplay ({ currentTime, duration }: VideoTimeDisplayProps) {
     return (
-        <span style={{ fontSize: 'var(--player-time-font-size, 0.9rem)', lineHeight: 1.1 }}>
+        <span style={{ fontSize: 'var(--player-time-font-size, 1rem)', lineHeight: 1.1 , margin: 'clamp(0.5rem, 1vw, 1rem)'}}>
             {formatDuration(currentTime)} / {formatDuration(duration)}
         </span>
     );
