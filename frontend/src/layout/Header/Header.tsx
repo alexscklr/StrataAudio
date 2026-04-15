@@ -1,9 +1,7 @@
-
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Header.module.css";
 import { AuthContext } from "@/features/auth/context/AuthContext";
-import LogInOutButton from "@/features/auth/components/LogInOutButton";
 import { useVideoCatalog } from "@/shared/hooks/useVideoCatalog";
 import { useTranslation } from 'react-i18next';
 
