@@ -1,0 +1,303 @@
+.sectionCard {
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    background:
+        radial-gradient(circle at 85% 10%, rgb(from var(--strata-accent) r g b / 0.15), transparent 48%),
+        linear-gradient(155deg, rgb(255 255 255 / 0.04), rgb(0 0 0 / 0.16));
+    box-shadow: 0 14px 30px rgb(0 0 0 / 0.2);
+    padding: 1.2rem;
+}
+
+.sectionHeader h1 {
+    margin: 0;
+}
+
+.sectionHeader p {
+    margin: 0.5rem 0 0;
+    color: var(--text-muted);
+}
+
+.sectionHint {
+    margin: 0.4rem 0 0;
+    color: var(--text-muted);
+}
+
+.authGate {
+    margin-top: 1rem;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.8rem;
+    padding: 1rem;
+    background: rgb(255 255 255 / 0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+}
+
+.authGate button {
+    border: 1px solid rgb(255 255 255 / 0.22);
+    background: rgb(from var(--strata-accent) r g b / 0.22);
+    color: #fff;
+    border-radius: 0.65rem;
+    padding: 0.62rem 0.95rem;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.modeSwitch {
+    display: inline-flex;
+    gap: 0.5rem;
+    margin-top: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.modeButton {
+    border: 1px solid rgb(255 255 255 / 0.18);
+    background: rgb(255 255 255 / 0.04);
+    color: inherit;
+    border-radius: 999px;
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.modeButtonActive {
+    background: rgb(from var(--strata-accent) r g b / 0.28);
+    border-color: rgb(from var(--strata-accent) r g b / 0.5);
+}
+
+.uploadChecks {
+    margin: 0.9rem 0 1.1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+}
+
+.checkOk,
+.checkMissing {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.55rem;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.9rem;
+}
+
+.checkOk {
+    color: #b7f7cc;
+    background: rgb(34 120 71 / 0.18);
+}
+
+.checkMissing {
+    color: #ffb4b4;
+    background: rgb(128 33 33 / 0.18);
+}
+
+.videoList {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    gap: 1rem;
+}
+
+.videoItem {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: 0.8rem;
+    padding: 1rem;
+    background: rgb(0 0 0 / 0.15);
+}
+
+.videoMeta h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+}
+
+.videoMeta p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.videoActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.thumbnail {
+    width: 220px;
+    max-width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(255 255 255 / 0.2);
+}
+
+.deleteButton {
+    border: 1px solid rgb(255 113 113 / 0.65);
+    background: rgb(165 36 36 / 0.4);
+    color: #fff;
+    border-radius: 0.6rem;
+    padding: 0.55rem 0.8rem;
+    cursor: pointer;
+}
+
+.deleteButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+}
+
+.formGrid label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-weight: 600;
+}
+
+.formGrid input,
+.formGrid textarea {
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 0.55rem;
+    background: rgb(0 0 0 / 0.2);
+    color: inherit;
+    padding: 0.55rem 0.65rem;
+    font: inherit;
+}
+
+.switchLabel {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0.55rem !important;
+}
+
+.audioTracksSection {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.audioTracksSection h3 {
+    margin: 0;
+}
+
+.audioTracksGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+}
+
+.audioTrackCard {
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.7rem;
+    padding: 0.75rem;
+    background: rgb(255 255 255 / 0.04);
+    display: grid;
+    gap: 0.6rem;
+}
+
+.audioTrackCard h4 {
+    margin: 0;
+}
+
+.filePreviewBlock {
+    border: 1px dashed rgb(255 255 255 / 0.2);
+    border-radius: 0.7rem;
+    padding: 0.8rem;
+    background: rgb(0 0 0 / 0.15);
+}
+
+.filePreviewBlock h3 {
+    margin: 0 0 0.6rem;
+}
+
+.filePreviewList {
+    margin: 0;
+    padding-left: 1.05rem;
+    max-height: 10.5rem;
+    overflow-y: auto;
+    display: grid;
+    gap: 0.2rem;
+}
+
+.filePreviewList li {
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+}
+
+.fullWidth {
+    grid-column: 1 / -1;
+}
+
+.submitButton {
+    border: 1px solid rgb(255 255 255 / 0.22);
+    background: rgb(from var(--strata-accent) r g b / 0.25);
+    color: #fff;
+    border-radius: 0.65rem;
+    padding: 0.62rem 0.95rem;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.errorText {
+    color: #ffb4b4;
+}
+
+.successText {
+    color: #b2ffc9;
+}
+
+.inviteResultBox {
+    margin-top: 0.9rem;
+    display: grid;
+    gap: 0.55rem;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.7rem;
+    padding: 0.75rem;
+    background: rgb(255 255 255 / 0.04);
+}
+
+.inviteResultBox textarea {
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 0.55rem;
+    background: rgb(0 0 0 / 0.2);
+    color: inherit;
+    padding: 0.55rem 0.65rem;
+    font: inherit;
+}
+
+@media (min-width: 900px) {
+    .videoItem {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .uploadChecks {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .audioTracksGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sectionCard {
+        padding: 1.4rem;
+    }
+}

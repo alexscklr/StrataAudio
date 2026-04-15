@@ -35,16 +35,22 @@
 }
 
 .nav ul li a,
-.nav ul li span {
+.nav ul li span,
+.nav ul li button {
     color: var(--text-main);
     text-decoration: none;
     font-size: 1rem;
     transition: color 0.2s;
     position: relative;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
 .nav ul li a::after,
-.nav ul li span::after {
+.nav ul li span::after,
+.nav ul li button::after {
     content: '';
     position: absolute;
     left: 0;
@@ -61,7 +67,16 @@
     color: var(--primary);
 }
 
+.nav ul li button:hover {
+    color: var(--primary);
+}
+
 .nav ul li a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.nav ul li button:hover::after {
     transform: scaleX(1);
     transform-origin: left;
 }
@@ -119,7 +134,8 @@
     }
 
     .nav ul li a,
-    .nav ul li span {
+    .nav ul li span,
+    .nav ul li button {
         font-size: 0.95rem;
         white-space: normal;
         overflow-wrap: anywhere;

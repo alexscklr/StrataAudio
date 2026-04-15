@@ -89,16 +89,10 @@
 .submitRow {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 1rem;
     flex-wrap: wrap;
     padding-top: 0.5rem;
-}
-
-.submitHint {
-    color: var(--text-muted);
-    margin-bottom: 0;
-    max-width: 48ch;
 }
 
 .submitError {

@@ -14,6 +14,7 @@ import DemographicsRequiredRoute from './features/analytics/components/Demograph
 import EndSurveyRequiredRoute from './features/analytics/components/EndSurveyRequiredRoute';
 import ImprintPage from './pages/ImprintPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import VideoManagementPage from './pages/VideoManagementPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -36,6 +37,7 @@ function App() {
           <Route path="/" element={<ConsentPage />} />
           <Route path="/demografie" element={<ProtectedRoute><DemographicsPage /></ProtectedRoute>} />
           <Route path="/videos" element={<ProtectedRoute><DemographicsRequiredRoute><VideoCatalogPage /></DemographicsRequiredRoute></ProtectedRoute>} />
+          <Route path="/upload" element={<VideoManagementPage />} />
           <Route path="/videos/:videoid" element={<ProtectedRoute><DemographicsRequiredRoute><WatchPage /></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/endumfrage" element={<ProtectedRoute><DemographicsRequiredRoute><EndSurveyRequiredRoute><EndSurveyPage /></EndSurveyRequiredRoute></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/impressum" element={<ImprintPage />} />

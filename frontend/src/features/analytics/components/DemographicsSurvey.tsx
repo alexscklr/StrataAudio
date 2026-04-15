@@ -113,7 +113,6 @@ function DemographicsSurvey() {
                 {submitError && <p className={styles.submitError}>{submitError}</p>}
 
                 <div className={styles.submitRow}>
-                    <p className={styles.submitHint}>{t(demographicsSurvey.submitHint)}</p>
                     <button type="submit" className="primary" disabled={isSubmitting}>{isSubmitting ? t('common.saveInProgress') : t('demographics.submitButton')}</button>
                 </div>
             </form>
