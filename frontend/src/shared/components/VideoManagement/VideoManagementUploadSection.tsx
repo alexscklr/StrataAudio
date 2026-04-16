@@ -2,6 +2,8 @@ import type { RefObject } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "@/pages/styles/VideoManagementPage.module.css";
 import type { AudioTrackFormState, RawAudioFileFormState, UploadMode } from "@/shared/types/videoManagement";
+import { CaptchaWidget } from "./CaptchaWidget";
+import { HCAPTCHA_SITE_KEY, CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS } from "@/config/captcha";
 
 interface VideoManagementUploadSectionProps {
   canUpload: boolean;
@@ -33,6 +35,8 @@ interface VideoManagementUploadSectionProps {
   rawUploadSuccess: boolean;
   uploadErrorMessage: string | null;
   rawUploadErrorMessage: string | null;
+  captchaToken: string | null;
+  onCaptchaTokenChange: (token: string | null) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onMediaFolderFilesChange: (files: File[]) => void;
   onRawVideoFileChange: (file: File | null) => void;
@@ -80,6 +84,8 @@ export function VideoManagementUploadSection({
   rawUploadSuccess,
   uploadErrorMessage,
   rawUploadErrorMessage,
+  captchaToken,
+  onCaptchaTokenChange,
   onSubmit,
   onMediaFolderFilesChange,
   onRawVideoFileChange,
@@ -100,7 +106,8 @@ export function VideoManagementUploadSection({
 
   const uploadDisabled = isUploading
     || (uploadMode === "catalog" && (!hasMaster || !hasVideoPlaylist || audioTracks.length === 0))
-    || (uploadMode === "raw" && (!rawVideoFile || rawAudioFiles.length === 0));
+    || (uploadMode === "raw" && (!rawVideoFile || rawAudioFiles.length === 0))
+    || (canUploadWithInvite && CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS && !captchaToken);
 
   return (
     <section className={styles.sectionCard}>
@@ -173,6 +180,14 @@ export function VideoManagementUploadSection({
       )}
 
       <form className={styles.formGrid} onSubmit={onSubmit}>
+        {canUploadWithInvite && CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS && (
+          <CaptchaWidget
+            siteKey={HCAPTCHA_SITE_KEY}
+            onTokenChange={onCaptchaTokenChange}
+            isVisible={true}
+          />
+        )}
+
         {isInviteRawUpload ? (
           <>
             <label>

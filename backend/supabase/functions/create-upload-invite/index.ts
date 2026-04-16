@@ -77,7 +77,7 @@ Deno.serve(async (request: Request) => {
         Authorization: authorization,
       },
     },
-  });
+  }) as any;
 
   const { data: authData, error: authError } = await authClient.auth.getUser();
   if (authError || !authData.user) {
@@ -104,7 +104,7 @@ Deno.serve(async (request: Request) => {
 
   const serviceClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },
-  });
+  }) as any;
 
   const { error: insertError } = await serviceClient
     .from('upload_invites')

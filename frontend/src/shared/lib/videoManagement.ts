@@ -294,6 +294,7 @@ export interface UploadRawSourceInput {
     iconFile?: File | null;
   }[];
   inviteToken?: string | null;
+  captchaToken?: string | null;
 }
 
 export interface CreateUploadInviteInput {
@@ -366,16 +367,27 @@ export const createUploadInvite = async (
   };
 };
 
+type SignedUploadFileDescriptor = {
+  path: string;
+  mimeType: string;
+  sizeBytes: number;
+};
+
 const createSignedUploadMap = async (
   bucket: string,
-  paths: string[],
-  inviteToken?: string | null
+  uploadId: string,
+  files: SignedUploadFileDescriptor[],
+  inviteToken?: string | null,
+  captchaToken?: string | null
 ): Promise<Map<string, string>> => {
   const { data, error } = await supabase.functions.invoke('create-user-upload-urls', {
     body: {
+      action: 'issue',
       bucket,
-      paths,
+      uploadId,
+      files,
       inviteToken: inviteToken ?? null,
+      captchaToken: captchaToken ?? null,
     },
   });
 
@@ -394,11 +406,32 @@ const createSignedUploadMap = async (
     tokenMap.set(upload.path, upload.token);
   }
 
-  if (tokenMap.size !== paths.length) {
+  if (tokenMap.size !== files.length) {
     throw new Error('Signed upload URLs konnten nicht vollstaendig erstellt werden.');
   }
 
   return tokenMap;
+};
+
+const finalizeSignedUpload = async (
+  bucket: string,
+  uploadId: string,
+  inviteToken?: string | null,
+  captchaToken?: string | null
+): Promise<void> => {
+  const { error } = await supabase.functions.invoke('create-user-upload-urls', {
+    body: {
+      action: 'finalize',
+      bucket,
+      uploadId,
+      inviteToken: inviteToken ?? null,
+      captchaToken: captchaToken ?? null,
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 };
 
 const buildInfoFileContent = (input: UploadRawSourceInput, uploadId: string, uploadedVideoPath: string, uploadedThumbnailPath: string | null) => {
@@ -509,8 +542,14 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
 
     const signedUploadMap = await createSignedUploadMap(
       'user_uploads',
-      filesToUpload.map((entry) => entry.path),
-      input.inviteToken
+      uploadId,
+      filesToUpload.map((entry) => ({
+        path: entry.path,
+        mimeType: entry.file.type || 'application/octet-stream',
+        sizeBytes: entry.file.size,
+      })),
+      input.inviteToken,
+      input.captchaToken
     );
 
     for (const entry of filesToUpload) {
@@ -529,6 +568,8 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
 
       uploadedPaths.push(entry.path);
     }
+
+    await finalizeSignedUpload('user_uploads', uploadId, input.inviteToken, input.captchaToken);
 
     return uploadId;
   } catch (error) {

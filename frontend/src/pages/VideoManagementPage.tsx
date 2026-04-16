@@ -45,6 +45,7 @@ function VideoManagementPage() {
   const [inviteExpiresHours, setInviteExpiresHours] = useState("72");
   const [inviteMaxUses, setInviteMaxUses] = useState("1");
   const [createdInviteLink, setCreatedInviteLink] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (!mediaFolderInputRef.current) {
@@ -226,6 +227,7 @@ function VideoManagementPage() {
         videoFile: rawVideoFile,
         thumbnailFile: rawThumbnailFile,
         inviteToken,
+        captchaToken,
         audioFiles: rawAudioFiles.map((audio) => ({
           file: audio.file,
           titleDe: audio.titleDe.trim() || audio.titleEn.trim(),
@@ -439,6 +441,8 @@ function VideoManagementPage() {
         rawUploadSuccess={rawUploadMutation.isSuccess}
         uploadErrorMessage={uploadErrorMessage}
         rawUploadErrorMessage={rawUploadErrorMessage}
+        captchaToken={captchaToken}
+        onCaptchaTokenChange={setCaptchaToken}
         onSubmit={onSubmit}
         onMediaFolderFilesChange={setMediaFolderFiles}
         onRawVideoFileChange={setRawVideoFile}
