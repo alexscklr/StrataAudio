@@ -1,7 +1,12 @@
-import type { RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "@/pages/styles/VideoManagementPage.module.css";
-import type { AudioTrackFormState, RawAudioFileFormState, UploadMode } from "@/shared/types/videoManagement";
+import type {
+  AudioTrackFormState,
+  EmbeddedAudioFormState,
+  RawAudioFileFormState,
+  UploadMode,
+} from "@/shared/types/videoManagement";
 import { CaptchaWidget } from "./CaptchaWidget";
 import { HCAPTCHA_SITE_KEY, CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS } from "@/config/captcha";
 
@@ -20,6 +25,8 @@ interface VideoManagementUploadSectionProps {
   detectedFiles: string[];
   audioTracks: AudioTrackFormState[];
   rawVideoFile: File | null;
+  rawVideoContainsAudio: boolean;
+  rawVideoAudioMeta: EmbeddedAudioFormState;
   rawThumbnailFile: File | null;
   rawAudioFiles: RawAudioFileFormState[];
   titleDe: string;
@@ -40,8 +47,10 @@ interface VideoManagementUploadSectionProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onMediaFolderFilesChange: (files: File[]) => void;
   onRawVideoFileChange: (file: File | null) => void;
+  onRawVideoContainsAudioChange: (value: boolean) => void;
+  updateRawVideoAudioMeta: (updater: (current: EmbeddedAudioFormState) => EmbeddedAudioFormState) => void;
   onRawThumbnailFileChange: (file: File | null) => void;
-  onRawAudioSelection: (files: FileList | null) => void;
+  onRawAudioFileChange: (index: number, file: File | null) => void;
   onTitleDeChange: (value: string) => void;
   onTitleEnChange: (value: string) => void;
   onDescriptionDeChange: (value: string) => void;
@@ -69,6 +78,8 @@ export function VideoManagementUploadSection({
   detectedFiles,
   audioTracks,
   rawVideoFile,
+  rawVideoContainsAudio,
+  rawVideoAudioMeta,
   rawThumbnailFile,
   rawAudioFiles,
   titleDe,
@@ -89,8 +100,10 @@ export function VideoManagementUploadSection({
   onSubmit,
   onMediaFolderFilesChange,
   onRawVideoFileChange,
+  onRawVideoContainsAudioChange,
+  updateRawVideoAudioMeta,
   onRawThumbnailFileChange,
-  onRawAudioSelection,
+  onRawAudioFileChange,
   onTitleDeChange,
   onTitleEnChange,
   onDescriptionDeChange,
@@ -103,10 +116,26 @@ export function VideoManagementUploadSection({
   updateRawAudio,
 }: VideoManagementUploadSectionProps) {
   const { t } = useTranslation();
+  const [rawAudioInputCount, setRawAudioInputCount] = useState(1);
+
+  useEffect(() => {
+    setRawAudioInputCount((previous) => Math.max(previous, rawAudioFiles.length + 1));
+  }, [rawAudioFiles.length]);
+
+  const rawAudioInputSlots = Math.max(rawAudioInputCount, rawAudioFiles.length + 1);
+  const maxRawAudioInputSlots = 32;
+  const minRawAudioFiles = rawVideoContainsAudio ? 1 : 2;
+  const hasRequiredRawAudios = rawAudioFiles.length >= minRawAudioFiles;
+  const hasRequiredRawVideoAudioMetadata = !rawVideoContainsAudio || (
+    (rawVideoAudioMeta.titleDe.trim() || rawVideoAudioMeta.titleEn.trim())
+  );
+  const hasRequiredRawAudioMetadata = rawAudioFiles.every(
+    (audio) => (audio.titleDe.trim() || audio.titleEn.trim())
+  );
 
   const uploadDisabled = isUploading
     || (uploadMode === "catalog" && (!hasMaster || !hasVideoPlaylist || audioTracks.length === 0))
-    || (uploadMode === "raw" && (!rawVideoFile || rawAudioFiles.length === 0))
+    || (uploadMode === "raw" && (!rawVideoFile || !hasRequiredRawVideoAudioMetadata || !hasRequiredRawAudios || !hasRequiredRawAudioMetadata))
     || (canUploadWithInvite && CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS && !captchaToken);
 
   return (
@@ -135,48 +164,8 @@ export function VideoManagementUploadSection({
         </div>
       )}
 
-      {canUploadWithInvite && (
-        <p className={styles.sectionHint}>{t("videoManagement.inviteActive")}</p>
-      )}
-
-      <p className={styles.sectionHint}>
-        {uploadMode === "catalog" ? t("videoManagement.folderHint") : t("videoManagement.rawHint")}
-      </p>
-
-      {uploadMode === "catalog" && isAdmin && (
-        <div className={styles.uploadChecks}>
-          <span className={hasMaster ? styles.checkOk : styles.checkMissing}>
-            {hasMaster ? t("videoManagement.checkMasterOk") : t("videoManagement.checkMasterMissing")}
-          </span>
-          <span className={hasVideoPlaylist ? styles.checkOk : styles.checkMissing}>
-            {hasVideoPlaylist ? t("videoManagement.checkStream0Ok") : t("videoManagement.checkStream0Missing")}
-          </span>
-          <span className={hasThumbnail ? styles.checkOk : styles.checkMissing}>
-            {hasThumbnail ? t("videoManagement.checkThumbnailOk") : t("videoManagement.checkThumbnailMissing")}
-          </span>
-          <span className={audioTracks.length > 0 ? styles.checkOk : styles.checkMissing}>
-            {audioTracks.length > 0
-              ? t("videoManagement.checkAudioTracksOk", { count: audioTracks.length })
-              : t("videoManagement.checkAudioTracksMissing")}
-          </span>
-        </div>
-      )}
-
-      {uploadMode === "raw" && (
-        <div className={styles.uploadChecks}>
-          <span className={rawVideoFile ? styles.checkOk : styles.checkMissing}>
-            {rawVideoFile ? t("videoManagement.checkRawVideoOk") : t("videoManagement.checkRawVideoMissing")}
-          </span>
-          <span className={rawThumbnailFile ? styles.checkOk : styles.checkMissing}>
-            {rawThumbnailFile ? t("videoManagement.checkRawThumbnailOk") : t("videoManagement.checkRawThumbnailMissing")}
-          </span>
-          <span className={rawAudioFiles.length > 0 ? styles.checkOk : styles.checkMissing}>
-            {rawAudioFiles.length > 0
-              ? t("videoManagement.checkRawAudiosOk", { count: rawAudioFiles.length })
-              : t("videoManagement.checkRawAudiosMissing")}
-          </span>
-          <span className={styles.checkOk}>{t("videoManagement.checkInfoTxtAuto")}</span>
-        </div>
+      {uploadMode === "catalog" && (
+        <p className={styles.sectionHint}>{t("videoManagement.folderHint")}</p>
       )}
 
       <form className={styles.formGrid} onSubmit={onSubmit}>
@@ -307,6 +296,18 @@ export function VideoManagementUploadSection({
                 onMediaFolderFilesChange(selectedFiles);
               }}
             />
+            <p className={styles.uploadInputHint}>{t("videoManagement.mediaFolderHintDetailed")}</p>
+            <div className={styles.inlineStatusRow}>
+              <span className={`${styles.statusText} ${hasMaster ? styles.statusTextOk : styles.statusTextError}`}>
+                {hasMaster ? t("videoManagement.checkMasterOk") : t("videoManagement.checkMasterMissing")}
+              </span>
+              <span className={`${styles.statusText} ${hasVideoPlaylist ? styles.statusTextOk : styles.statusTextError}`}>
+                {hasVideoPlaylist ? t("videoManagement.checkStream0Ok") : t("videoManagement.checkStream0Missing")}
+              </span>
+              <span className={`${styles.statusText} ${hasThumbnail ? styles.statusTextOk : styles.statusTextOptional}`}>
+                {hasThumbnail ? t("videoManagement.checkThumbnailOk") : t("videoManagement.checkThumbnailMissing")}
+              </span>
+            </div>
           </label>
         )}
 
@@ -314,6 +315,13 @@ export function VideoManagementUploadSection({
           <div className={`${styles.fullWidth} ${styles.audioTracksSection}`}>
             <h3>{t("videoManagement.audioTracksTitle")}</h3>
             <p className={styles.sectionHint}>{t("videoManagement.audioTracksHint")}</p>
+            <div className={styles.inlineStatusRow}>
+              <span className={`${styles.statusText} ${audioTracks.length > 0 ? styles.statusTextOk : styles.statusTextError}`}>
+                {audioTracks.length > 0
+                  ? t("videoManagement.checkAudioTracksOk", { count: audioTracks.length })
+                  : t("videoManagement.checkAudioTracksMissing")}
+              </span>
+            </div>
 
             <div className={styles.audioTracksGrid}>
               {audioTracks.map((track) => (
@@ -321,43 +329,32 @@ export function VideoManagementUploadSection({
                   <h4>{track.streamFolder}</h4>
 
                   <label>
-                    {t("videoManagement.audioTitleDe")}
+                    {t("videoManagement.audioContentDe")}
                     <input
                       value={track.titleDe}
                       required
                       onChange={(event) => {
-                        updateTrack(track.streamFolder, (current) => ({ ...current, titleDe: event.target.value }));
+                        const next = event.target.value;
+                        updateTrack(track.streamFolder, (current) => ({
+                          ...current,
+                          titleDe: next,
+                          typeDe: next,
+                        }));
                       }}
                     />
                   </label>
 
                   <label>
-                    {t("videoManagement.audioTitleEn")}
+                    {t("videoManagement.audioContentEn")}
                     <input
                       value={track.titleEn}
                       onChange={(event) => {
-                        updateTrack(track.streamFolder, (current) => ({ ...current, titleEn: event.target.value }));
-                      }}
-                    />
-                  </label>
-
-                  <label>
-                    {t("videoManagement.audioTypeDe")}
-                    <input
-                      value={track.typeDe}
-                      required
-                      onChange={(event) => {
-                        updateTrack(track.streamFolder, (current) => ({ ...current, typeDe: event.target.value }));
-                      }}
-                    />
-                  </label>
-
-                  <label>
-                    {t("videoManagement.audioTypeEn")}
-                    <input
-                      value={track.typeEn}
-                      onChange={(event) => {
-                        updateTrack(track.streamFolder, (current) => ({ ...current, typeEn: event.target.value }));
+                        const next = event.target.value;
+                        updateTrack(track.streamFolder, (current) => ({
+                          ...current,
+                          titleEn: next,
+                          typeEn: next,
+                        }));
                       }}
                     />
                   </label>
@@ -375,18 +372,6 @@ export function VideoManagementUploadSection({
                           ...current,
                           defaultVolume: event.target.value,
                         }));
-                      }}
-                    />
-                  </label>
-
-                  <label>
-                    {t("videoManagement.audioIcon")}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => {
-                        const icon = event.target.files?.[0] ?? null;
-                        updateTrack(track.streamFolder, (current) => ({ ...current, iconFile: icon }));
                       }}
                     />
                   </label>
@@ -414,44 +399,203 @@ export function VideoManagementUploadSection({
           <>
             <label className={styles.fullWidth}>
               {t("videoManagement.rawVideoFile")}
+              <div className={styles.fileInputStatusRow}>
+                <input
+                  type="file"
+                  required
+                  accept=".mp4,.mov,.mkv,.webm,.m4v,video/*"
+                  onChange={(event) => {
+                    onRawVideoFileChange(event.target.files?.[0] ?? null);
+                  }}
+                />
+                <span className={`${styles.statusText} ${rawVideoFile ? styles.statusTextOk : styles.statusTextError}`}>
+                  {rawVideoFile ? t("videoManagement.checkRawVideoOk") : t("videoManagement.checkRawVideoMissing")}
+                </span>
+              </div>
+              <p className={styles.uploadInputHint}>{t("videoManagement.rawVideoFileHint")}</p>
+            </label>
+
+            <label className={`${styles.fullWidth} ${styles.switchLabel}`}>
               <input
-                type="file"
-                required
-                accept="video/*"
+                type="checkbox"
+                checked={rawVideoContainsAudio}
                 onChange={(event) => {
-                  onRawVideoFileChange(event.target.files?.[0] ?? null);
+                  onRawVideoContainsAudioChange(event.target.checked);
                 }}
               />
+              {t("videoManagement.rawVideoContainsAudio")}
             </label>
+
+            {rawVideoContainsAudio && (
+              <section className={`${styles.fullWidth} ${styles.containsAudioCard}`}>
+                <h3>{t("videoManagement.rawVideoContainsAudioTitle")}</h3>
+
+                <div className={styles.inlineStatusRow}>
+                  <span className={`${styles.statusText} ${hasRequiredRawVideoAudioMetadata ? styles.statusTextOk : styles.statusTextError}`}>
+                    {hasRequiredRawVideoAudioMetadata
+                      ? t("videoManagement.rawVideoAudioMetaComplete")
+                      : t("videoManagement.rawVideoAudioMetaRequired")}
+                  </span>
+                </div>
+
+                <div className={styles.audioTracksGrid}>
+                  <article className={styles.audioTrackCard}>
+                    {isInviteRawUpload ? (
+                      <>
+                        <label>
+                          {t("videoManagement.localizedAudioContent")}
+                          <input
+                            value={isEnglishUi ? rawVideoAudioMeta.titleEn : rawVideoAudioMeta.titleDe}
+                            required
+                            onChange={(event) => {
+                              const next = event.target.value;
+                              updateRawVideoAudioMeta((current) => (
+                                isEnglishUi
+                                  ? { ...current, titleEn: next, typeEn: next }
+                                  : { ...current, titleDe: next, typeDe: next }
+                              ));
+                            }}
+                          />
+                        </label>
+                      </>
+                    ) : (
+                      <>
+                        <label>
+                          {t("videoManagement.audioContentDe")}
+                          <input
+                            value={rawVideoAudioMeta.titleDe}
+                            required
+                            onChange={(event) => {
+                              const next = event.target.value;
+                              updateRawVideoAudioMeta((current) => ({ ...current, titleDe: next, typeDe: next }));
+                            }}
+                          />
+                        </label>
+
+                        <label>
+                          {t("videoManagement.audioContentEn")}
+                          <input
+                            value={rawVideoAudioMeta.titleEn}
+                            onChange={(event) => {
+                              const next = event.target.value;
+                              updateRawVideoAudioMeta((current) => ({ ...current, titleEn: next, typeEn: next }));
+                            }}
+                          />
+                        </label>
+                      </>
+                    )}
+
+                    <label>
+                      {t("videoManagement.audioDefaultVolume")}
+                      <input
+                        type="number"
+                        min={0}
+                        max={1}
+                        step={0.05}
+                        value={rawVideoAudioMeta.defaultVolume}
+                        onChange={(event) => {
+                          updateRawVideoAudioMeta((current) => ({ ...current, defaultVolume: event.target.value }));
+                        }}
+                      />
+                    </label>
+                  </article>
+                </div>
+              </section>
+            )}
 
             <label className={styles.fullWidth}>
               {t("videoManagement.rawThumbnailFile")}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(event) => {
-                  onRawThumbnailFileChange(event.target.files?.[0] ?? null);
-                }}
-              />
+              <div className={styles.fileInputStatusRow}>
+                <input
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.webp,.gif,.avif,image/*"
+                  onChange={(event) => {
+                    onRawThumbnailFileChange(event.target.files?.[0] ?? null);
+                  }}
+                />
+                <span className={`${styles.statusText} ${rawThumbnailFile ? styles.statusTextOk : styles.statusTextOptional}`}>
+                  {rawThumbnailFile ? t("videoManagement.checkRawThumbnailOk") : t("videoManagement.checkRawThumbnailMissing")}
+                </span>
+              </div>
+              <p className={styles.uploadInputHint}>{t("videoManagement.rawThumbnailFileHint")}</p>
             </label>
 
-            <label className={styles.fullWidth}>
-              {t("videoManagement.rawAudioFiles")}
-              <input
-                type="file"
-                multiple
-                required
-                accept="audio/*,.aiff,.wav,.mp3,.aac,.flac,.m4a"
-                onChange={(event) => {
-                  onRawAudioSelection(event.target.files);
+            <div className={`${styles.fullWidth} ${styles.sectionDivider}`} aria-hidden="true" />
+
+            <div className={`${styles.fullWidth} ${styles.audioTracksSection}`}>
+              <h3>{t("videoManagement.rawAudioFiles")}</h3>
+              <p className={styles.sectionHint}>{t("videoManagement.rawAudioPickerHint")}</p>
+              <div className={styles.inlineStatusRow}>
+                <span className={`${styles.statusText} ${hasRequiredRawAudios ? styles.statusTextOk : styles.statusTextError}`}>
+                  {hasRequiredRawAudios
+                    ? t("videoManagement.checkRawAudiosOk", { count: rawAudioFiles.length })
+                    : t("videoManagement.rawAudioMinRequired", { count: minRawAudioFiles })}
+                </span>
+              </div>
+
+              <div className={styles.audioTracksGrid}>
+                {Array.from({ length: rawAudioInputSlots }, (_, index) => {
+                  const currentAudio = rawAudioFiles[index] ?? null;
+
+                  return (
+                    <article key={`raw-audio-input-${index}`} className={styles.audioTrackCard}>
+                      <label>
+                        <span className={styles.audioFileLabelLine}>
+                          {t("videoManagement.rawAudioFileLabel", { index: index + 1 })}
+                        </span>
+                        <input
+                          type="file"
+                          required={index < minRawAudioFiles && rawAudioFiles.length <= index}
+                          accept=".aiff,.aif,.wav,.mp3,.aac,.flac,.m4a,.ogg,audio/*"
+                          onChange={(event) => {
+                            onRawAudioFileChange(index, event.target.files?.[0] ?? null);
+                          }}
+                        />
+                        <p className={styles.uploadInputHint}>{t("videoManagement.rawAudioFileHint")}</p>
+                        {currentAudio && <span className={styles.audioFileName}>{currentAudio.file.name}</span>}
+                      </label>
+
+                      {currentAudio && (
+                        <button
+                          type="button"
+                          className={styles.modeButton}
+                          onClick={() => {
+                            onRawAudioFileChange(index, null);
+                          }}
+                        >
+                          {t("videoManagement.removeAudioFileAction")}
+                        </button>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                className={styles.modeButton}
+                disabled={rawAudioInputSlots >= maxRawAudioInputSlots}
+                onClick={() => {
+                  setRawAudioInputCount((previous) => Math.min(previous + 1, maxRawAudioInputSlots));
                 }}
-              />
-            </label>
+              >
+                {t("videoManagement.addAudioFileAction")}
+              </button>
+            </div>
 
             {rawAudioFiles.length > 0 && (
               <div className={`${styles.fullWidth} ${styles.audioTracksSection}`}>
                 <h3>{t("videoManagement.rawAudioMetaTitle")}</h3>
                 <p className={styles.sectionHint}>{t("videoManagement.rawAudioMetaHint")}</p>
+                <div className={styles.inlineStatusRow}>
+                  <span className={`${styles.statusText} ${hasRequiredRawAudioMetadata ? styles.statusTextOk : styles.statusTextError}`}>
+                    {hasRequiredRawAudioMetadata
+                      ? t("videoManagement.rawAudioMetaComplete")
+                      : t("videoManagement.rawAudioMetaRequired")}
+                  </span>
+                </div>
+
+                <div className={`${styles.fullWidth} ${styles.sectionDivider}`} aria-hidden="true" />
 
                 <div className={styles.audioTracksGrid}>
                   {rawAudioFiles.map((audio, index) => (
@@ -461,7 +605,7 @@ export function VideoManagementUploadSection({
                       {isInviteRawUpload ? (
                         <>
                           <label>
-                            {t("videoManagement.localizedAudioTitle")}
+                            {t("videoManagement.localizedAudioContent")}
                             <input
                               value={isEnglishUi ? audio.titleEn : audio.titleDe}
                               required
@@ -469,24 +613,8 @@ export function VideoManagementUploadSection({
                                 const next = event.target.value;
                                 updateRawAudio(index, (current) => (
                                   isEnglishUi
-                                    ? { ...current, titleEn: next }
-                                    : { ...current, titleDe: next }
-                                ));
-                              }}
-                            />
-                          </label>
-
-                          <label>
-                            {t("videoManagement.localizedAudioType")}
-                            <input
-                              value={isEnglishUi ? audio.typeEn : audio.typeDe}
-                              required
-                              onChange={(event) => {
-                                const next = event.target.value;
-                                updateRawAudio(index, (current) => (
-                                  isEnglishUi
-                                    ? { ...current, typeEn: next }
-                                    : { ...current, typeDe: next }
+                                    ? { ...current, titleEn: next, typeEn: next }
+                                    : { ...current, titleDe: next, typeDe: next }
                                 ));
                               }}
                             />
@@ -495,43 +623,24 @@ export function VideoManagementUploadSection({
                       ) : (
                         <>
                           <label>
-                            {t("videoManagement.audioTitleDe")}
+                            {t("videoManagement.audioContentDe")}
                             <input
                               value={audio.titleDe}
                               required
                               onChange={(event) => {
-                                updateRawAudio(index, (current) => ({ ...current, titleDe: event.target.value }));
+                                const next = event.target.value;
+                                updateRawAudio(index, (current) => ({ ...current, titleDe: next, typeDe: next }));
                               }}
                             />
                           </label>
 
                           <label>
-                            {t("videoManagement.audioTitleEn")}
+                            {t("videoManagement.audioContentEn")}
                             <input
                               value={audio.titleEn}
                               onChange={(event) => {
-                                updateRawAudio(index, (current) => ({ ...current, titleEn: event.target.value }));
-                              }}
-                            />
-                          </label>
-
-                          <label>
-                            {t("videoManagement.audioTypeDe")}
-                            <input
-                              value={audio.typeDe}
-                              required
-                              onChange={(event) => {
-                                updateRawAudio(index, (current) => ({ ...current, typeDe: event.target.value }));
-                              }}
-                            />
-                          </label>
-
-                          <label>
-                            {t("videoManagement.audioTypeEn")}
-                            <input
-                              value={audio.typeEn}
-                              onChange={(event) => {
-                                updateRawAudio(index, (current) => ({ ...current, typeEn: event.target.value }));
+                                const next = event.target.value;
+                                updateRawAudio(index, (current) => ({ ...current, titleEn: next, typeEn: next }));
                               }}
                             />
                           </label>
@@ -548,17 +657,6 @@ export function VideoManagementUploadSection({
                           value={audio.defaultVolume}
                           onChange={(event) => {
                             updateRawAudio(index, (current) => ({ ...current, defaultVolume: event.target.value }));
-                          }}
-                        />
-                      </label>
-
-                      <label>
-                        {t("videoManagement.audioIcon")}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(event) => {
-                            updateRawAudio(index, (current) => ({ ...current, iconFile: event.target.files?.[0] ?? null }));
                           }}
                         />
                       </label>

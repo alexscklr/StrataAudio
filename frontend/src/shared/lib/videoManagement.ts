@@ -283,6 +283,15 @@ export interface UploadRawSourceInput {
   isMandatory: boolean;
   durationSeconds?: number | null;
   videoFile: File;
+  containsVideoAudio?: boolean;
+  videoAudio?: {
+    titleDe: string;
+    titleEn?: string;
+    typeDe: string;
+    typeEn?: string;
+    defaultVolume: number;
+    iconFile?: File | null;
+  };
   thumbnailFile?: File | null;
   audioFiles: {
     file: File;
@@ -434,7 +443,13 @@ const finalizeSignedUpload = async (
   }
 };
 
-const buildInfoFileContent = (input: UploadRawSourceInput, uploadId: string, uploadedVideoPath: string, uploadedThumbnailPath: string | null) => {
+const buildInfoFileContent = (
+  input: UploadRawSourceInput,
+  uploadId: string,
+  uploadedVideoPath: string,
+  uploadedThumbnailPath: string | null,
+  uploadedVideoAudioIconPath: string | null
+) => {
   const lines = [
     `upload_id=${uploadId}`,
     `title_de=${input.titleDe.trim()}`,
@@ -446,6 +461,13 @@ const buildInfoFileContent = (input: UploadRawSourceInput, uploadId: string, upl
     `is_mandatory=${input.isMandatory ? "true" : "false"}`,
     `duration_seconds=${input.durationSeconds ?? ""}`,
     `video_path=${uploadedVideoPath}`,
+    `video_contains_audio=${input.containsVideoAudio ? "true" : "false"}`,
+    `video_audio_title_de=${input.videoAudio?.titleDe?.trim() || ""}`,
+    `video_audio_title_en=${input.videoAudio?.titleEn?.trim() || ""}`,
+    `video_audio_type_de=${input.videoAudio?.typeDe?.trim() || ""}`,
+    `video_audio_type_en=${input.videoAudio?.typeEn?.trim() || ""}`,
+    `video_audio_default_volume=${input.videoAudio ? clampVolume(input.videoAudio.defaultVolume) : ""}`,
+    `video_audio_icon=${uploadedVideoAudioIconPath ?? ""}`,
     `thumbnail_path=${uploadedThumbnailPath ?? ""}`,
     "",
     "[audios]",
@@ -495,6 +517,27 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
     const storedVideoPath = `${uploadId}/video${videoExtension}`;
     filesToUpload.push({ path: storedVideoPath, file: input.videoFile });
 
+    let storedVideoAudioIconPath: string | null = null;
+    if (input.containsVideoAudio) {
+      const normalizedVideoAudioTitle = input.videoAudio?.titleDe?.trim() || input.videoAudio?.titleEn?.trim() || "";
+      const normalizedVideoAudioType = input.videoAudio?.typeDe?.trim() || input.videoAudio?.typeEn?.trim() || "";
+
+      if (!normalizedVideoAudioTitle) {
+        throw new Error("Audio-Titel fuer im Video eingebettete Audiospur darf nicht leer sein.");
+      }
+
+      if (!normalizedVideoAudioType) {
+        throw new Error("Audio-Typ fuer im Video eingebettete Audiospur darf nicht leer sein.");
+      }
+
+      if (input.videoAudio?.iconFile) {
+        const iconName = sanitizeFileName(input.videoAudio.iconFile.name);
+        const iconExtension = iconName.includes(".") ? iconName.slice(iconName.lastIndexOf(".")) : "";
+        storedVideoAudioIconPath = `${uploadId}/icons/00-video-audio${iconExtension}`;
+        filesToUpload.push({ path: storedVideoAudioIconPath, file: input.videoAudio.iconFile });
+      }
+    }
+
     let storedThumbnailPath: string | null = null;
     if (input.thumbnailFile) {
       const thumbnailFileName = sanitizeFileName(input.thumbnailFile.name);
@@ -535,7 +578,13 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
       }
     }
 
-    const infoContent = buildInfoFileContent(input, uploadId, storedVideoPath.replace(`${uploadId}/`, ""), storedThumbnailPath?.replace(`${uploadId}/`, "") ?? null);
+    const infoContent = buildInfoFileContent(
+      input,
+      uploadId,
+      storedVideoPath.replace(`${uploadId}/`, ""),
+      storedThumbnailPath?.replace(`${uploadId}/`, "") ?? null,
+      storedVideoAudioIconPath?.replace(`${uploadId}/`, "") ?? null
+    );
     const infoBlob = new Blob([infoContent], { type: "text/plain;charset=utf-8" });
     infoPath = `${uploadId}/info.txt`;
     filesToUpload.push({ path: infoPath, file: infoBlob });

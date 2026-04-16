@@ -20,10 +20,10 @@ const HCAPTCHA_SECRET_KEY = Deno.env.get('HCAPTCHA_SECRET_KEY') ?? '';
 const CAPTCHA_REQUIRED_FOR_PUBLIC_UPLOADS = (Deno.env.get('CAPTCHA_REQUIRED_FOR_PUBLIC_UPLOADS') ?? 'false') === 'true';
 
 const MAX_FILES_PER_UPLOAD = 32;
-const MAX_TOTAL_BYTES = 4 * 1024 * 1024 * 1024; // 4 GiB
+const MAX_TOTAL_BYTES = 768 * 1024 * 1024; // 768 MiB
 
-const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024; // 2 GiB
-const MAX_AUDIO_BYTES = 512 * 1024 * 1024; // 512 MiB
+const MAX_VIDEO_BYTES = 300 * 1024 * 1024; // 300 MiB
+const MAX_AUDIO_BYTES = 64 * 1024 * 1024; // 64 MiB
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024; // 20 MiB
 const MAX_INFO_BYTES = 64 * 1024; // 64 KiB
 
@@ -147,7 +147,13 @@ const verifyCaptcha = async (captchaToken: string | undefined, requestIp: string
     return true;
   }
 
-  if (!HCAPTCHA_SECRET_KEY || !captchaToken) {
+  if (!HCAPTCHA_SECRET_KEY) {
+    console.error('[captcha] HCAPTCHA_SECRET_KEY is not set');
+    return false;
+  }
+
+  if (!captchaToken) {
+    console.error('[captcha] no captcha token in request payload');
     return false;
   }
 
@@ -165,10 +171,14 @@ const verifyCaptcha = async (captchaToken: string | undefined, requestIp: string
   });
 
   if (!response.ok) {
+    console.error('[captcha] hcaptcha siteverify HTTP error:', response.status);
     return false;
   }
 
-  const result = await response.json() as { success?: boolean };
+  const result = await response.json() as { success?: boolean; 'error-codes'?: string[] };
+  if (!result.success) {
+    console.error('[captcha] siteverify failed, error-codes:', result['error-codes'] ?? []);
+  }
   return result.success === true;
 };
 
@@ -362,14 +372,14 @@ Deno.serve(async (request: Request) => {
   const requestIp = getRequestIp(request);
   const inviteHash = payload.inviteToken?.trim() ? await sha256(payload.inviteToken.trim()) : null;
 
-  if (!user) {
-    const captchaValid = await verifyCaptcha(payload.captchaToken, requestIp);
-    if (!captchaValid) {
-      return jsonResponse(401, { error: 'Captcha validation failed' });
-    }
-  }
-
   if (action === 'issue') {
+    if (!user) {
+      const captchaValid = await verifyCaptcha(payload.captchaToken, requestIp);
+      if (!captchaValid) {
+        return jsonResponse(401, { error: 'Captcha validation failed' });
+      }
+    }
+
     const files = payload.files ?? [];
     const validated = validateFiles(files, payload.uploadId);
     if (!validated) {

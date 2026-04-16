@@ -16,8 +16,13 @@ import mainPageStyles from "./styles/MainPageStyle.module.css";
 import { VideoManagementAdminListSection } from "@/shared/components/VideoManagement/VideoManagementAdminListSection";
 import { VideoManagementInviteSection } from "@/shared/components/VideoManagement/VideoManagementInviteSection";
 import { VideoManagementUploadSection } from "@/shared/components/VideoManagement/VideoManagementUploadSection";
-import type { AudioTrackFormState, RawAudioFileFormState, UploadMode } from "../shared/types/videoManagement";
-import { compareStreamFolders, getFileIdentity, toRelativePath } from "../shared/utils/videoManagement";
+import type {
+  AudioTrackFormState,
+  EmbeddedAudioFormState,
+  RawAudioFileFormState,
+  UploadMode,
+} from "../shared/types/videoManagement";
+import { compareStreamFolders, toRelativePath } from "../shared/utils/videoManagement";
 
 function VideoManagementPage() {
   const { t, i18n } = useTranslation();
@@ -39,6 +44,15 @@ function VideoManagementPage() {
   const [mediaFolderFiles, setMediaFolderFiles] = useState<File[]>([]);
   const [audioTracks, setAudioTracks] = useState<AudioTrackFormState[]>([]);
   const [rawVideoFile, setRawVideoFile] = useState<File | null>(null);
+  const [rawVideoContainsAudio, setRawVideoContainsAudio] = useState(false);
+  const [rawVideoAudioMeta, setRawVideoAudioMeta] = useState<EmbeddedAudioFormState>({
+    titleDe: "",
+    titleEn: "",
+    typeDe: "",
+    typeEn: "",
+    defaultVolume: "1",
+    iconFile: null,
+  });
   const [rawThumbnailFile, setRawThumbnailFile] = useState<File | null>(null);
   const [rawAudioFiles, setRawAudioFiles] = useState<RawAudioFileFormState[]>([]);
   const [inviteLabel, setInviteLabel] = useState("");
@@ -144,6 +158,15 @@ function VideoManagementPage() {
     setMediaFolderFiles([]);
     setAudioTracks([]);
     setRawVideoFile(null);
+    setRawVideoContainsAudio(false);
+    setRawVideoAudioMeta({
+      titleDe: "",
+      titleEn: "",
+      typeDe: "",
+      typeEn: "",
+      defaultVolume: "1",
+      iconFile: null,
+    });
     setRawThumbnailFile(null);
     setRawAudioFiles([]);
 
@@ -204,7 +227,21 @@ function VideoManagementPage() {
     const parsedDuration = durationSeconds.trim() ? Number(durationSeconds.trim()) : null;
 
     if (uploadMode === "raw") {
-      if (!rawVideoFile || rawAudioFiles.length === 0) {
+      const minRawAudioFiles = rawVideoContainsAudio ? 1 : 2;
+      if (!rawVideoFile || rawAudioFiles.length < minRawAudioFiles) {
+        return;
+      }
+
+      const hasRequiredRawVideoAudioMetadata = !rawVideoContainsAudio
+        || (rawVideoAudioMeta.titleDe.trim() || rawVideoAudioMeta.titleEn.trim());
+      if (!hasRequiredRawVideoAudioMetadata) {
+        return;
+      }
+
+      const hasRequiredRawAudioMetadata = rawAudioFiles.every(
+        (audio) => (audio.titleDe.trim() || audio.titleEn.trim())
+      );
+      if (!hasRequiredRawAudioMetadata) {
         return;
       }
 
@@ -225,6 +262,17 @@ function VideoManagementPage() {
         isMandatory: isInviteRawUpload ? false : isMandatory,
         durationSeconds: Number.isFinite(parsedDuration) ? parsedDuration : null,
         videoFile: rawVideoFile,
+        containsVideoAudio: rawVideoContainsAudio,
+        videoAudio: rawVideoContainsAudio
+          ? {
+            titleDe: rawVideoAudioMeta.titleDe.trim() || rawVideoAudioMeta.titleEn.trim(),
+            titleEn: rawVideoAudioMeta.titleEn.trim() || rawVideoAudioMeta.titleDe.trim(),
+            typeDe: rawVideoAudioMeta.typeDe.trim() || rawVideoAudioMeta.typeEn.trim() || rawVideoAudioMeta.titleDe.trim() || rawVideoAudioMeta.titleEn.trim(),
+            typeEn: rawVideoAudioMeta.typeEn.trim() || rawVideoAudioMeta.typeDe.trim() || rawVideoAudioMeta.titleEn.trim() || rawVideoAudioMeta.titleDe.trim(),
+            defaultVolume: Number(rawVideoAudioMeta.defaultVolume),
+            iconFile: rawVideoAudioMeta.iconFile,
+          }
+          : undefined,
         thumbnailFile: rawThumbnailFile,
         inviteToken,
         captchaToken,
@@ -232,8 +280,8 @@ function VideoManagementPage() {
           file: audio.file,
           titleDe: audio.titleDe.trim() || audio.titleEn.trim(),
           titleEn: audio.titleEn.trim() || audio.titleDe.trim(),
-          typeDe: audio.typeDe.trim() || audio.typeEn.trim(),
-          typeEn: audio.typeEn.trim() || audio.typeDe.trim(),
+          typeDe: audio.typeDe.trim() || audio.typeEn.trim() || audio.titleDe.trim() || audio.titleEn.trim(),
+          typeEn: audio.typeEn.trim() || audio.typeDe.trim() || audio.titleEn.trim() || audio.titleDe.trim(),
           defaultVolume: Number(audio.defaultVolume),
           iconFile: audio.iconFile,
         })),
@@ -264,8 +312,8 @@ function VideoManagementPage() {
         streamFolder: track.streamFolder,
         titleDe: track.titleDe,
         titleEn: track.titleEn,
-        typeDe: track.typeDe,
-        typeEn: track.typeEn,
+        typeDe: track.typeDe || track.titleDe,
+        typeEn: track.typeEn || track.titleEn || track.typeDe || track.titleDe,
         defaultVolume: Number(track.defaultVolume),
         iconFile: track.iconFile,
       })),
@@ -282,33 +330,42 @@ function VideoManagementPage() {
     setRawAudioFiles((previous) => previous.map((audio, currentIndex) => (currentIndex === index ? updater(audio) : audio)));
   };
 
-  const onRawAudioSelection = (files: FileList | null) => {
-    const selectedFiles = Array.from(files ?? []);
+  const updateRawVideoAudioMeta = (updater: (current: EmbeddedAudioFormState) => EmbeddedAudioFormState) => {
+    setRawVideoAudioMeta((previous) => updater(previous));
+  };
+
+  const onRawAudioFileChange = (index: number, file: File | null) => {
     setRawAudioFiles((previous) => {
-      const merged = [...previous];
-
-      for (const file of selectedFiles) {
-        const identity = getFileIdentity(file);
-        const existingIndex = merged.findIndex((audio) => getFileIdentity(audio.file) === identity);
-
-        if (existingIndex >= 0) {
-          merged[existingIndex] = { ...merged[existingIndex], file };
-          continue;
+      if (!file) {
+        if (index < 0 || index >= previous.length) {
+          return previous;
         }
 
-        const fileBaseName = file.name.replace(/\.[^.]+$/, "");
-        merged.push({
-          file,
-          titleDe: fileBaseName,
-          titleEn: fileBaseName,
-          typeDe: "",
-          typeEn: "",
-          defaultVolume: "1",
-          iconFile: null,
-        } satisfies RawAudioFileFormState);
+        return previous.filter((_, currentIndex) => currentIndex !== index);
       }
 
-      return merged;
+      const next = [...previous];
+      if (index >= 0 && index < next.length) {
+        next[index] = {
+          ...next[index],
+          file,
+        };
+
+        return next;
+      }
+
+      const fileBaseName = file.name.replace(/\.[^.]+$/, "");
+      next.push({
+        file,
+        titleDe: fileBaseName,
+        titleEn: fileBaseName,
+        typeDe: fileBaseName,
+        typeEn: fileBaseName,
+        defaultVolume: "1",
+        iconFile: null,
+      } satisfies RawAudioFileFormState);
+
+      return next;
     });
   };
 
@@ -426,6 +483,8 @@ function VideoManagementPage() {
         detectedFiles={detectedFiles}
         audioTracks={audioTracks}
         rawVideoFile={rawVideoFile}
+        rawVideoContainsAudio={rawVideoContainsAudio}
+        rawVideoAudioMeta={rawVideoAudioMeta}
         rawThumbnailFile={rawThumbnailFile}
         rawAudioFiles={rawAudioFiles}
         titleDe={titleDe}
@@ -446,8 +505,10 @@ function VideoManagementPage() {
         onSubmit={onSubmit}
         onMediaFolderFilesChange={setMediaFolderFiles}
         onRawVideoFileChange={setRawVideoFile}
+        onRawVideoContainsAudioChange={setRawVideoContainsAudio}
+        updateRawVideoAudioMeta={updateRawVideoAudioMeta}
         onRawThumbnailFileChange={setRawThumbnailFile}
-        onRawAudioSelection={onRawAudioSelection}
+        onRawAudioFileChange={onRawAudioFileChange}
         onTitleDeChange={setTitleDe}
         onTitleEnChange={setTitleEn}
         onDescriptionDeChange={setDescriptionDe}

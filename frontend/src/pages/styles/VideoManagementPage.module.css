@@ -84,6 +84,16 @@
     font-size: 0.9rem;
 }
 
+.checkOptional {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.55rem;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.9rem;
+}
+
 .checkOk {
     color: #b7f7cc;
     background: rgb(34 120 71 / 0.18);
@@ -92,6 +102,11 @@
 .checkMissing {
     color: #ffb4b4;
     background: rgb(128 33 33 / 0.18);
+}
+
+.checkOptional {
+    color: #d5dbeb;
+    background: rgb(112 126 157 / 0.2);
 }
 
 .videoList {
@@ -174,6 +189,14 @@
     font: inherit;
 }
 
+.uploadInputHint {
+    margin: 0.15rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.35;
+}
+
 .switchLabel {
     flex-direction: row !important;
     align-items: center;
@@ -183,6 +206,54 @@
 .audioTracksSection {
     display: grid;
     gap: 0.85rem;
+}
+
+.inlineStatusRow {
+    margin-top: 0.25rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+}
+
+.statusText {
+    font-size: 0.88rem;
+    line-height: 1.35;
+    font-weight: 600;
+}
+
+.statusTextOk {
+    color: #b7f7cc;
+}
+
+.statusTextError {
+    color: #ffb4b4;
+}
+
+.statusTextOptional {
+    color: #d5dbeb;
+}
+
+.fileInputStatusRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.sectionDivider {
+    border-top: 1px dashed rgb(255 255 255 / 0.2);
+    margin: 0.25rem 0;
+}
+
+.containsAudioCard {
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.7rem;
+    padding: 0.8rem;
+    background: rgb(255 255 255 / 0.04);
+}
+
+.containsAudioCard h3 {
+    margin: 0;
 }
 
 .audioTracksSection h3 {
@@ -206,6 +277,19 @@
 
 .audioTrackCard h4 {
     margin: 0;
+}
+
+.audioFileLabelLine {
+    font-weight: 700;
+}
+
+.audioFileName {
+    display: inline-block;
+    margin-top: 0.2rem;
+    color: #b7f7cc;
+    font-size: 0.88rem;
+    font-weight: 500;
+    overflow-wrap: anywhere;
 }
 
 .filePreviewBlock {
@@ -291,6 +375,15 @@
 
     .uploadChecks {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inlineStatusRow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .fileInputStatusRow {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.8rem;
     }
 
     .audioTracksGrid {
