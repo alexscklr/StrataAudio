@@ -1,9 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { PutObjectCommand, S3Client } from 'npm:@aws-sdk/client-s3@3.908.0';
+import { getSignedUrl } from 'npm:@aws-sdk/s3-request-presigner@3.908.0';
 
 type SignedUploadRequest = {
   bucket: string;
   uploadId: string;
   action?: 'issue' | 'finalize';
+  storageProvider?: 'supabase' | 'r2';
   files?: Array<{
     path: string;
     mimeType?: string;
@@ -16,6 +19,21 @@ type SignedUploadRequest = {
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const STORAGE_PROVIDER = (Deno.env.get('STORAGE_PROVIDER') ?? 'supabase').trim().toLowerCase() === 'r2' ? 'r2' : 'supabase';
+
+const R2_ACCOUNT_ID = (Deno.env.get('R2_ACCOUNT_ID') ?? '').trim();
+const R2_ACCESS_KEY_ID = (Deno.env.get('R2_ACCESS_KEY_ID') ?? '').trim();
+const R2_SECRET_ACCESS_KEY = (Deno.env.get('R2_SECRET_ACCESS_KEY') ?? '').trim();
+const R2_JURISDICTION = (Deno.env.get('R2_JURISDICTION') ?? '').trim().toLowerCase();
+const R2_S3_ENDPOINT_FROM_ENV = (Deno.env.get('R2_S3_ENDPOINT') ?? '').trim();
+const R2_S3_ENDPOINT = R2_S3_ENDPOINT_FROM_ENV || (R2_ACCOUNT_ID
+  ? `https://${R2_ACCOUNT_ID}${R2_JURISDICTION ? `.${R2_JURISDICTION}` : ''}.r2.cloudflarestorage.com`
+  : '');
+const R2_UPLOAD_URL_EXPIRES_SECONDS = Math.min(
+  3600,
+  Math.max(60, Number(Deno.env.get('R2_UPLOAD_URL_EXPIRES_SECONDS') ?? '900')),
+);
+
 const HCAPTCHA_SECRET_KEY = Deno.env.get('HCAPTCHA_SECRET_KEY') ?? '';
 const CAPTCHA_REQUIRED_FOR_PUBLIC_UPLOADS = (Deno.env.get('CAPTCHA_REQUIRED_FOR_PUBLIC_UPLOADS') ?? 'false') === 'true';
 
@@ -59,6 +77,63 @@ const imageMimePattern = /^image\//i;
 const infoMimePattern = /^text\/plain(\s*;.*)?$/i;
 
 type SupabaseClientLike = any;
+
+const resolveStorageProvider = (requestedProvider?: string): 'supabase' | 'r2' => {
+  const normalized = requestedProvider?.trim().toLowerCase();
+  if (normalized === 'r2') return 'r2';
+  if (normalized === 'supabase') return 'supabase';
+
+  return STORAGE_PROVIDER;
+};
+
+const resolveProviderBucket = (bucket: string, provider: 'supabase' | 'r2'): string => {
+  if (provider === 'r2' && bucket === 'user_uploads') {
+    return 'user-uploads';
+  }
+
+  if (provider === 'supabase' && bucket === 'user-uploads') {
+    return 'user_uploads';
+  }
+
+  return bucket;
+};
+
+const resolveR2UploadEndpoint = (_bucket: string): string => {
+  return R2_S3_ENDPOINT;
+};
+
+const getS3Client = (): S3Client => new S3Client({
+  // Keep R2 signing deterministic while debugging NoSuchBucket/signature routing.
+  region: 'auto',
+  endpoint: R2_S3_ENDPOINT,
+  forcePathStyle: true,
+  requestChecksumCalculation: 'WHEN_REQUIRED',
+  responseChecksumValidation: 'WHEN_REQUIRED',
+  credentials: {
+    accessKeyId: R2_ACCESS_KEY_ID,
+    secretAccessKey: R2_SECRET_ACCESS_KEY,
+  },
+});
+
+const getMissingR2RuntimeFields = (bucket: string): string[] => {
+  const missing: string[] = [];
+
+  const resolvedEndpoint = resolveR2UploadEndpoint(bucket);
+
+  if (!resolvedEndpoint) {
+    missing.push('R2_S3_ENDPOINT or R2_ACCOUNT_ID');
+  }
+
+  if (!R2_ACCESS_KEY_ID) {
+    missing.push('R2_ACCESS_KEY_ID');
+  }
+
+  if (!R2_SECRET_ACCESS_KEY) {
+    missing.push('R2_SECRET_ACCESS_KEY');
+  }
+
+  return missing;
+};
 
 const isPathValid = (path: string, expectedUploadId: string): boolean => {
   if (!path || path.length > 512 || !uuidV4Pattern.test(expectedUploadId)) {
@@ -351,9 +426,24 @@ Deno.serve(async (request: Request) => {
     return jsonResponse(400, { error: 'Invalid payload' });
   }
 
-  if (payload.bucket !== 'user_uploads') {
+  const effectiveStorageProvider = resolveStorageProvider(payload.storageProvider);
+
+  if (effectiveStorageProvider === 'r2') {
+    const providerBucketForValidation = resolveProviderBucket(payload.bucket, effectiveStorageProvider);
+    const missingR2Fields = getMissingR2RuntimeFields(providerBucketForValidation);
+    if (missingR2Fields.length > 0) {
+      return jsonResponse(500, {
+        error: 'Missing R2 runtime credentials',
+        missing: missingR2Fields,
+      });
+    }
+  }
+
+  if (payload.bucket !== 'user_uploads' && payload.bucket !== 'user-uploads') {
     return jsonResponse(403, { error: 'Bucket not allowed' });
   }
+
+  const providerBucket = resolveProviderBucket(payload.bucket, effectiveStorageProvider);
 
   const action = payload.action ?? 'issue';
   if (action !== 'issue' && action !== 'finalize') {
@@ -412,10 +502,40 @@ Deno.serve(async (request: Request) => {
       return jsonResponse(401, { error: 'Unauthorized upload request' });
     }
 
-    const uploads: Array<{ path: string; token: string }> = [];
+    const uploads: Array<{ path: string; token?: string; url?: string }> = [];
+
     for (const path of validated.paths) {
+      if (effectiveStorageProvider === 'r2') {
+        const s3Client = getS3Client();
+        let signedUrl = '';
+
+        try {
+          signedUrl = await getSignedUrl(
+            s3Client,
+            new PutObjectCommand({
+              Bucket: providerBucket,
+              Key: path,
+            }),
+            { expiresIn: R2_UPLOAD_URL_EXPIRES_SECONDS }
+          );
+        } catch (error) {
+          const details = error instanceof Error ? error.message : String(error);
+          return jsonResponse(500, {
+            error: 'Failed to create R2 signed upload URL',
+            details,
+            bucket: providerBucket,
+            endpoint: R2_S3_ENDPOINT,
+            forcePathStyle: true,
+            path,
+          });
+        }
+
+        uploads.push({ path, url: signedUrl });
+        continue;
+      }
+
       const { data, error } = await serviceClient.storage
-        .from('user_uploads')
+        .from(providerBucket)
         .createSignedUploadUrl(path);
 
       if (error || !data?.token) {

@@ -1,5 +1,12 @@
 import { supabase } from "@/api/supabaseClient";
 import { fetchVideoCatalog } from "@/shared/lib/videoCatalog";
+import {
+  getStorageProvider,
+  listStoragePathsRecursively,
+  removeStoragePaths,
+  uploadFileToStorage,
+  uploadToSignedStorageUrl,
+} from "@/shared/utils/storage";
 import type { Video } from "@/shared/types/media";
 
 const sanitizeFileName = (name: string): string =>
@@ -94,52 +101,12 @@ const getPlaylistPathForStream = (streamFolder: string, availablePaths: string[]
 };
 
 const listStorageFilesRecursively = async (bucket: string, prefix: string): Promise<string[]> => {
-  const filePaths: string[] = [];
-  const stack: string[] = [prefix];
-
-  while (stack.length > 0) {
-    const currentPrefix = stack.pop();
-    if (!currentPrefix) {
-      continue;
-    }
-
-    const { data, error } = await supabase.storage.from(bucket).list(currentPrefix, {
-      limit: 1000,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    for (const entry of data ?? []) {
-      const name = (entry as { name?: string }).name;
-      if (!name) {
-        continue;
-      }
-
-      const fullPath = `${currentPrefix}/${name}`;
-      const isFolder = (entry as { id?: string | null; metadata?: object | null }).id === null
-        || (entry as { metadata?: object | null }).metadata === null;
-
-      if (isFolder) {
-        stack.push(fullPath);
-      } else {
-        filePaths.push(fullPath);
-      }
-    }
-  }
-
-  return filePaths;
+  return listStoragePathsRecursively(bucket, prefix);
 };
 
 const removeStorageFiles = async (bucket: string, paths: string[]): Promise<void> => {
-  for (const chunk of chunkArray(paths, 100)) {
-    const { error } = await supabase.storage.from(bucket).remove(chunk);
-    if (error) {
-      throw new Error(error.message);
-    }
+  for (const chunk of chunkArray(paths, 1000)) {
+    await removeStoragePaths(bucket, chunk);
   }
 };
 
@@ -193,14 +160,13 @@ const uploadAudioIcon = async (videoId: string, streamFolder: string, file: File
 
   const iconFileName = `${videoId}-${streamFolder}-${baseName}`;
   const iconStoragePath = `icons/${iconFileName}`;
-  const { error } = await supabase.storage.from("system").upload(iconStoragePath, file, {
+  await uploadFileToStorage({
+    bucket: "system",
+    path: iconStoragePath,
+    file,
     upsert: false,
     cacheControl: "3600",
   });
-
-  if (error) {
-    throw new Error(error.message);
-  }
 
   return iconFileName;
 };
@@ -215,14 +181,13 @@ const uploadMediaFolder = async (videoId: string, files: File[]): Promise<string
     const relativePath = toStorageRelativePath(file);
     const targetPath = `${videoId}/${relativePath}`;
 
-    const { error } = await supabase.storage.from("videos").upload(targetPath, file, {
+    await uploadFileToStorage({
+      bucket: "videos",
+      path: targetPath,
+      file,
       upsert: false,
       cacheControl: "3600",
     });
-
-    if (error) {
-      throw new Error(error.message);
-    }
 
     uploadedPaths.push(targetPath);
   }
@@ -382,6 +347,19 @@ type SignedUploadFileDescriptor = {
   sizeBytes: number;
 };
 
+const getPublicUploadSignedProvider = (): 'supabase' | 'r2' => {
+  const explicitProvider = (import.meta.env.VITE_PUBLIC_UPLOAD_SIGNED_PROVIDER ?? '').trim().toLowerCase();
+  if (explicitProvider === 'supabase') {
+    return 'supabase';
+  }
+
+  if (explicitProvider === 'r2') {
+    return 'r2';
+  }
+
+  return getStorageProvider();
+};
+
 const createSignedUploadMap = async (
   bucket: string,
   uploadId: string,
@@ -392,6 +370,7 @@ const createSignedUploadMap = async (
   const { data, error } = await supabase.functions.invoke('create-user-upload-urls', {
     body: {
       action: 'issue',
+      storageProvider: getPublicUploadSignedProvider(),
       bucket,
       uploadId,
       files,
@@ -404,15 +383,16 @@ const createSignedUploadMap = async (
     throw new Error(error.message);
   }
 
-  const uploads = (data as { uploads?: Array<{ path?: string; token?: string }> } | null)?.uploads ?? [];
+  const uploads = (data as { uploads?: Array<{ path?: string; token?: string; url?: string }> } | null)?.uploads ?? [];
   const tokenMap = new Map<string, string>();
 
   for (const upload of uploads) {
-    if (!upload.path || !upload.token) {
+    const uploadCredential = upload.token ?? upload.url;
+    if (!upload.path || !uploadCredential) {
       continue;
     }
 
-    tokenMap.set(upload.path, upload.token);
+    tokenMap.set(upload.path, uploadCredential);
   }
 
   if (tokenMap.size !== files.length) {
@@ -431,6 +411,7 @@ const finalizeSignedUpload = async (
   const { error } = await supabase.functions.invoke('create-user-upload-urls', {
     body: {
       action: 'finalize',
+      storageProvider: getPublicUploadSignedProvider(),
       bucket,
       uploadId,
       inviteToken: inviteToken ?? null,
@@ -607,13 +588,7 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
         throw new Error(`Signed Upload Token fehlt fuer ${entry.path}`);
       }
 
-      const { error: uploadError } = await supabase.storage
-        .from('user_uploads')
-        .uploadToSignedUrl(entry.path, token, entry.file);
-
-      if (uploadError) {
-        throw new Error(uploadError.message);
-      }
+      await uploadToSignedStorageUrl('user_uploads', entry.path, token, entry.file);
 
       uploadedPaths.push(entry.path);
     }

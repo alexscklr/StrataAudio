@@ -4,15 +4,19 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.3",
+    "cloudflare": "^5.2.0",
     "dotenv": "^17.3.1",
     "glob": "^13.0.6",
     "mime": "^4.1.0",
     "mime-types": "^3.0.2"
   },
   "scripts": {
-    "db:reset": "supabase db reset && node storage-seed.js",
-    "backend:start": "supabase start && supabase db reset && node storage-seed.js",
+    "db:reset": "cp .env supabase/functions/.env && supabase db reset && supabase db query \"notify pgrst, 'reload schema';\" && node storage-seed.js",
+    "backend:start": "cp .env supabase/functions/.env && supabase start && supabase db reset && supabase db query \"notify pgrst, 'reload schema';\" && node storage-seed.js",
     "backend:stop": "supabase stop",
-    "backend:restart": "npm run backend:stop && npm run backend:start"
+    "backend:restart": "npm run backend:stop && npm run backend:start",
+    "r2:bucket:ensure": "node scripts/r2-cors.mjs ensure user-uploads",
+    "r2:cors:set": "node scripts/r2-cors.mjs set user-uploads cors.json",
+    "r2:cors:list": "node scripts/r2-cors.mjs list user-uploads"
   }
 }

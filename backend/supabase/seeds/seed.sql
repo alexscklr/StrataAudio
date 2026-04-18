@@ -54,3 +54,96 @@ INSERT INTO audio_contents (audio_id, title_de, title_en) VALUES
 ('f1b2c3e4-5678-90ab-cdef-1234567890ab', 'Spiel', NULL),
 ('f1b2c3e4-5678-90ab-cdef-1234567890ac', 'Hintergrundmusik', NULL),
 ('f1b2c3e4-5678-90ab-cdef-1234567890ae', 'Sprache', NULL);
+
+-- Test auth user for local login:
+-- email: test@strataaudio.local
+-- password: test
+INSERT INTO auth.users (
+	id,
+	instance_id,
+	aud,
+	role,
+	email,
+	encrypted_password,
+	email_confirmed_at,
+	confirmation_token,
+	recovery_token,
+	email_change_token_new,
+	email_change,
+	email_change_token_current,
+	phone,
+	phone_change,
+	reauthentication_token,
+	created_at,
+	updated_at,
+	raw_app_meta_data,
+	raw_user_meta_data,
+	is_sso_user,
+	is_anonymous
+) VALUES (
+	'9f0b6b8f-a4ee-4d5f-8951-4c3b5af667e1',
+	'00000000-0000-0000-0000-000000000000',
+	'authenticated',
+	'authenticated',
+	'test@strataaudio.local',
+	crypt('test', gen_salt('bf')),
+	now(),
+	'',
+	'',
+	'',
+	'',
+	'',
+	'',
+	'',
+	'',
+	now(),
+	now(),
+	'{"provider":"email","providers":["email"]}',
+	'{}',
+	false,
+	false
+)
+ON CONFLICT (id) DO UPDATE
+SET
+	email = EXCLUDED.email,
+	encrypted_password = EXCLUDED.encrypted_password,
+	email_confirmed_at = EXCLUDED.email_confirmed_at,
+	confirmation_token = EXCLUDED.confirmation_token,
+	recovery_token = EXCLUDED.recovery_token,
+	email_change_token_new = EXCLUDED.email_change_token_new,
+	email_change = EXCLUDED.email_change,
+	email_change_token_current = EXCLUDED.email_change_token_current,
+	phone = EXCLUDED.phone,
+	phone_change = EXCLUDED.phone_change,
+	reauthentication_token = EXCLUDED.reauthentication_token,
+	updated_at = now(),
+	raw_app_meta_data = EXCLUDED.raw_app_meta_data,
+	raw_user_meta_data = EXCLUDED.raw_user_meta_data,
+	is_sso_user = EXCLUDED.is_sso_user,
+	is_anonymous = EXCLUDED.is_anonymous;
+
+INSERT INTO auth.identities (
+	id,
+	user_id,
+	identity_data,
+	provider,
+	provider_id,
+	created_at,
+	updated_at,
+	last_sign_in_at
+) VALUES (
+	'9f0b6b8f-a4ee-4d5f-8951-4c3b5af667e1',
+	'9f0b6b8f-a4ee-4d5f-8951-4c3b5af667e1',
+	'{"sub":"9f0b6b8f-a4ee-4d5f-8951-4c3b5af667e1","email":"test@strataaudio.local"}',
+	'email',
+	'test@strataaudio.local',
+	now(),
+	now(),
+	now()
+)
+ON CONFLICT (provider, provider_id) DO UPDATE
+SET
+	user_id = EXCLUDED.user_id,
+	identity_data = EXCLUDED.identity_data,
+	updated_at = now(),
+	last_sign_in_at = EXCLUDED.last_sign_in_at;
