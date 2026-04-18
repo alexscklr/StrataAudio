@@ -1,8 +1,8 @@
-import { supabase } from '@/api/supabaseClient';
+import { supabase } from "@/api/supabaseClient";
 
-const USER_HASH_STORAGE_KEY = 'user-hash';
-const PARTICIPANT_ID_STORAGE_KEY = 'participant-id';
-const PARTICIPANT_CREATED_STORAGE_KEY = 'participant-created';
+const USER_HASH_STORAGE_KEY = "user-hash";
+const PARTICIPANT_ID_STORAGE_KEY = "participant-id";
+const PARTICIPANT_CREATED_STORAGE_KEY = "participant-created";
 
 interface BrowserInfo {
   browserName: string;
@@ -26,55 +26,55 @@ export interface ClientEnvironmentInfo {
 const parseBrowserInfo = (userAgent: string): BrowserInfo => {
   const normalizedUa = userAgent.toLowerCase();
 
-  if (normalizedUa.includes('edg/')) {
-    const version = /edg\/([\d.]+)/i.exec(userAgent)?.[1] ?? 'unknown';
-    return { browserName: 'Edge', browserVersion: version };
+  if (normalizedUa.includes("edg/")) {
+    const version = /edg\/([\d.]+)/i.exec(userAgent)?.[1] ?? "unknown";
+    return { browserName: "Edge", browserVersion: version };
   }
 
-  if (normalizedUa.includes('chrome/') && !normalizedUa.includes('edg/')) {
-    const version = /chrome\/([\d.]+)/i.exec(userAgent)?.[1] ?? 'unknown';
-    return { browserName: 'Chrome', browserVersion: version };
+  if (normalizedUa.includes("chrome/") && !normalizedUa.includes("edg/")) {
+    const version = /chrome\/([\d.]+)/i.exec(userAgent)?.[1] ?? "unknown";
+    return { browserName: "Chrome", browserVersion: version };
   }
 
-  if (normalizedUa.includes('firefox/')) {
-    const version = /firefox\/([\d.]+)/i.exec(userAgent)?.[1] ?? 'unknown';
-    return { browserName: 'Firefox', browserVersion: version };
+  if (normalizedUa.includes("firefox/")) {
+    const version = /firefox\/([\d.]+)/i.exec(userAgent)?.[1] ?? "unknown";
+    return { browserName: "Firefox", browserVersion: version };
   }
 
-  if (normalizedUa.includes('safari/') && !normalizedUa.includes('chrome/')) {
-    const version = /version\/([\d.]+)/i.exec(userAgent)?.[1] ?? 'unknown';
-    return { browserName: 'Safari', browserVersion: version };
+  if (normalizedUa.includes("safari/") && !normalizedUa.includes("chrome/")) {
+    const version = /version\/([\d.]+)/i.exec(userAgent)?.[1] ?? "unknown";
+    return { browserName: "Safari", browserVersion: version };
   }
 
-  return { browserName: 'unknown', browserVersion: 'unknown' };
+  return { browserName: "unknown", browserVersion: "unknown" };
 };
 
 const parseOsInfo = (userAgent: string): OsInfo => {
   const windowsMatch = /Windows NT ([\d.]+)/i.exec(userAgent);
   if (windowsMatch) {
-    return { osName: 'Windows', osVersion: windowsMatch[1] };
+    return { osName: "Windows", osVersion: windowsMatch[1] };
   }
 
   const macMatch = /Mac OS X ([\d_]+)/i.exec(userAgent);
   if (macMatch) {
-    return { osName: 'macOS', osVersion: macMatch[1].replace(/_/g, '.') };
+    return { osName: "macOS", osVersion: macMatch[1].replace(/_/g, ".") };
   }
 
   const androidMatch = /Android ([\d.]+)/i.exec(userAgent);
   if (androidMatch) {
-    return { osName: 'Android', osVersion: androidMatch[1] };
+    return { osName: "Android", osVersion: androidMatch[1] };
   }
 
   const iosMatch = /OS ([\d_]+) like Mac OS X/i.exec(userAgent);
   if (iosMatch) {
-    return { osName: 'iOS', osVersion: iosMatch[1].replace(/_/g, '.') };
+    return { osName: "iOS", osVersion: iosMatch[1].replace(/_/g, ".") };
   }
 
   if (/Linux/i.test(userAgent)) {
-    return { osName: 'Linux', osVersion: 'unknown' };
+    return { osName: "Linux", osVersion: "unknown" };
   }
 
-  return { osName: 'unknown', osVersion: 'unknown' };
+  return { osName: "unknown", osVersion: "unknown" };
 };
 
 const getOrCreateUserHash = (): string => {
@@ -115,29 +115,30 @@ export const ensureParticipantExists = async (): Promise<string> => {
   const participantId = storedParticipantId ?? crypto.randomUUID();
   const environmentInfo = getClientEnvironmentInfo();
 
-  const { error } = await supabase
-    .from('participants')
-    .insert({
-      id: participantId,
-      created_at: new Date().toISOString(),
-      user_hash: userHash,
-      browser_name: environmentInfo.browserName,
-      browser_version: environmentInfo.browserVersion,
-      os_name: environmentInfo.osName,
-      os_version: environmentInfo.osVersion,
-      screen_res_width: environmentInfo.screenWidth,
-      screen_res_height: environmentInfo.screenHeight,
-    });
+  const { error } = await supabase.rpc("register_participant", {
+    p_id: participantId,
+    p_user_hash: userHash,
+    p_browser_name: environmentInfo.browserName,
+    p_browser_version: environmentInfo.browserVersion,
+    p_os_name: environmentInfo.osName,
+    p_os_version: environmentInfo.osVersion,
+    p_screen_res_width: environmentInfo.screenWidth,
+    p_screen_res_height: environmentInfo.screenHeight,
+  });
+
+  if (error && error.message.includes("STUDY_INACTIVE")) {
+    throw new Error("The study is currently inactive. Please try again later.");
+  }
 
   if (error) {
     // 23505 = unique_violation. If participant already exists, we can continue.
-    if (error.code !== '23505') {
+    if (error.code !== "23505") {
       // Keep hash in localStorage even when insert fails; next session can retry.
       throw error;
     }
   }
 
   localStorage.setItem(PARTICIPANT_ID_STORAGE_KEY, participantId);
-  localStorage.setItem(PARTICIPANT_CREATED_STORAGE_KEY, 'true');
+  localStorage.setItem(PARTICIPANT_CREATED_STORAGE_KEY, "true");
   return participantId;
 };
