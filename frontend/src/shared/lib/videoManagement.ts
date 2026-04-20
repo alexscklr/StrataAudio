@@ -269,6 +269,7 @@ export interface UploadRawSourceInput {
   }[];
   inviteToken?: string | null;
   captchaToken?: string | null;
+  consentGiven?: boolean;
 }
 
 export interface CreateUploadInviteInput {
@@ -450,9 +451,11 @@ const buildInfoFileContent = (
     `video_audio_default_volume=${input.videoAudio ? clampVolume(input.videoAudio.defaultVolume) : ""}`,
     `video_audio_icon=${uploadedVideoAudioIconPath ?? ""}`,
     `thumbnail_path=${uploadedThumbnailPath ?? ""}`,
-    "",
-    "[audios]",
   ];
+  if (input.consentGiven) {
+    lines.push(`consent_given_at=${new Date().toISOString()}`);
+  }
+  lines.push("", "[audios]");
 
   input.audioFiles.forEach((audio, index) => {
     const sanitizedAudioName = sanitizeFileName(audio.file.name);

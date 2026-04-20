@@ -129,6 +129,7 @@ const dePages = {
     rawUploadSuccess:
       "Rohdaten wurden erfolgreich nach user_uploads hochgeladen.",
     thumbnailAlt: "Thumbnail zu {{title}}",
+    consentCheckboxLabel: "Ich willige ein, dass die hochgeladenen Daten ohne Namensnennung verwendet werden dürfen.",
   },
   watchPage: {
     playbackNote:

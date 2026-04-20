@@ -125,6 +125,7 @@ const enPages = {
     uploadSuccess: "Video uploaded successfully.",
     rawUploadSuccess: "Raw files uploaded successfully to user_uploads.",
     thumbnailAlt: "Thumbnail for {{title}}",
+    consentCheckboxLabel: "I consent to the uploaded data being used without attribution.",
   },
   watchPage: {
     playbackNote:

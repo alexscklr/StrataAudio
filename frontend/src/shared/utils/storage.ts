@@ -106,7 +106,7 @@ const uploadWithSignedDescriptor = async (
         });
     } catch (error) {
         throw new Error(
-            'Upload fehlgeschlagen. Fuer direkte Browser-Uploads nach R2 muss Bucket-CORS den Origin erlauben (z. B. http://localhost:5173) und PUT zulassen.'
+            'Upload fehlgeschlagen.'
         );
     }
 

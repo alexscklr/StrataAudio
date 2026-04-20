@@ -25,6 +25,7 @@ import type {
 import { compareStreamFolders, toRelativePath } from "../shared/utils/videoManagement";
 
 function VideoManagementPage() {
+  const [consentGiven, setConsentGiven] = useState(false);
   const { t, i18n } = useTranslation();
   const { user, loading } = useContext(AuthContext);
   const queryClient = useQueryClient();
@@ -227,6 +228,9 @@ function VideoManagementPage() {
     const parsedDuration = durationSeconds.trim() ? Number(durationSeconds.trim()) : null;
 
     if (uploadMode === "raw") {
+      if (!consentGiven) {
+        return;
+      }
       const minRawAudioFiles = rawVideoContainsAudio ? 1 : 2;
       if (!rawVideoFile || rawAudioFiles.length < minRawAudioFiles) {
         return;
@@ -277,6 +281,7 @@ function VideoManagementPage() {
         inviteToken,
         captchaToken,
         audioFiles: rawAudioFiles.map((audio) => ({
+        consentGiven,
           file: audio.file,
           titleDe: audio.titleDe.trim() || audio.titleEn.trim(),
           titleEn: audio.titleEn.trim() || audio.titleDe.trim(),
@@ -519,6 +524,8 @@ function VideoManagementPage() {
         onMandatoryChange={setIsMandatory}
         updateTrack={updateTrack}
         updateRawAudio={updateRawAudio}
+        consentGiven={consentGiven}
+        setConsentGiven={setConsentGiven}
       />
       <LogInOutButton popoverTarget="video-management-login-inline" />
     </section>

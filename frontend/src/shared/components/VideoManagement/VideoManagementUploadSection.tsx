@@ -8,7 +8,10 @@ import type {
   UploadMode,
 } from "@/shared/types/videoManagement";
 import { CaptchaWidget } from "./CaptchaWidget";
-import { HCAPTCHA_SITE_KEY, CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS } from "@/config/captcha";
+import {
+  HCAPTCHA_SITE_KEY,
+  CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS,
+} from "@/config/captcha";
 
 interface VideoManagementUploadSectionProps {
   canUpload: boolean;
@@ -48,7 +51,9 @@ interface VideoManagementUploadSectionProps {
   onMediaFolderFilesChange: (files: File[]) => void;
   onRawVideoFileChange: (file: File | null) => void;
   onRawVideoContainsAudioChange: (value: boolean) => void;
-  updateRawVideoAudioMeta: (updater: (current: EmbeddedAudioFormState) => EmbeddedAudioFormState) => void;
+  updateRawVideoAudioMeta: (
+    updater: (current: EmbeddedAudioFormState) => EmbeddedAudioFormState,
+  ) => void;
   onRawThumbnailFileChange: (file: File | null) => void;
   onRawAudioFileChange: (index: number, file: File | null) => void;
   onTitleDeChange: (value: string) => void;
@@ -59,8 +64,14 @@ interface VideoManagementUploadSectionProps {
   onGenreEnChange: (value: string) => void;
   onDurationSecondsChange: (value: string) => void;
   onMandatoryChange: (value: boolean) => void;
-  updateTrack: (streamFolder: string, updater: (current: AudioTrackFormState) => AudioTrackFormState) => void;
-  updateRawAudio: (index: number, updater: (current: RawAudioFileFormState) => RawAudioFileFormState) => void;
+  updateTrack: (
+    streamFolder: string,
+    updater: (current: AudioTrackFormState) => AudioTrackFormState,
+  ) => void;
+  updateRawAudio: (
+    index: number,
+    updater: (current: RawAudioFileFormState) => RawAudioFileFormState,
+  ) => void;
 }
 
 export function VideoManagementUploadSection({
@@ -117,30 +128,50 @@ export function VideoManagementUploadSection({
 }: VideoManagementUploadSectionProps) {
   const { t } = useTranslation();
   const [rawAudioInputCount, setRawAudioInputCount] = useState(1);
+  const [consentGiven, setConsentGiven] = useState(false);
 
   useEffect(() => {
-    setRawAudioInputCount((previous) => Math.max(previous, rawAudioFiles.length + 1));
+    setRawAudioInputCount((previous) =>
+      Math.max(previous, rawAudioFiles.length + 1),
+    );
   }, [rawAudioFiles.length]);
 
-  const rawAudioInputSlots = Math.max(rawAudioInputCount, rawAudioFiles.length + 1);
+  const rawAudioInputSlots = Math.max(
+    rawAudioInputCount,
+    rawAudioFiles.length + 1,
+  );
   const maxRawAudioInputSlots = 32;
   const minRawAudioFiles = rawVideoContainsAudio ? 1 : 2;
   const hasRequiredRawAudios = rawAudioFiles.length >= minRawAudioFiles;
-  const hasRequiredRawVideoAudioMetadata = !rawVideoContainsAudio || (
-    (rawVideoAudioMeta.titleDe.trim() || rawVideoAudioMeta.titleEn.trim())
-  );
+  const hasRequiredRawVideoAudioMetadata =
+    !rawVideoContainsAudio ||
+    rawVideoAudioMeta.titleDe.trim() ||
+    rawVideoAudioMeta.titleEn.trim();
   const hasRequiredRawAudioMetadata = rawAudioFiles.every(
-    (audio) => (audio.titleDe.trim() || audio.titleEn.trim())
+    (audio) => audio.titleDe.trim() || audio.titleEn.trim(),
   );
 
-  const uploadDisabled = isUploading
-    || (uploadMode === "catalog" && (!hasMaster || !hasVideoPlaylist || audioTracks.length === 0))
-    || (uploadMode === "raw" && (!rawVideoFile || !hasRequiredRawVideoAudioMetadata || !hasRequiredRawAudios || !hasRequiredRawAudioMetadata))
-    || (canUploadWithInvite && CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS && !captchaToken);
+  const uploadDisabled =
+    isUploading ||
+    (uploadMode === "catalog" &&
+      (!hasMaster || !hasVideoPlaylist || audioTracks.length === 0)) ||
+    (uploadMode === "raw" &&
+      (!rawVideoFile ||
+        !hasRequiredRawVideoAudioMetadata ||
+        !hasRequiredRawAudios ||
+        !hasRequiredRawAudioMetadata)) ||
+    (canUploadWithInvite &&
+      CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS &&
+      !captchaToken) ||
+    !consentGiven;
 
   return (
     <section className={styles.sectionCard}>
-      <h2>{canUploadWithInvite ? t("videoManagement.uploadTitleInvite") : t("videoManagement.uploadTitle")}</h2>
+      <h2>
+        {canUploadWithInvite
+          ? t("videoManagement.uploadTitleInvite")
+          : t("videoManagement.uploadTitle")}
+      </h2>
       {isAdmin && (
         <div className={styles.modeSwitch}>
           <button
@@ -169,6 +200,15 @@ export function VideoManagementUploadSection({
       )}
 
       <form className={styles.formGrid} onSubmit={onSubmit}>
+        <label className={styles.switchLabel} style={{marginBottom: 8}}>
+          <input
+            type="checkbox"
+            checked={consentGiven}
+            onChange={e => setConsentGiven(e.target.checked)}
+            required
+          />
+          {t("videoManagement.consentCheckboxLabel")}
+        </label>
         {canUploadWithInvite && CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS && (
           <CaptchaWidget
             siteKey={HCAPTCHA_SITE_KEY}
@@ -231,32 +271,66 @@ export function VideoManagementUploadSection({
           <>
             <label>
               {t("videoManagement.titleDe")}
-              <input value={titleDe} onChange={(event) => { onTitleDeChange(event.target.value); }} required />
+              <input
+                value={titleDe}
+                onChange={(event) => {
+                  onTitleDeChange(event.target.value);
+                }}
+                required
+              />
             </label>
 
             <label>
               {t("videoManagement.titleEn")}
-              <input value={titleEn} onChange={(event) => { onTitleEnChange(event.target.value); }} />
+              <input
+                value={titleEn}
+                onChange={(event) => {
+                  onTitleEnChange(event.target.value);
+                }}
+              />
             </label>
 
             <label>
               {t("videoManagement.genreDe")}
-              <input value={genreDe} onChange={(event) => { onGenreDeChange(event.target.value); }} required />
+              <input
+                value={genreDe}
+                onChange={(event) => {
+                  onGenreDeChange(event.target.value);
+                }}
+                required
+              />
             </label>
 
             <label>
               {t("videoManagement.genreEn")}
-              <input value={genreEn} onChange={(event) => { onGenreEnChange(event.target.value); }} />
+              <input
+                value={genreEn}
+                onChange={(event) => {
+                  onGenreEnChange(event.target.value);
+                }}
+              />
             </label>
 
             <label className={styles.fullWidth}>
               {t("videoManagement.descriptionDe")}
-              <textarea value={descriptionDe} onChange={(event) => { onDescriptionDeChange(event.target.value); }} rows={3} />
+              <textarea
+                value={descriptionDe}
+                onChange={(event) => {
+                  onDescriptionDeChange(event.target.value);
+                }}
+                rows={3}
+              />
             </label>
 
             <label className={styles.fullWidth}>
               {t("videoManagement.descriptionEn")}
-              <textarea value={descriptionEn} onChange={(event) => { onDescriptionEnChange(event.target.value); }} rows={3} />
+              <textarea
+                value={descriptionEn}
+                onChange={(event) => {
+                  onDescriptionEnChange(event.target.value);
+                }}
+                rows={3}
+              />
             </label>
           </>
         )}
@@ -267,7 +341,9 @@ export function VideoManagementUploadSection({
             type="number"
             min={0}
             value={durationSeconds}
-            onChange={(event) => { onDurationSecondsChange(event.target.value); }}
+            onChange={(event) => {
+              onDurationSecondsChange(event.target.value);
+            }}
             placeholder="z. B. 147"
           />
         </label>
@@ -277,7 +353,9 @@ export function VideoManagementUploadSection({
             <input
               type="checkbox"
               checked={isMandatory}
-              onChange={(event) => { onMandatoryChange(event.target.checked); }}
+              onChange={(event) => {
+                onMandatoryChange(event.target.checked);
+              }}
             />
             {t("videoManagement.mandatory")}
           </label>
@@ -296,16 +374,30 @@ export function VideoManagementUploadSection({
                 onMediaFolderFilesChange(selectedFiles);
               }}
             />
-            <p className={styles.uploadInputHint}>{t("videoManagement.mediaFolderHintDetailed")}</p>
+            <p className={styles.uploadInputHint}>
+              {t("videoManagement.mediaFolderHintDetailed")}
+            </p>
             <div className={styles.inlineStatusRow}>
-              <span className={`${styles.statusText} ${hasMaster ? styles.statusTextOk : styles.statusTextError}`}>
-                {hasMaster ? t("videoManagement.checkMasterOk") : t("videoManagement.checkMasterMissing")}
+              <span
+                className={`${styles.statusText} ${hasMaster ? styles.statusTextOk : styles.statusTextError}`}
+              >
+                {hasMaster
+                  ? t("videoManagement.checkMasterOk")
+                  : t("videoManagement.checkMasterMissing")}
               </span>
-              <span className={`${styles.statusText} ${hasVideoPlaylist ? styles.statusTextOk : styles.statusTextError}`}>
-                {hasVideoPlaylist ? t("videoManagement.checkStream0Ok") : t("videoManagement.checkStream0Missing")}
+              <span
+                className={`${styles.statusText} ${hasVideoPlaylist ? styles.statusTextOk : styles.statusTextError}`}
+              >
+                {hasVideoPlaylist
+                  ? t("videoManagement.checkStream0Ok")
+                  : t("videoManagement.checkStream0Missing")}
               </span>
-              <span className={`${styles.statusText} ${hasThumbnail ? styles.statusTextOk : styles.statusTextOptional}`}>
-                {hasThumbnail ? t("videoManagement.checkThumbnailOk") : t("videoManagement.checkThumbnailMissing")}
+              <span
+                className={`${styles.statusText} ${hasThumbnail ? styles.statusTextOk : styles.statusTextOptional}`}
+              >
+                {hasThumbnail
+                  ? t("videoManagement.checkThumbnailOk")
+                  : t("videoManagement.checkThumbnailMissing")}
               </span>
             </div>
           </label>
@@ -314,18 +406,27 @@ export function VideoManagementUploadSection({
         {uploadMode === "catalog" && isAdmin && audioTracks.length > 0 && (
           <div className={`${styles.fullWidth} ${styles.audioTracksSection}`}>
             <h3>{t("videoManagement.audioTracksTitle")}</h3>
-            <p className={styles.sectionHint}>{t("videoManagement.audioTracksHint")}</p>
+            <p className={styles.sectionHint}>
+              {t("videoManagement.audioTracksHint")}
+            </p>
             <div className={styles.inlineStatusRow}>
-              <span className={`${styles.statusText} ${audioTracks.length > 0 ? styles.statusTextOk : styles.statusTextError}`}>
+              <span
+                className={`${styles.statusText} ${audioTracks.length > 0 ? styles.statusTextOk : styles.statusTextError}`}
+              >
                 {audioTracks.length > 0
-                  ? t("videoManagement.checkAudioTracksOk", { count: audioTracks.length })
+                  ? t("videoManagement.checkAudioTracksOk", {
+                      count: audioTracks.length,
+                    })
                   : t("videoManagement.checkAudioTracksMissing")}
               </span>
             </div>
 
             <div className={styles.audioTracksGrid}>
               {audioTracks.map((track) => (
-                <article key={track.streamFolder} className={styles.audioTrackCard}>
+                <article
+                  key={track.streamFolder}
+                  className={styles.audioTrackCard}
+                >
                   <h4>{track.streamFolder}</h4>
 
                   <label>
@@ -390,7 +491,11 @@ export function VideoManagementUploadSection({
               ))}
             </ul>
             {detectedFiles.length > 24 && (
-              <p className={styles.sectionHint}>{t("videoManagement.moreFiles", { count: detectedFiles.length - 24 })}</p>
+              <p className={styles.sectionHint}>
+                {t("videoManagement.moreFiles", {
+                  count: detectedFiles.length - 24,
+                })}
+              </p>
             )}
           </div>
         )}
@@ -408,11 +513,17 @@ export function VideoManagementUploadSection({
                     onRawVideoFileChange(event.target.files?.[0] ?? null);
                   }}
                 />
-                <span className={`${styles.statusText} ${rawVideoFile ? styles.statusTextOk : styles.statusTextError}`}>
-                  {rawVideoFile ? t("videoManagement.checkRawVideoOk") : t("videoManagement.checkRawVideoMissing")}
+                <span
+                  className={`${styles.statusText} ${rawVideoFile ? styles.statusTextOk : styles.statusTextError}`}
+                >
+                  {rawVideoFile
+                    ? t("videoManagement.checkRawVideoOk")
+                    : t("videoManagement.checkRawVideoMissing")}
                 </span>
               </div>
-              <p className={styles.uploadInputHint}>{t("videoManagement.rawVideoFileHint")}</p>
+              <p className={styles.uploadInputHint}>
+                {t("videoManagement.rawVideoFileHint")}
+              </p>
             </label>
 
             <label className={`${styles.fullWidth} ${styles.switchLabel}`}>
@@ -427,11 +538,15 @@ export function VideoManagementUploadSection({
             </label>
 
             {rawVideoContainsAudio && (
-              <section className={`${styles.fullWidth} ${styles.containsAudioCard}`}>
+              <section
+                className={`${styles.fullWidth} ${styles.containsAudioCard}`}
+              >
                 <h3>{t("videoManagement.rawVideoContainsAudioTitle")}</h3>
 
                 <div className={styles.inlineStatusRow}>
-                  <span className={`${styles.statusText} ${hasRequiredRawVideoAudioMetadata ? styles.statusTextOk : styles.statusTextError}`}>
+                  <span
+                    className={`${styles.statusText} ${hasRequiredRawVideoAudioMetadata ? styles.statusTextOk : styles.statusTextError}`}
+                  >
                     {hasRequiredRawVideoAudioMetadata
                       ? t("videoManagement.rawVideoAudioMetaComplete")
                       : t("videoManagement.rawVideoAudioMetaRequired")}
@@ -445,15 +560,19 @@ export function VideoManagementUploadSection({
                         <label>
                           {t("videoManagement.localizedAudioContent")}
                           <input
-                            value={isEnglishUi ? rawVideoAudioMeta.titleEn : rawVideoAudioMeta.titleDe}
+                            value={
+                              isEnglishUi
+                                ? rawVideoAudioMeta.titleEn
+                                : rawVideoAudioMeta.titleDe
+                            }
                             required
                             onChange={(event) => {
                               const next = event.target.value;
-                              updateRawVideoAudioMeta((current) => (
+                              updateRawVideoAudioMeta((current) =>
                                 isEnglishUi
                                   ? { ...current, titleEn: next, typeEn: next }
-                                  : { ...current, titleDe: next, typeDe: next }
-                              ));
+                                  : { ...current, titleDe: next, typeDe: next },
+                              );
                             }}
                           />
                         </label>
@@ -467,7 +586,11 @@ export function VideoManagementUploadSection({
                             required
                             onChange={(event) => {
                               const next = event.target.value;
-                              updateRawVideoAudioMeta((current) => ({ ...current, titleDe: next, typeDe: next }));
+                              updateRawVideoAudioMeta((current) => ({
+                                ...current,
+                                titleDe: next,
+                                typeDe: next,
+                              }));
                             }}
                           />
                         </label>
@@ -478,7 +601,11 @@ export function VideoManagementUploadSection({
                             value={rawVideoAudioMeta.titleEn}
                             onChange={(event) => {
                               const next = event.target.value;
-                              updateRawVideoAudioMeta((current) => ({ ...current, titleEn: next, typeEn: next }));
+                              updateRawVideoAudioMeta((current) => ({
+                                ...current,
+                                titleEn: next,
+                                typeEn: next,
+                              }));
                             }}
                           />
                         </label>
@@ -494,7 +621,10 @@ export function VideoManagementUploadSection({
                         step={0.05}
                         value={rawVideoAudioMeta.defaultVolume}
                         onChange={(event) => {
-                          updateRawVideoAudioMeta((current) => ({ ...current, defaultVolume: event.target.value }));
+                          updateRawVideoAudioMeta((current) => ({
+                            ...current,
+                            defaultVolume: event.target.value,
+                          }));
                         }}
                       />
                     </label>
@@ -513,23 +643,40 @@ export function VideoManagementUploadSection({
                     onRawThumbnailFileChange(event.target.files?.[0] ?? null);
                   }}
                 />
-                <span className={`${styles.statusText} ${rawThumbnailFile ? styles.statusTextOk : styles.statusTextOptional}`}>
-                  {rawThumbnailFile ? t("videoManagement.checkRawThumbnailOk") : t("videoManagement.checkRawThumbnailMissing")}
+                <span
+                  className={`${styles.statusText} ${rawThumbnailFile ? styles.statusTextOk : styles.statusTextOptional}`}
+                >
+                  {rawThumbnailFile
+                    ? t("videoManagement.checkRawThumbnailOk")
+                    : t("videoManagement.checkRawThumbnailMissing")}
                 </span>
               </div>
-              <p className={styles.uploadInputHint}>{t("videoManagement.rawThumbnailFileHint")}</p>
+              <p className={styles.uploadInputHint}>
+                {t("videoManagement.rawThumbnailFileHint")}
+              </p>
             </label>
 
-            <div className={`${styles.fullWidth} ${styles.sectionDivider}`} aria-hidden="true" />
+            <div
+              className={`${styles.fullWidth} ${styles.sectionDivider}`}
+              aria-hidden="true"
+            />
 
             <div className={`${styles.fullWidth} ${styles.audioTracksSection}`}>
               <h3>{t("videoManagement.rawAudioFiles")}</h3>
-              <p className={styles.sectionHint}>{t("videoManagement.rawAudioPickerHint")}</p>
+              <p className={styles.sectionHint}>
+                {t("videoManagement.rawAudioPickerHint")}
+              </p>
               <div className={styles.inlineStatusRow}>
-                <span className={`${styles.statusText} ${hasRequiredRawAudios ? styles.statusTextOk : styles.statusTextError}`}>
+                <span
+                  className={`${styles.statusText} ${hasRequiredRawAudios ? styles.statusTextOk : styles.statusTextError}`}
+                >
                   {hasRequiredRawAudios
-                    ? t("videoManagement.checkRawAudiosOk", { count: rawAudioFiles.length })
-                    : t("videoManagement.rawAudioMinRequired", { count: minRawAudioFiles })}
+                    ? t("videoManagement.checkRawAudiosOk", {
+                        count: rawAudioFiles.length,
+                      })
+                    : t("videoManagement.rawAudioMinRequired", {
+                        count: minRawAudioFiles,
+                      })}
                 </span>
               </div>
 
@@ -538,21 +685,38 @@ export function VideoManagementUploadSection({
                   const currentAudio = rawAudioFiles[index] ?? null;
 
                   return (
-                    <article key={`raw-audio-input-${index}`} className={styles.audioTrackCard}>
+                    <article
+                      key={`raw-audio-input-${index}`}
+                      className={styles.audioTrackCard}
+                    >
                       <label>
                         <span className={styles.audioFileLabelLine}>
-                          {t("videoManagement.rawAudioFileLabel", { index: index + 1 })}
+                          {t("videoManagement.rawAudioFileLabel", {
+                            index: index + 1,
+                          })}
                         </span>
                         <input
                           type="file"
-                          required={index < minRawAudioFiles && rawAudioFiles.length <= index}
+                          required={
+                            index < minRawAudioFiles &&
+                            rawAudioFiles.length <= index
+                          }
                           accept=".aiff,.aif,.wav,.mp3,.aac,.flac,.m4a,.ogg,audio/*"
                           onChange={(event) => {
-                            onRawAudioFileChange(index, event.target.files?.[0] ?? null);
+                            onRawAudioFileChange(
+                              index,
+                              event.target.files?.[0] ?? null,
+                            );
                           }}
                         />
-                        <p className={styles.uploadInputHint}>{t("videoManagement.rawAudioFileHint")}</p>
-                        {currentAudio && <span className={styles.audioFileName}>{currentAudio.file.name}</span>}
+                        <p className={styles.uploadInputHint}>
+                          {t("videoManagement.rawAudioFileHint")}
+                        </p>
+                        {currentAudio && (
+                          <span className={styles.audioFileName}>
+                            {currentAudio.file.name}
+                          </span>
+                        )}
                       </label>
 
                       {currentAudio && (
@@ -576,7 +740,9 @@ export function VideoManagementUploadSection({
                 className={styles.modeButton}
                 disabled={rawAudioInputSlots >= maxRawAudioInputSlots}
                 onClick={() => {
-                  setRawAudioInputCount((previous) => Math.min(previous + 1, maxRawAudioInputSlots));
+                  setRawAudioInputCount((previous) =>
+                    Math.min(previous + 1, maxRawAudioInputSlots),
+                  );
                 }}
               >
                 {t("videoManagement.addAudioFileAction")}
@@ -584,22 +750,34 @@ export function VideoManagementUploadSection({
             </div>
 
             {rawAudioFiles.length > 0 && (
-              <div className={`${styles.fullWidth} ${styles.audioTracksSection}`}>
+              <div
+                className={`${styles.fullWidth} ${styles.audioTracksSection}`}
+              >
                 <h3>{t("videoManagement.rawAudioMetaTitle")}</h3>
-                <p className={styles.sectionHint}>{t("videoManagement.rawAudioMetaHint")}</p>
+                <p className={styles.sectionHint}>
+                  {t("videoManagement.rawAudioMetaHint")}
+                </p>
                 <div className={styles.inlineStatusRow}>
-                  <span className={`${styles.statusText} ${hasRequiredRawAudioMetadata ? styles.statusTextOk : styles.statusTextError}`}>
+                  <span
+                    className={`${styles.statusText} ${hasRequiredRawAudioMetadata ? styles.statusTextOk : styles.statusTextError}`}
+                  >
                     {hasRequiredRawAudioMetadata
                       ? t("videoManagement.rawAudioMetaComplete")
                       : t("videoManagement.rawAudioMetaRequired")}
                   </span>
                 </div>
 
-                <div className={`${styles.fullWidth} ${styles.sectionDivider}`} aria-hidden="true" />
+                <div
+                  className={`${styles.fullWidth} ${styles.sectionDivider}`}
+                  aria-hidden="true"
+                />
 
                 <div className={styles.audioTracksGrid}>
                   {rawAudioFiles.map((audio, index) => (
-                    <article key={`${audio.file.name}-${audio.file.size}`} className={styles.audioTrackCard}>
+                    <article
+                      key={`${audio.file.name}-${audio.file.size}`}
+                      className={styles.audioTrackCard}
+                    >
                       <h4>{audio.file.name}</h4>
 
                       {isInviteRawUpload ? (
@@ -607,15 +785,25 @@ export function VideoManagementUploadSection({
                           <label>
                             {t("videoManagement.localizedAudioContent")}
                             <input
-                              value={isEnglishUi ? audio.titleEn : audio.titleDe}
+                              value={
+                                isEnglishUi ? audio.titleEn : audio.titleDe
+                              }
                               required
                               onChange={(event) => {
                                 const next = event.target.value;
-                                updateRawAudio(index, (current) => (
+                                updateRawAudio(index, (current) =>
                                   isEnglishUi
-                                    ? { ...current, titleEn: next, typeEn: next }
-                                    : { ...current, titleDe: next, typeDe: next }
-                                ));
+                                    ? {
+                                        ...current,
+                                        titleEn: next,
+                                        typeEn: next,
+                                      }
+                                    : {
+                                        ...current,
+                                        titleDe: next,
+                                        typeDe: next,
+                                      },
+                                );
                               }}
                             />
                           </label>
@@ -629,7 +817,11 @@ export function VideoManagementUploadSection({
                               required
                               onChange={(event) => {
                                 const next = event.target.value;
-                                updateRawAudio(index, (current) => ({ ...current, titleDe: next, typeDe: next }));
+                                updateRawAudio(index, (current) => ({
+                                  ...current,
+                                  titleDe: next,
+                                  typeDe: next,
+                                }));
                               }}
                             />
                           </label>
@@ -640,7 +832,11 @@ export function VideoManagementUploadSection({
                               value={audio.titleEn}
                               onChange={(event) => {
                                 const next = event.target.value;
-                                updateRawAudio(index, (current) => ({ ...current, titleEn: next, typeEn: next }));
+                                updateRawAudio(index, (current) => ({
+                                  ...current,
+                                  titleEn: next,
+                                  typeEn: next,
+                                }));
                               }}
                             />
                           </label>
@@ -656,7 +852,10 @@ export function VideoManagementUploadSection({
                           step={0.05}
                           value={audio.defaultVolume}
                           onChange={(event) => {
-                            updateRawAudio(index, (current) => ({ ...current, defaultVolume: event.target.value }));
+                            updateRawAudio(index, (current) => ({
+                              ...current,
+                              defaultVolume: event.target.value,
+                            }));
                           }}
                         />
                       </label>
@@ -669,7 +868,11 @@ export function VideoManagementUploadSection({
         )}
 
         <div className={styles.fullWidth}>
-          <button type="submit" className={styles.submitButton} disabled={uploadDisabled}>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={uploadDisabled}
+          >
             {isUploading
               ? t("videoManagement.uploading")
               : uploadMode === "catalog"
@@ -679,10 +882,22 @@ export function VideoManagementUploadSection({
         </div>
       </form>
 
-      {uploadSuccess && <p className={styles.successText}>{t("videoManagement.uploadSuccess")}</p>}
-      {rawUploadSuccess && <p className={styles.successText}>{t("videoManagement.rawUploadSuccess")}</p>}
-      {uploadErrorMessage && <p className={styles.errorText}>{uploadErrorMessage}</p>}
-      {rawUploadErrorMessage && <p className={styles.errorText}>{rawUploadErrorMessage}</p>}
+      {uploadSuccess && (
+        <p className={styles.successText}>
+          {t("videoManagement.uploadSuccess")}
+        </p>
+      )}
+      {rawUploadSuccess && (
+        <p className={styles.successText}>
+          {t("videoManagement.rawUploadSuccess")}
+        </p>
+      )}
+      {uploadErrorMessage && (
+        <p className={styles.errorText}>{uploadErrorMessage}</p>
+      )}
+      {rawUploadErrorMessage && (
+        <p className={styles.errorText}>{rawUploadErrorMessage}</p>
+      )}
     </section>
   );
 }
