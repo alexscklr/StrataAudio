@@ -296,7 +296,7 @@ export const createUploadInvite = async (
   }
 
   const { data: refreshedData, error: refreshError } = await supabase.auth.refreshSession();
-  let currentSession = refreshedData.session ?? sessionData.session;
+  const currentSession = refreshedData.session ?? sessionData.session;
 
   if (refreshError && !currentSession) {
     throw new Error('Admin-Session abgelaufen. Bitte neu einloggen.');

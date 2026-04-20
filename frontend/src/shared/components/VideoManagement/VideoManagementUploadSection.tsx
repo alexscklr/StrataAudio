@@ -46,6 +46,7 @@ interface VideoManagementUploadSectionProps {
   uploadErrorMessage: string | null;
   rawUploadErrorMessage: string | null;
   captchaToken: string | null;
+  consentGiven: boolean;
   onCaptchaTokenChange: (token: string | null) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onMediaFolderFilesChange: (files: File[]) => void;
@@ -72,6 +73,7 @@ interface VideoManagementUploadSectionProps {
     index: number,
     updater: (current: RawAudioFileFormState) => RawAudioFileFormState,
   ) => void;
+  setConsentGiven: (value: boolean) => void;
 }
 
 export function VideoManagementUploadSection({
@@ -107,6 +109,7 @@ export function VideoManagementUploadSection({
   uploadErrorMessage,
   rawUploadErrorMessage,
   captchaToken,
+  consentGiven,
   onCaptchaTokenChange,
   onSubmit,
   onMediaFolderFilesChange,
@@ -125,10 +128,10 @@ export function VideoManagementUploadSection({
   onMandatoryChange,
   updateTrack,
   updateRawAudio,
+  setConsentGiven
 }: VideoManagementUploadSectionProps) {
   const { t } = useTranslation();
   const [rawAudioInputCount, setRawAudioInputCount] = useState(1);
-  const [consentGiven, setConsentGiven] = useState(false);
 
   useEffect(() => {
     setRawAudioInputCount((previous) =>

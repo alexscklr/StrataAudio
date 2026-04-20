@@ -106,7 +106,7 @@ const uploadWithSignedDescriptor = async (
         });
     } catch (error) {
         throw new Error(
-            'Upload fehlgeschlagen.'
+            `Upload fehlgeschlagen: ${error instanceof Error ? error.message : '-'}`
         );
     }
 
