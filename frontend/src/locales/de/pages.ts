@@ -129,7 +129,8 @@ const dePages = {
     rawUploadSuccess:
       "Rohdaten wurden erfolgreich nach user_uploads hochgeladen.",
     thumbnailAlt: "Thumbnail zu {{title}}",
-    consentCheckboxLabel: "Ich willige ein, dass die hochgeladenen Daten ohne Namensnennung verwendet werden dürfen.",
+    consentCheckboxLabel:
+      "Ich willige ein, dass die hochgeladenen Daten ohne Namensnennung verwendet werden dürfen.",
   },
   watchPage: {
     playbackNote:
@@ -331,6 +332,17 @@ const dePages = {
     retentionPeriodLabel: "Geplante Speicherdauer:",
     retentionPeriodText:
       "Die Daten werden bis zum endgültigen Abschluss des Prüfungsverfahrens der Bachelorarbeit gespeichert und anschließend gelöscht.",
+    cookiesTitle: "Cookies und lokale Speicherung",
+    cookiesText:
+      "To ensure functionality, the application stores technical information (such as a user hash to avoid multiple participations and your individual progress when watching videos) locally in the browser (Local Storage). These data are used solely for technical purposes and are not used for tracking or profiling.",
+    privacyNotesTitle: "Datenschutzhinweise",
+    privacyNotesText:
+      "Es werden keine IP-Adressen oder Tracking-Cookies gespeichert. Es werden nur technisch notwendige Daten (anonymisierter Benutzer-Hash, Upload-Metadaten) verarbeitet. Local Storage wird ausschließlich für den Benutzer-Hash und den Video-Fortschritt verwendet. Betroffenenrechte: Kontakt per E-Mail, mit Hinweis auf Anonymisierung und eingeschränkte Löschbarkeit. Datenverarbeitungsverträge bestehen mit Supabase, Cloudflare, Vercel und hCaptcha. Privacy by Design: Datenminimierung, Speicherbegrenzung, keine dauerhafte Identifizierung. Sicherheitsmaßnahmen: TLS, Supabase-Verschlüsselung, keine sensiblen Daten im Klartext. Drittlandübermittlungen: siehe hCaptcha und Cloudflare, abgesichert durch Standardvertragsklauseln.",
+    hcaptchaTitle: "Einsatz von hCaptcha",
+    hcaptchaText:
+      "Zum Schutz vor Missbrauch und Spam wird der Dienst hCaptcha (Intuition Machines, Inc., USA) eingesetzt. Bei der Nutzung kann es zur Übermittlung personenbezogener Daten (z. B. IP-Adresse, Browserdaten) in die USA kommen. Weitere Informationen finden Sie in der Datenschutzerklärung von hCaptcha: ",
+    hcaptchaLinkText: "https://www.hcaptcha.com/privacy",
+    hcaptchaLabel: "Datenschutzerklärung von hCaptcha",
     withdrawalLabel: "Hinweis zum Widerruf:",
     withdrawalText:
       "Da die Erhebung anonymisiert erfolgt, können Daten nach dem Absenden der Umfrage technisch nicht mehr einer spezifischen Person zugeordnet werden. Eine nachträgliche Identifizierung oder Löschung einzelner Datensätze ist daher nicht möglich.",

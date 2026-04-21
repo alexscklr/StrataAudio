@@ -1,3 +1,4 @@
+
 import mainPageStyles from "./styles/MainPageStyle.module.css";
 import { useTranslation } from "react-i18next";
 import { PageMeta } from "@/shared/components/Seo/PageMeta";
@@ -71,56 +72,51 @@ function PrivacyPolicyPage() {
         </ul>
       </section>
 
-      <section
-        className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}
-      >
+
+      <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
         <h2>{t("privacyPolicyPage.retentionTitle")}</h2>
         <p>{t("privacyPolicyPage.hostingIntro")}</p>
-
         <ul className={mainPageStyles.providerList}>
           <li>
-            <strong>{t("privacyPolicyPage.vercelLabel")}</strong>{" "}
-            {t("privacyPolicyPage.vercelText")}{" "}
-            <a
-              href="https://vercel.com/legal/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Vercel Privacy
-            </a>
+            <strong>{t("privacyPolicyPage.vercelLabel")}</strong> {t("privacyPolicyPage.vercelText")}{" "}
+            <a href="https://vercel.com/legal/privacy" target="_blank" rel="noopener noreferrer">Vercel Privacy</a>
           </li>
           <li>
-            <strong>{t("privacyPolicyPage.supabaseLabel")}</strong>{" "}
-            {t("privacyPolicyPage.supabaseText")}{" "}
-            <a
-              href="https://supabase.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Supabase Privacy
-            </a>
+            <strong>{t("privacyPolicyPage.supabaseLabel")}</strong> {t("privacyPolicyPage.supabaseText")}{" "}
+            <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">Supabase Privacy</a>
           </li>
           <li>
-            <strong>{t("privacyPolicyPage.cloudflareLabel")}</strong>{" "}
-            {t("privacyPolicyPage.cloudflareText")}{" "}
-            <a
-              href="https://www.cloudflare.com/privacypolicy/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Cloudflare Privacy
-            </a>
+            <strong>{t("privacyPolicyPage.cloudflareLabel")}</strong> {t("privacyPolicyPage.cloudflareText")}{" "}
+            <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare Privacy</a>
           </li>
         </ul>
-
         <p style={{ marginTop: "20px" }}>
-          <strong>{t("privacyPolicyPage.retentionPeriodLabel")}</strong>{" "}
-          {t("privacyPolicyPage.retentionPeriodText")}
+          <strong>{t("privacyPolicyPage.retentionPeriodLabel")}</strong> {t("privacyPolicyPage.retentionPeriodText")}
         </p>
         <p>
-          <strong>{t("privacyPolicyPage.withdrawalLabel")}</strong>{" "}
-          {t("privacyPolicyPage.withdrawalText")}
+          <strong>{t("privacyPolicyPage.withdrawalLabel")}</strong> {t("privacyPolicyPage.withdrawalText")}
         </p>
+      </section>
+
+      <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
+        <h2>{t("privacyPolicyPage.cookiesTitle")}</h2>
+        <p>{t("privacyPolicyPage.cookiesText")}</p>
+      </section>
+
+
+      <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
+        <h2>{t("privacyPolicyPage.hcaptchaTitle")}</h2>
+        <p>
+          {t("privacyPolicyPage.hcaptchaText")}
+          <a href={t("privacyPolicyPage.hcaptchaLinkText")} target="_blank" rel="noopener noreferrer">
+            {t("privacyPolicyPage.hcaptchaLabel")}
+          </a>
+        </p>
+      </section>
+
+      <section className={`${mainPageStyles.pageSection} ${mainPageStyles.sectionIndented}`}>
+        <h2>{t("privacyPolicyPage.privacyNotesTitle")}</h2>
+        <p>{t("privacyPolicyPage.privacyNotesText")}</p>
       </section>
 
       <section

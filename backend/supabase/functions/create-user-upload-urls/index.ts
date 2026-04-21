@@ -195,61 +195,34 @@ const sha256 = async (value: string): Promise<string> => {
   return hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join('');
 };
 
-const getRequestIp = (request: Request): string | null => {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  if (forwardedFor) {
-    const first = forwardedFor.split(',')[0]?.trim();
-    if (first) {
-      return first;
-    }
-  }
 
-  const realIp = request.headers.get('x-real-ip');
-  if (realIp?.trim()) {
-    return realIp.trim();
-  }
+// IP wird nicht mehr gespeichert oder weitergegeben (DSGVO-Konformität)
 
-  const cfConnectingIp = request.headers.get('cf-connecting-ip');
-  if (cfConnectingIp?.trim()) {
-    return cfConnectingIp.trim();
-  }
-
-  return null;
-};
-
-const verifyCaptcha = async (captchaToken: string | undefined, requestIp: string | null): Promise<boolean> => {
+const verifyCaptcha = async (captchaToken: string | undefined): Promise<boolean> => {
   if (!CAPTCHA_REQUIRED_FOR_PUBLIC_UPLOADS) {
     return true;
   }
-
   if (!HCAPTCHA_SECRET_KEY) {
     console.error('[captcha] HCAPTCHA_SECRET_KEY is not set');
     return false;
   }
-
   if (!captchaToken) {
     console.error('[captcha] no captcha token in request payload');
     return false;
   }
-
   const body = new URLSearchParams();
   body.set('secret', HCAPTCHA_SECRET_KEY);
   body.set('response', captchaToken);
-  if (requestIp) {
-    body.set('remoteip', requestIp);
-  }
-
+  // remoteip wird nicht mehr gesetzt
   const response = await fetch('https://hcaptcha.com/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
   });
-
   if (!response.ok) {
     console.error('[captcha] hcaptcha siteverify HTTP error:', response.status);
     return false;
   }
-
   const result = await response.json() as { success?: boolean; 'error-codes'?: string[] };
   if (!result.success) {
     console.error('[captcha] siteverify failed, error-codes:', result['error-codes'] ?? []);
@@ -260,24 +233,19 @@ const verifyCaptcha = async (captchaToken: string | undefined, requestIp: string
 const validateInviteForIssue = async (
   serviceClient: SupabaseClientLike,
   inviteToken: string | undefined,
-  uploadId: string,
-  requestIp: string | null
+  uploadId: string
 ): Promise<boolean> => {
   if (!inviteToken || inviteToken.trim().length === 0) {
     return false;
   }
-
   const tokenHash = await sha256(inviteToken.trim());
   const { error } = await serviceClient.rpc('validate_upload_invite_issue', {
     p_token_hash: tokenHash,
     p_upload_id: uploadId,
-    p_request_ip: requestIp,
   });
-
   if (error) {
     return false;
   }
-
   return true;
 };
 
@@ -459,12 +427,12 @@ Deno.serve(async (request: Request) => {
   }) as SupabaseClientLike;
 
   const user = await getAuthenticatedUser(request);
-  const requestIp = getRequestIp(request);
+  // IP wird nicht mehr verwendet
   const inviteHash = payload.inviteToken?.trim() ? await sha256(payload.inviteToken.trim()) : null;
 
   if (action === 'issue') {
     if (!user) {
-      const captchaValid = await verifyCaptcha(payload.captchaToken, requestIp);
+      const captchaValid = await verifyCaptcha(payload.captchaToken);
       if (!captchaValid) {
         return jsonResponse(401, { error: 'Captcha validation failed' });
       }
@@ -478,7 +446,6 @@ Deno.serve(async (request: Request) => {
 
     const { error: rateError } = await serviceClient.rpc('log_and_enforce_upload_request', {
       p_invite_hash: inviteHash,
-      p_request_ip: requestIp,
       p_action: action,
       p_paths_count: validated.paths.length,
       p_total_bytes: validated.totalBytes,
@@ -493,8 +460,7 @@ Deno.serve(async (request: Request) => {
       inviteIsValid = await validateInviteForIssue(
         serviceClient,
         payload.inviteToken,
-        payload.uploadId,
-        requestIp
+        payload.uploadId
       );
     }
 
@@ -553,7 +519,6 @@ Deno.serve(async (request: Request) => {
 
   const { error: finalizeRateError } = await serviceClient.rpc('log_and_enforce_upload_request', {
     p_invite_hash: inviteHash,
-    p_request_ip: requestIp,
     p_action: action,
     p_paths_count: 0,
     p_total_bytes: 0,

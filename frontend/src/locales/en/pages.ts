@@ -125,7 +125,8 @@ const enPages = {
     uploadSuccess: "Video uploaded successfully.",
     rawUploadSuccess: "Raw files uploaded successfully to user_uploads.",
     thumbnailAlt: "Thumbnail for {{title}}",
-    consentCheckboxLabel: "I consent to the uploaded data being used without attribution.",
+    consentCheckboxLabel:
+      "I consent to the uploaded data being used without attribution.",
   },
   watchPage: {
     playbackNote:
@@ -320,6 +321,17 @@ const enPages = {
     retentionPeriodLabel: "Planned retention period:",
     retentionPeriodText:
       "Data is stored until final completion of the bachelor thesis examination process and then deleted.",
+    cookiesTitle: "Cookies and Local Storage",
+    cookiesText:
+      "To ensure functionality, the application stores technical information (such as a user hash to avoid multiple participations and your individual progress when watching videos) locally in the browser (Local Storage). These data are used solely for technical purposes and are not used for tracking or profiling.",
+    privacyNotesTitle: "Data protection notes",
+    privacyNotesText:
+      "No IP addresses or tracking cookies are stored. Only technically necessary data (anonymized user hash, upload metadata) is processed. Local Storage is used exclusively for the user hash and video progress. Data subject rights: Contact via email, with a note on anonymization and limited erasability. Data processing agreements exist with Supabase, Cloudflare, Vercel, and hCaptcha. Privacy by design: data minimization, storage limitation, no permanent identification. Security measures: TLS, Supabase encryption, no sensitive data in plain text. Third-country transfers: see hCaptcha and Cloudflare, secured via standard contractual clauses.",
+    hcaptchaTitle: "Use of hCaptcha",
+    hcaptchaText:
+      "To protect against abuse and spam, the hCaptcha service (Intuition Machines, Inc., USA) is used. When using the service, personal data (e.g. IP address, browser data) may be transmitted to the USA. More information can be found in the hCaptcha privacy policy: ",
+    hcaptchaLinkText: "https://www.hcaptcha.com/privacy",
+    hcaptchaLabel: "hCaptcha Privacy Policy",
     withdrawalLabel: "Withdrawal note:",
     withdrawalText:
       "Because collection is anonymized, data cannot be technically assigned to a specific person after survey submission. Subsequent identification or deletion of individual records is therefore not possible.",
