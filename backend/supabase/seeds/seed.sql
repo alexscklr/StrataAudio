@@ -7,18 +7,6 @@ SET
 	label_de = EXCLUDED.label_de,
 	label_en = EXCLUDED.label_en;
 
-INSERT INTO audio_types (id, label_de, label_en) VALUES
-('voice', 'Sprache', NULL),
-('music', 'Musik', NULL),
-('voice_chat', 'Sprachchat', NULL),
-('game_sound', 'Spielsound', NULL),
-('motion', 'Bewegung', NULL),
-('sound_effects', 'Soundeffekte', NULL)
-ON CONFLICT (id) DO UPDATE
-SET
-	label_de = EXCLUDED.label_de,
-	label_en = EXCLUDED.label_en;
-
 INSERT INTO videos (id, hls_url, thumbnail_url, genre_id, is_mandatory, duration_seconds) VALUES
 ('67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_video.m3u8', 'thumbnail.webp', 'test', false, 14),
 ('797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'stream_0/playlist.m3u8', 'thumbnail.webp', 'short_film', true, 147),
@@ -29,19 +17,19 @@ INSERT INTO video_contents (video_id, title_de, title_en, description_de, descri
 ('797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'SCOUTs Reise', NULL, 'Dies ist ein Kurzfilm mit 3D-Animation.', NULL),
 ('89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'OBS-Aufnahmetest', NULL, 'Dies ist ein kurzer Clip von Solitaire mit mehreren Audiotracks.', NULL);
 
-INSERT INTO audios (id, video_id, hls_url, audio_type_id, icon_url, default_volume) VALUES
-('d1b2c3e4-5678-90ab-cdef-1234567890ab', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio1.m3u8', 'voice', 'microphone.png', 0.3),
-('d1b2c3e4-5678-90ab-cdef-1234567890ac', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio2.m3u8', 'music', 'music.png', 0.7),
-('d1b2c3e4-5678-90ab-cdef-1234567890ad', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio3.m3u8', 'voice_chat', 'phone.png', 0.5),
-('d1b2c3e4-5678-90ab-cdef-1234567890ae', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio4.m3u8', 'game_sound', 'game.png', 0.5),
+INSERT INTO audios (id, video_id, hls_url, icon_url, default_volume) VALUES
+('d1b2c3e4-5678-90ab-cdef-1234567890ab', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio1.m3u8', 'microphone.png', 0.3),
+('d1b2c3e4-5678-90ab-cdef-1234567890ac', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio2.m3u8', 'music.png', 0.7),
+('d1b2c3e4-5678-90ab-cdef-1234567890ad', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio3.m3u8', 'phone.png', 0.5),
+('d1b2c3e4-5678-90ab-cdef-1234567890ae', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio4.m3u8', 'game.png', 0.5),
 
-('e1b2c3e4-5678-90ab-cdef-1234567890aa', '797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'stream_1/playlist.m3u8', 'music', 'music.png', 1),
-('e1b2c3e4-5678-90ab-cdef-1234567890ab', '797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'stream_2/playlist.m3u8', 'motion', 'phone.png', 1),
-('e1b2c3e4-5678-90ab-cdef-1234567890ac', '797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'stream_3/playlist.m3u8', 'sound_effects', 'sfx.png', 1),
+('e1b2c3e4-5678-90ab-cdef-1234567890aa', '797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'stream_1/playlist.m3u8', 'music.png', 1),
+('e1b2c3e4-5678-90ab-cdef-1234567890ab', '797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'stream_2/playlist.m3u8', 'phone.png', 1),
+('e1b2c3e4-5678-90ab-cdef-1234567890ac', '797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'stream_3/playlist.m3u8', 'sfx.png', 1),
 
-('f1b2c3e4-5678-90ab-cdef-1234567890ab', '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_2/playlist.m3u8', 'game_sound', 'game.png', 1),
-('f1b2c3e4-5678-90ab-cdef-1234567890ac', '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_3/playlist.m3u8', 'music', 'music.png', 1),
-('f1b2c3e4-5678-90ab-cdef-1234567890ae', '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_4/playlist.m3u8', 'voice', 'microphone.png', 1);
+('f1b2c3e4-5678-90ab-cdef-1234567890ab', '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_2/playlist.m3u8', 'game.png', 1),
+('f1b2c3e4-5678-90ab-cdef-1234567890ac', '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_3/playlist.m3u8', 'music.png', 1),
+('f1b2c3e4-5678-90ab-cdef-1234567890ae', '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'stream_4/playlist.m3u8', 'microphone.png', 1);
 
 INSERT INTO audio_contents (audio_id, title_de, title_en) VALUES
 ('d1b2c3e4-5678-90ab-cdef-1234567890ab', 'Testaudio 1', NULL),

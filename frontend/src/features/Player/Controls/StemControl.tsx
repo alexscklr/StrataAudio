@@ -30,7 +30,7 @@ function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, o
                 title={audio.title}
                 onClick={() => { onToggleMute(audio.id); }}
             >
-                <img className={styles.icon} src={getPublicUrl(`icons/${audio.icon_url}`, "system")} alt={audio.title + ' ' + audio.type} width={32} height={32} />
+                <img className={styles.icon} src={getPublicUrl(`icons/${audio.icon_url}`, "system")} alt={audio.title} width={32} height={32} />
                 <LuSlash className={styles.muteIcon} style={{ display: trackState.isMuted ? 'block' : 'none' }} color="red" />
             </button>
         </div>

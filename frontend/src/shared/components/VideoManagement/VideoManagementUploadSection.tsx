@@ -128,7 +128,7 @@ export function VideoManagementUploadSection({
   onMandatoryChange,
   updateTrack,
   updateRawAudio,
-  setConsentGiven
+  setConsentGiven,
 }: VideoManagementUploadSectionProps) {
   const { t } = useTranslation();
   const [rawAudioInputCount, setRawAudioInputCount] = useState(1);
@@ -163,10 +163,10 @@ export function VideoManagementUploadSection({
         !hasRequiredRawVideoAudioMetadata ||
         !hasRequiredRawAudios ||
         !hasRequiredRawAudioMetadata)) ||
+    (canUploadWithInvite && !consentGiven) ||
     (canUploadWithInvite &&
       CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS &&
-      !captchaToken) ||
-    !consentGiven;
+      !captchaToken);
 
   return (
     <section className={styles.sectionCard}>
@@ -203,15 +203,22 @@ export function VideoManagementUploadSection({
       )}
 
       <form className={styles.formGrid} onSubmit={onSubmit}>
-        <label className={styles.switchLabel} style={{marginBottom: 8}}>
-          <input
-            type="checkbox"
-            checked={consentGiven}
-            onChange={e => setConsentGiven(e.target.checked)}
-            required
-          />
-          {t("videoManagement.consentCheckboxLabel")}
-        </label>
+        {canUploadWithInvite && (
+          <>
+            <p className={`${styles.fullWidth} ${styles.sectionHint}`}>
+              {t("videoManagement.inviteAttributionHint")}
+            </p>
+            <label className={`${styles.fullWidth} ${styles.switchLabel}`}>
+              <input
+                type="checkbox"
+                checked={consentGiven}
+                onChange={(event) => setConsentGiven(event.target.checked)}
+                required
+              />
+              {t("videoManagement.inviteConsentLabel")}
+            </label>
+          </>
+        )}
         {canUploadWithInvite && CAPTCHA_ENABLED_FOR_PUBLIC_UPLOADS && (
           <CaptchaWidget
             siteKey={HCAPTCHA_SITE_KEY}
@@ -442,7 +449,6 @@ export function VideoManagementUploadSection({
                         updateTrack(track.streamFolder, (current) => ({
                           ...current,
                           titleDe: next,
-                          typeDe: next,
                         }));
                       }}
                     />
@@ -457,7 +463,6 @@ export function VideoManagementUploadSection({
                         updateTrack(track.streamFolder, (current) => ({
                           ...current,
                           titleEn: next,
-                          typeEn: next,
                         }));
                       }}
                     />
@@ -573,8 +578,8 @@ export function VideoManagementUploadSection({
                               const next = event.target.value;
                               updateRawVideoAudioMeta((current) =>
                                 isEnglishUi
-                                  ? { ...current, titleEn: next, typeEn: next }
-                                  : { ...current, titleDe: next, typeDe: next },
+                                  ? { ...current, titleEn: next }
+                                  : { ...current, titleDe: next },
                               );
                             }}
                           />
@@ -592,7 +597,6 @@ export function VideoManagementUploadSection({
                               updateRawVideoAudioMeta((current) => ({
                                 ...current,
                                 titleDe: next,
-                                typeDe: next,
                               }));
                             }}
                           />
@@ -607,7 +611,6 @@ export function VideoManagementUploadSection({
                               updateRawVideoAudioMeta((current) => ({
                                 ...current,
                                 titleEn: next,
-                                typeEn: next,
                               }));
                             }}
                           />
@@ -799,12 +802,10 @@ export function VideoManagementUploadSection({
                                     ? {
                                         ...current,
                                         titleEn: next,
-                                        typeEn: next,
                                       }
                                     : {
                                         ...current,
                                         titleDe: next,
-                                        typeDe: next,
                                       },
                                 );
                               }}
@@ -823,7 +824,6 @@ export function VideoManagementUploadSection({
                                 updateRawAudio(index, (current) => ({
                                   ...current,
                                   titleDe: next,
-                                  typeDe: next,
                                 }));
                               }}
                             />
@@ -838,7 +838,6 @@ export function VideoManagementUploadSection({
                                 updateRawAudio(index, (current) => ({
                                   ...current,
                                   titleEn: next,
-                                  typeEn: next,
                                 }));
                               }}
                             />

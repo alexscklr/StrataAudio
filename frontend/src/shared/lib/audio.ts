@@ -34,8 +34,7 @@ export const fetchAudioDetails = async (videoid: string): Promise<Audio[]> => {
       hls_url,
       icon_url,
       default_volume,
-            audio_contents(title_de, title_en),
-            audio_types(label_de, label_en)
+                        audio_contents(title_de, title_en)
     `)
         .eq('video_id', videoid);
 
@@ -43,7 +42,6 @@ export const fetchAudioDetails = async (videoid: string): Promise<Audio[]> => {
 
     return (data ?? []).map((row: any) => {
         const content = readRelation<{ title_de: string; title_en: string | null }>(row.audio_contents);
-        const audioType = readRelation<{ label_de: string; label_en: string | null }>(row.audio_types);
 
         return {
             id: row.id,
@@ -51,7 +49,6 @@ export const fetchAudioDetails = async (videoid: string): Promise<Audio[]> => {
             icon_url: row.icon_url,
             default_volume: row.default_volume,
             title: localizedText(content?.title_de, content?.title_en, locale),
-            type: localizedText(audioType?.label_de, audioType?.label_en, locale),
         } satisfies Audio;
     });
 };

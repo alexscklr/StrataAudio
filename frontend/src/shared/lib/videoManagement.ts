@@ -32,13 +32,6 @@ const slugifyGenre = (value: string): string =>
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "") || "genre";
 
-const slugifyAudioType = (value: string): string =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "") || "audio_type";
-
 const clampVolume = (value: number): number => {
   if (!Number.isFinite(value)) {
     return 1;
@@ -131,27 +124,6 @@ const ensureGenre = async (genreDe: string, genreEn?: string): Promise<string> =
   return genreId;
 };
 
-const ensureAudioType = async (typeDe: string, typeEn?: string): Promise<string> => {
-  const audioTypeId = slugifyAudioType(typeDe);
-
-  const { error } = await supabase
-    .from("audio_types")
-    .upsert(
-      {
-        id: audioTypeId,
-        label_de: typeDe,
-        label_en: typeEn?.trim() || null,
-      },
-      { onConflict: "id" }
-    );
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return audioTypeId;
-};
-
 const uploadAudioIcon = async (videoId: string, streamFolder: string, file: File): Promise<string> => {
   const baseName = sanitizeFileName(file.name);
   if (!baseName) {
@@ -231,8 +203,6 @@ export interface UploadVideoInput {
     streamFolder: string;
     titleDe: string;
     titleEn?: string;
-    typeDe: string;
-    typeEn?: string;
     defaultVolume: number;
     iconFile?: File | null;
   }[];
@@ -252,8 +222,6 @@ export interface UploadRawSourceInput {
   videoAudio?: {
     titleDe: string;
     titleEn?: string;
-    typeDe: string;
-    typeEn?: string;
     defaultVolume: number;
     iconFile?: File | null;
   };
@@ -262,8 +230,6 @@ export interface UploadRawSourceInput {
     file: File;
     titleDe: string;
     titleEn?: string;
-    typeDe: string;
-    typeEn?: string;
     defaultVolume: number;
     iconFile?: File | null;
   }[];
@@ -446,8 +412,6 @@ const buildInfoFileContent = (
     `video_contains_audio=${input.containsVideoAudio ? "true" : "false"}`,
     `video_audio_title_de=${input.videoAudio?.titleDe?.trim() || ""}`,
     `video_audio_title_en=${input.videoAudio?.titleEn?.trim() || ""}`,
-    `video_audio_type_de=${input.videoAudio?.typeDe?.trim() || ""}`,
-    `video_audio_type_en=${input.videoAudio?.typeEn?.trim() || ""}`,
     `video_audio_default_volume=${input.videoAudio ? clampVolume(input.videoAudio.defaultVolume) : ""}`,
     `video_audio_icon=${uploadedVideoAudioIconPath ?? ""}`,
     `thumbnail_path=${uploadedThumbnailPath ?? ""}`,
@@ -471,8 +435,6 @@ const buildInfoFileContent = (
     lines.push(`audio_${index + 1}_file=${storedAudioPath}`);
     lines.push(`audio_${index + 1}_title_de=${audio.titleDe.trim()}`);
     lines.push(`audio_${index + 1}_title_en=${audio.titleEn?.trim() || ""}`);
-    lines.push(`audio_${index + 1}_type_de=${audio.typeDe.trim()}`);
-    lines.push(`audio_${index + 1}_type_en=${audio.typeEn?.trim() || ""}`);
     lines.push(`audio_${index + 1}_default_volume=${clampVolume(audio.defaultVolume)}`);
     lines.push(`audio_${index + 1}_icon=${storedIconPath}`);
     lines.push("");
@@ -504,14 +466,9 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
     let storedVideoAudioIconPath: string | null = null;
     if (input.containsVideoAudio) {
       const normalizedVideoAudioTitle = input.videoAudio?.titleDe?.trim() || input.videoAudio?.titleEn?.trim() || "";
-      const normalizedVideoAudioType = input.videoAudio?.typeDe?.trim() || input.videoAudio?.typeEn?.trim() || "";
 
       if (!normalizedVideoAudioTitle) {
         throw new Error("Audio-Titel fuer im Video eingebettete Audiospur darf nicht leer sein.");
-      }
-
-      if (!normalizedVideoAudioType) {
-        throw new Error("Audio-Typ fuer im Video eingebettete Audiospur darf nicht leer sein.");
       }
 
       if (input.videoAudio?.iconFile) {
@@ -539,14 +496,9 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
     for (let index = 0; index < input.audioFiles.length; index += 1) {
       const audio = input.audioFiles[index];
       const audioTitle = audio.titleDe.trim();
-      const audioType = audio.typeDe.trim();
 
       if (!audioTitle) {
         throw new Error(`Audio-Titel fuer Datei ${audio.file.name} darf nicht leer sein.`);
-      }
-
-      if (!audioType) {
-        throw new Error(`Audio-Typ fuer Datei ${audio.file.name} darf nicht leer sein.`);
       }
 
       const audioName = sanitizeFileName(audio.file.name);
@@ -663,22 +615,10 @@ export const uploadVideo = async (input: UploadVideoInput): Promise<string> => {
       throw new Error(insertContentError.message);
     }
 
-    const audioTypeIds = await Promise.all(
-      input.audioTracks.map(async (track) => {
-        const normalizedType = track.typeDe.trim();
-        if (!normalizedType) {
-          throw new Error(`Audio-Typ fuer ${track.streamFolder} darf nicht leer sein.`);
-        }
-
-        return ensureAudioType(normalizedType, track.typeEn?.trim());
-      })
-    );
-
     const audioRows: {
       id: string;
       video_id: string;
       hls_url: string;
-      audio_type_id: string;
       icon_url: string | null;
       default_volume: number;
     }[] = [];
@@ -710,7 +650,6 @@ export const uploadVideo = async (input: UploadVideoInput): Promise<string> => {
         id: audioId,
         video_id: videoId,
         hls_url: hlsPlaylistPath,
-        audio_type_id: audioTypeIds[index],
         icon_url: iconFileName,
         default_volume: clampVolume(track.defaultVolume),
       });

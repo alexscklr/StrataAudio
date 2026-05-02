@@ -2,7 +2,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-type SupportedTable = 'video_contents' | 'audio_contents' | 'video_genres' | 'audio_types';
+type SupportedTable = 'video_contents' | 'audio_contents' | 'video_genres';
 
 type WebhookPayload = {
   table: SupportedTable;
@@ -223,35 +223,6 @@ Deno.serve(async (req: Request) => {
           .from('video_genres')
           .update(updates)
           .eq('id', genreId);
-
-        if (error) throw error;
-      }
-
-      return jsonResponse(200, { updated: Object.keys(updates) });
-    }
-
-    if (table === 'audio_types') {
-      const typeId = String(record.id ?? '');
-      const labelDe = String(record.label_de ?? '');
-      const labelEn = record.label_en;
-
-      if (!typeId) {
-        return jsonResponse(400, { error: 'Missing audio type id' });
-      }
-
-      const updates: Record<string, string> = {};
-      if (isBlank(labelEn) && !isBlank(labelDe)) {
-        const translatedLabel = await translateDeToEn(labelDe);
-        if (!isBlank(translatedLabel)) {
-          updates.label_en = translatedLabel as string;
-        }
-      }
-
-      if (Object.keys(updates).length > 0) {
-        const { error } = await supabase
-          .from('audio_types')
-          .update(updates)
-          .eq('id', typeId);
 
         if (error) throw error;
       }

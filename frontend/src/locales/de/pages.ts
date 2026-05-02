@@ -129,8 +129,10 @@ const dePages = {
     rawUploadSuccess:
       "Rohdaten wurden erfolgreich nach user_uploads hochgeladen.",
     thumbnailAlt: "Thumbnail zu {{title}}",
-    consentCheckboxLabel:
-      "Ich willige ein, dass die hochgeladenen Daten ohne Namensnennung verwendet werden dürfen.",
+    inviteAttributionHint:
+      "Falls eine namentliche Nennung gewuenscht ist, kann der Name im Titel oder in der Beschreibung angegeben werden.",
+    inviteConsentLabel:
+      "Ich stimme zu, dass mein Upload fuer die StrataAudio-Studie gespeichert und verwendet werden darf, und bestaetige, dass ich die erforderlichen Rechte an den hochgeladenen Inhalten habe.",
   },
   watchPage: {
     playbackNote:

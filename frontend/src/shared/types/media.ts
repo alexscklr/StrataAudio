@@ -19,7 +19,6 @@ export type CatalogItemStatus = "unlocked" | "locked" | "watched";
 export interface Audio extends Omit<BaseEntity, "created_at"> {
   title: string;
   hls_url: string;
-  type: string;
   icon_url?: string;
   default_volume: number;
 }

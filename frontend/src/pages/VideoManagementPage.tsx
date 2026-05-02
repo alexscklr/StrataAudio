@@ -49,8 +49,6 @@ function VideoManagementPage() {
   const [rawVideoAudioMeta, setRawVideoAudioMeta] = useState<EmbeddedAudioFormState>({
     titleDe: "",
     titleEn: "",
-    typeDe: "",
-    typeEn: "",
     defaultVolume: "1",
     iconFile: null,
   });
@@ -138,8 +136,6 @@ function VideoManagementPage() {
           streamFolder,
           titleDe: "",
           titleEn: "",
-          typeDe: "",
-          typeEn: "",
           defaultVolume: "1",
           iconFile: null,
         } satisfies AudioTrackFormState;
@@ -163,13 +159,12 @@ function VideoManagementPage() {
     setRawVideoAudioMeta({
       titleDe: "",
       titleEn: "",
-      typeDe: "",
-      typeEn: "",
       defaultVolume: "1",
       iconFile: null,
     });
     setRawThumbnailFile(null);
     setRawAudioFiles([]);
+    setConsentGiven(false);
 
     if (mediaFolderInputRef.current) {
       mediaFolderInputRef.current.value = "";
@@ -228,7 +223,7 @@ function VideoManagementPage() {
     const parsedDuration = durationSeconds.trim() ? Number(durationSeconds.trim()) : null;
 
     if (uploadMode === "raw") {
-      if (!consentGiven) {
+      if (canUploadWithInvite && !consentGiven) {
         return;
       }
       const minRawAudioFiles = rawVideoContainsAudio ? 1 : 2;
@@ -271,8 +266,6 @@ function VideoManagementPage() {
           ? {
             titleDe: rawVideoAudioMeta.titleDe.trim() || rawVideoAudioMeta.titleEn.trim(),
             titleEn: rawVideoAudioMeta.titleEn.trim() || rawVideoAudioMeta.titleDe.trim(),
-            typeDe: rawVideoAudioMeta.typeDe.trim() || rawVideoAudioMeta.typeEn.trim() || rawVideoAudioMeta.titleDe.trim() || rawVideoAudioMeta.titleEn.trim(),
-            typeEn: rawVideoAudioMeta.typeEn.trim() || rawVideoAudioMeta.typeDe.trim() || rawVideoAudioMeta.titleEn.trim() || rawVideoAudioMeta.titleDe.trim(),
             defaultVolume: Number(rawVideoAudioMeta.defaultVolume),
             iconFile: rawVideoAudioMeta.iconFile,
           }
@@ -280,13 +273,11 @@ function VideoManagementPage() {
         thumbnailFile: rawThumbnailFile,
         inviteToken,
         captchaToken,
+        consentGiven: canUploadWithInvite ? consentGiven : undefined,
         audioFiles: rawAudioFiles.map((audio) => ({
-        consentGiven,
           file: audio.file,
           titleDe: audio.titleDe.trim() || audio.titleEn.trim(),
           titleEn: audio.titleEn.trim() || audio.titleDe.trim(),
-          typeDe: audio.typeDe.trim() || audio.typeEn.trim() || audio.titleDe.trim() || audio.titleEn.trim(),
-          typeEn: audio.typeEn.trim() || audio.typeDe.trim() || audio.titleEn.trim() || audio.titleDe.trim(),
           defaultVolume: Number(audio.defaultVolume),
           iconFile: audio.iconFile,
         })),
@@ -317,8 +308,6 @@ function VideoManagementPage() {
         streamFolder: track.streamFolder,
         titleDe: track.titleDe,
         titleEn: track.titleEn,
-        typeDe: track.typeDe || track.titleDe,
-        typeEn: track.typeEn || track.titleEn || track.typeDe || track.titleDe,
         defaultVolume: Number(track.defaultVolume),
         iconFile: track.iconFile,
       })),
@@ -364,8 +353,6 @@ function VideoManagementPage() {
         file,
         titleDe: fileBaseName,
         titleEn: fileBaseName,
-        typeDe: fileBaseName,
-        typeEn: fileBaseName,
         defaultVolume: "1",
         iconFile: null,
       } satisfies RawAudioFileFormState);
@@ -506,6 +493,7 @@ function VideoManagementPage() {
         uploadErrorMessage={uploadErrorMessage}
         rawUploadErrorMessage={rawUploadErrorMessage}
         captchaToken={captchaToken}
+        consentGiven={consentGiven}
         onCaptchaTokenChange={setCaptchaToken}
         onSubmit={onSubmit}
         onMediaFolderFilesChange={setMediaFolderFiles}
@@ -524,7 +512,6 @@ function VideoManagementPage() {
         onMandatoryChange={setIsMandatory}
         updateTrack={updateTrack}
         updateRawAudio={updateRawAudio}
-        consentGiven={consentGiven}
         setConsentGiven={setConsentGiven}
       />
       <LogInOutButton popoverTarget="video-management-login-inline" />

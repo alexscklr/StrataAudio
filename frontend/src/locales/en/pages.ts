@@ -125,8 +125,10 @@ const enPages = {
     uploadSuccess: "Video uploaded successfully.",
     rawUploadSuccess: "Raw files uploaded successfully to user_uploads.",
     thumbnailAlt: "Thumbnail for {{title}}",
-    consentCheckboxLabel:
-      "I consent to the uploaded data being used without attribution.",
+    inviteAttributionHint:
+      "If attribution is desired, the name can be included in the title or description.",
+    inviteConsentLabel:
+      "I agree that my upload may be stored and used for the StrataAudio study, and I confirm that I hold the necessary rights to the uploaded content.",
   },
   watchPage: {
     playbackNote:
