@@ -137,6 +137,12 @@ const dePages = {
   watchPage: {
     playbackNote:
       "Hinweis: Das Video wird zwei Mal abgespielt, einmal im Mixer-Modus und einmal im Standard-Modus. Die Umfrage wird anschließend freigeschaltet.",
+    technicalMetadataTitle: "Technische Metadaten",
+    technicalMetadataCategory: "Kategorie",
+    technicalMetadataSource: "Quelle",
+    technicalMetadataLicense: "Lizenz",
+    technicalMetadataMissingValue: "-",
+    technicalMetadataEmpty: "Keine technischen Metadaten hinterlegt.",
     loadingVideo: "Lade Video...",
     loadingAudio: "Lade Audio...",
     errorTitle: "Fehler",

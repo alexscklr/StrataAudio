@@ -8,6 +8,13 @@ export interface Video extends BaseEntity {
   thumbnail_url?: string;
   is_mandatory: boolean;
   duration_seconds: number | null;
+  technical_metadata?: VideoTechnicalMetadataItem[];
+}
+
+export interface VideoTechnicalMetadataItem {
+  category: string;
+  source: string;
+  license: string;
 }
 
 export interface VideoCatalogItem extends Video {

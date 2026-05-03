@@ -90,6 +90,8 @@ function WatchPage() {
         }));
     };
 
+    const technicalMetadataRows = video?.technical_metadata ?? [];
+
     return (
         <>
             <PageMeta
@@ -99,6 +101,35 @@ function WatchPage() {
             <h1>{video?.title}</h1>
             
             <p>{t('watchPage.playbackNote')}</p>
+            <section className={styles.technicalMetadataSection} aria-label={t('watchPage.technicalMetadataTitle')}>
+                <h2>{t('watchPage.technicalMetadataTitle')}</h2>
+                <div className={styles.technicalMetadataTableWrapper}>
+                    <table className={styles.technicalMetadataTable}>
+                        <thead>
+                            <tr>
+                                <th scope="col">{t('watchPage.technicalMetadataCategory')}</th>
+                                <th scope="col">{t('watchPage.technicalMetadataSource')}</th>
+                                <th scope="col">{t('watchPage.technicalMetadataLicense')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {technicalMetadataRows.length > 0 ? (
+                                technicalMetadataRows.map((entry, index) => (
+                                    <tr key={`${entry.category}-${entry.source}-${entry.license}-${index}`}>
+                                        <td>{entry.category || t('watchPage.technicalMetadataMissingValue')}</td>
+                                        <td>{entry.source || t('watchPage.technicalMetadataMissingValue')}</td>
+                                        <td>{entry.license || t('watchPage.technicalMetadataMissingValue')}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={3}>{t('watchPage.technicalMetadataEmpty')}</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
             {isVideoLoading && <div className={styles.playerPlaceholder} aria-hidden="true" />}
             {videoError && <WarningPopup title={t('watchPage.errorTitle')} message={t('watchPage.errorLoadingVideo', { message: videoError?.message })} closeBtnText={t('common.close')} onClose={() => { navigate(-1) }} />}
             {video && (
