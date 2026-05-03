@@ -33,7 +33,6 @@
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     overflow: hidden;
-    min-width: 540px;
 }
 
 .technicalMetadataTable th,
@@ -51,6 +50,70 @@
 
 .technicalMetadataTable tbody tr:last-child td {
     border-bottom: none;
+}
+
+.technicalMetadataSourceLink {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgb(255 255 255 / 0.35);
+}
+
+.technicalMetadataSourceLink::after {
+    content: '\2197';
+    font-size: 0.75em;
+    margin-left: 0.2em;
+    opacity: 0.6;
+    vertical-align: super;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.technicalMetadataSourceLink:hover {
+    text-decoration-color: currentColor;
+}
+
+.technicalMetadataSourceLink:hover::after {
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .technicalMetadataTable thead {
+        display: none;
+    }
+
+    .technicalMetadataTable,
+    .technicalMetadataTable tbody,
+    .technicalMetadataTable tr,
+    .technicalMetadataTable td {
+        display: block;
+        width: 100%;
+    }
+
+    .technicalMetadataTable tr {
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.4rem 0;
+    }
+
+    .technicalMetadataTable tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .technicalMetadataTable td {
+        display: flex;
+        gap: 0.5rem;
+        align-items: baseline;
+        border-bottom: none;
+        padding: 0.3rem 0.75rem;
+    }
+
+    .technicalMetadataTable td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        flex: 0 0 6.5rem;
+        font-size: 0.85em;
+        opacity: 0.7;
+    }
 }
 
 @keyframes watchPageLoadingPulse {

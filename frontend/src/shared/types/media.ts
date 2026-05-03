@@ -14,6 +14,7 @@ export interface Video extends BaseEntity {
 export interface VideoTechnicalMetadataItem {
   category: string;
   source: string;
+  source_url?: string;
   license: string;
 }
 

@@ -47,6 +47,7 @@ const toTechnicalMetadataItems = (value: unknown): VideoTechnicalMetadataItem[] 
       const entryRecord = entry as Record<string, unknown>;
       const category = typeof entryRecord.category === "string" ? entryRecord.category.trim() : "";
       const source = typeof entryRecord.source === "string" ? entryRecord.source.trim() : "";
+      const source_url = typeof entryRecord.source_url === "string" ? entryRecord.source_url.trim() : undefined;
       const license = typeof entryRecord.license === "string" ? entryRecord.license.trim() : "";
 
       if (!category && !source && !license) {
@@ -56,6 +57,7 @@ const toTechnicalMetadataItems = (value: unknown): VideoTechnicalMetadataItem[] 
       return {
         category,
         source,
+        ...(source_url ? { source_url } : {}),
         license,
       };
     })

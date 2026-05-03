@@ -116,9 +116,17 @@ function WatchPage() {
                             {technicalMetadataRows.length > 0 ? (
                                 technicalMetadataRows.map((entry, index) => (
                                     <tr key={`${entry.category}-${entry.source}-${entry.license}-${index}`}>
-                                        <td>{entry.category || t('watchPage.technicalMetadataMissingValue')}</td>
-                                        <td>{entry.source || t('watchPage.technicalMetadataMissingValue')}</td>
-                                        <td>{entry.license || t('watchPage.technicalMetadataMissingValue')}</td>
+                                        <td data-label={t('watchPage.technicalMetadataCategory')}>{entry.category || t('watchPage.technicalMetadataMissingValue')}</td>
+                                        <td data-label={t('watchPage.technicalMetadataSource')}>
+                                            {entry.source_url ? (
+                                                <a href={entry.source_url} target="_blank" rel="noopener noreferrer" className={styles.technicalMetadataSourceLink}>
+                                                    {entry.source || t('watchPage.technicalMetadataMissingValue')}
+                                                </a>
+                                            ) : (
+                                                entry.source || t('watchPage.technicalMetadataMissingValue')
+                                            )}
+                                        </td>
+                                        <td data-label={t('watchPage.technicalMetadataLicense')}>{entry.license || t('watchPage.technicalMetadataMissingValue')}</td>
                                     </tr>
                                 ))
                             ) : (
