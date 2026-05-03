@@ -133,7 +133,7 @@ const enPages = {
   watchPage: {
     playbackNote:
       "Note: The video plays twice, once in mixer mode and once in standard mode. The survey unlocks afterwards.",
-    technicalMetadataTitle: "Technical metadata",
+    technicalMetadataTitle: "Credits",
     technicalMetadataCategory: "Category",
     technicalMetadataSource: "Source",
     technicalMetadataLicense: "License",
