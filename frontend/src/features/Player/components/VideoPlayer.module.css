@@ -98,7 +98,8 @@
 
 .videoContainer:hover .overlay,
 .videoContainer:has(:focus-visible) .overlay,
-.videoContainer.initialOpen .overlay {
+.videoContainer.initialOpen .overlay,
+.videoContainer.touchOpen .overlay {
     opacity: 1;
     pointer-events: auto;
 }
@@ -135,18 +136,6 @@
     text-overflow: ellipsis;
 }
 
-.uiCenter {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--player-center-gap);
-    width: min(100%, calc(100% - (var(--player-edge-padding) * 2)));
-}
-
 .uiBottom {
     position: absolute;
     left: var(--player-edge-padding);
@@ -167,6 +156,12 @@
     flex-wrap: wrap;
 }
 
+.transportControls {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 0.75vw, 0.85rem);
+}
+
 .uiBottomRight {
     display: flex;
     align-items: flex-end;
@@ -174,10 +169,6 @@
     min-width: 0;
     flex-wrap: wrap;
     justify-content: flex-end;
-}
-
-.mobileHideBottomPlayButton {
-    display: flex;
 }
 
 @keyframes playerLoadingPulse {
@@ -211,10 +202,6 @@
         max-width: 80%;
     }
 
-    .uiCenter {
-        top: 46%;
-    }
-
     .uiBottom {
         align-items: flex-end;
         flex-wrap: nowrap;
@@ -233,8 +220,8 @@
         flex-wrap: nowrap;
     }
 
-    .mobileHideBottomPlayButton {
-        display: none;
+    .transportControls {
+        gap: clamp(0.35rem, 2vw, 0.55rem);
     }
 }
 
@@ -245,10 +232,6 @@
 
     .uiTop .videoTitle {
         max-width: 72%;
-    }
-
-    .uiCenter {
-        gap: var(--player-center-gap);
     }
 
     .uiBottom {

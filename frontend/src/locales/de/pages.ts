@@ -161,7 +161,7 @@ const dePages = {
     allDone: "Alle Modi abgeschlossen. Du kannst jetzt die Umfrage ausfüllen.",
   },
   player: {
-    masterVolume: "Master-Lautstärke",
+    masterVolume: "Master",
     trackVolume: "{{title}} Lautstärke",
     openAudioMixer: "Audio-Mixer öffnen",
   },

@@ -156,7 +156,7 @@ const enPages = {
     allDone: "All modes completed. You can now fill out the survey.",
   },
   player: {
-    masterVolume: "Master volume",
+    masterVolume: "Master",
     trackVolume: "{{title}} volume",
     openAudioMixer: "Open audio mixer",
   },

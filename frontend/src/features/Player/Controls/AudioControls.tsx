@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 import type { Audio, VideoWatchMode } from "@/shared/types/media";
 import styles from "./styles/AudioControls.module.css";
 import StemControl from "./StemControl";
 import type { MixerState } from "@/shared/types/mixer";
-import AudioSlider from "@/shared/components/UI/AudioSlider/AudioSlider";
+import AudioSlider from "../../../shared/components/UI/AudioSlider/AudioSlider";
 import { LuVolume2 } from "react-icons/lu";
 import { useTranslation } from 'react-i18next';
 
@@ -18,56 +18,28 @@ interface AudioControlsProps {
     isFullscreen: boolean;
     onMuteToggle: (id: string) => void;
     watchMode: VideoWatchMode;
+    isExpanded: boolean;
 }
 
-function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode }: AudioControlsProps) {
+function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode, isExpanded }: AudioControlsProps) {
     const { t } = useTranslation();
 
-
-    const [isAudioControlsOpen, setIsAudioControlsOpen] = useState(false);
-
-    const audioControlsBoxRef = useRef<HTMLDivElement>(null);
-
-    const handleAudioBoxToggle = () => {
-        setIsAudioControlsOpen(prev => !prev);
-    };
-
-    useEffect(() => {
-        if (!isAudioControlsOpen) return;
-
-        const handlePointerDownOutside = (event: MouseEvent | TouchEvent) => {
-            const target = event.target as Node | null;
-            if (!target) return;
-            if (!audioControlsBoxRef.current?.contains(target)) {
-                setIsAudioControlsOpen(false);
-            }
-        };
-
-        const handleEscape = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                setIsAudioControlsOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handlePointerDownOutside);
-        document.addEventListener('touchstart', handlePointerDownOutside);
-        document.addEventListener('keydown', handleEscape);
-
-        return () => {
-            document.removeEventListener('mousedown', handlePointerDownOutside);
-            document.removeEventListener('touchstart', handlePointerDownOutside);
-            document.removeEventListener('keydown', handleEscape);
-        };
-    }, [isAudioControlsOpen]);
+    const shouldRenderTracks = watchMode !== 'standard';
+    const panelClassName = useMemo(() => {
+        return [
+            styles.audioControlsBox,
+            isFullscreen ? styles.audioControlsBoxFullscreen : '',
+            isExpanded ? styles.audioControlsBoxExpanded : '',
+        ].filter(Boolean).join(' ');
+    }, [isExpanded, isFullscreen]);
 
     return (
         <div
-            ref={audioControlsBoxRef}
-            className={`${styles.audioControlsBox} ${isFullscreen ? styles.audioControlsBoxFullscreen : ''} ${isAudioControlsOpen ? styles.audioControlsBoxExpanded : ''}`}
+            className={panelClassName}
         >
             <div className={styles.audioControlsRow}>
                 <div className={styles.audioControlWrapper}>
-                    {isAudioControlsOpen && (
+                    {isExpanded && (
                         <AudioSlider
                             audioId="master"
                             volume={mixerState.masterVolume}
@@ -83,15 +55,16 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
                     >
                         <LuVolume2 className={styles.masterIcon} />
                     </button>
+                    {isExpanded && <span className={styles.audioTrackLabel}>{t('player.masterVolume')}</span>}
                 </div>
 
-                {watchMode !== 'standard' && <div className={styles.trackDivider} />}
+                {shouldRenderTracks && <div className={styles.trackDivider} />}
 
-                {watchMode !== 'standard' && audios?.map(audio => (
+                {shouldRenderTracks && audios?.map(audio => (
                     <StemControl
                         key={audio.id}
                         audio={audio}
-                        isAudioControlsOpen={isAudioControlsOpen}
+                        isAudioControlsOpen={isExpanded}
                         trackState={mixerState.trackstates[audio.id] ?? { volume: 1, isMuted: false }}
                         onVolumeChange={onVolumeChange}
                         onVolumeCommit={onVolumeCommit}
@@ -99,14 +72,7 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
                     />
                 ))}
             </div>
-            <button
-                className={`normal ${styles.audioControlsToggle} ${isAudioControlsOpen ? styles.audioControlsBoxExpanded : ''}`}
-                role="button"
-                tabIndex={0}
-                aria-expanded={isAudioControlsOpen}
-                aria-label={t('player.openAudioMixer')}
-                onClick={() => handleAudioBoxToggle()}>
-            </button>
+
         </div >
     )
 }

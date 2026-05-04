@@ -6,9 +6,10 @@ interface AudioSliderProps {
     volume: number;
     onVolumeChange: (id: string, val: number) => void;
     onVolumeCommit?: (id: string, val: number) => void;
+    orientation?: 'vertical' | 'horizontal';
 }
 
-function AudioSlider({ audioId, volume, onVolumeChange, onVolumeCommit }: AudioSliderProps) {
+function AudioSlider({ audioId, volume, onVolumeChange, onVolumeCommit, orientation = 'vertical' }: AudioSliderProps) {
     const { t } = useTranslation();
 
     const handleCommit = (value: number) => {
@@ -19,7 +20,7 @@ function AudioSlider({ audioId, volume, onVolumeChange, onVolumeCommit }: AudioS
         <div className={styles.sliderContainer}>
             <label htmlFor={`slider-${audioId}`} className={styles.srOnly}>{t('common.volume')}</label>
             <input
-                className={styles.slider}
+                className={`${styles.slider} ${orientation === 'horizontal' ? styles.sliderHorizontal : styles.sliderVertical}`}
                 id={`slider-${audioId}`}
                 type="range"
                 min={0}

@@ -7,13 +7,21 @@
 }
 
 .slider {
-	height: var(--audio-slider-height, 6rem);
-	width: var(--audio-slider-width, 1.125rem);
 	margin: 0;
 	cursor: pointer;
+	accent-color: var(--primary);
+}
+
+.sliderVertical {
+	height: var(--audio-slider-height, 6rem);
+	width: var(--audio-slider-width, 1.125rem);
 	writing-mode: vertical-lr;
 	direction: rtl;
-	accent-color: var(--primary);
+}
+
+.sliderHorizontal {
+	width: var(--audio-slider-horizontal-width, clamp(5.5rem, 12vw, 8.5rem));
+	height: clamp(0.875rem, 0.8vw, 1rem);
 }
 
 .srOnly {

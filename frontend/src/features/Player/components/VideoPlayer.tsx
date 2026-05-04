@@ -30,6 +30,19 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const [isVideoReady, setIsVideoReady] = useState(false);
+    const [isPlayerHovered, setIsPlayerHovered] = useState(false);
+    const [isTouchOpen, setIsTouchOpen] = useState(false);
+    const touchCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleTouchStart = () => {
+        if (touchCloseTimerRef.current) clearTimeout(touchCloseTimerRef.current);
+        setIsTouchOpen(true);
+        touchCloseTimerRef.current = setTimeout(() => setIsTouchOpen(false), 3500);
+    };
+
+    useEffect(() => {
+        return () => { if (touchCloseTimerRef.current) clearTimeout(touchCloseTimerRef.current); };
+    }, []);
 
     const {
         isPlaying,
@@ -77,10 +90,19 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
         styles.videoContainer,
         isFullscreen ? styles.fullscreen : '',
         isInitialOpen ? styles.initialOpen : '',
+        isTouchOpen ? styles.touchOpen : '',
     ].filter(Boolean).join(' ');
 
+    const isAudioControlsExpanded = isPlayerHovered || isInitialOpen || isTouchOpen;
+
     return (
-        <div ref={playerContainerRef} className={containerClassName}>
+        <div
+            ref={playerContainerRef}
+            className={containerClassName}
+            onMouseEnter={() => setIsPlayerHovered(true)}
+            onMouseLeave={() => setIsPlayerHovered(false)}
+            onTouchStart={handleTouchStart}
+        >
             <div
                 className={`${styles.playerPlaceholder} ${isVideoReady ? styles.playerPlaceholderHidden : ''}`}
                 aria-hidden="true"
@@ -97,34 +119,33 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
                 <div className={styles.uiTop}>
                     <p className={styles.videoTitle}>{title}</p>
                 </div>
-                <div className={styles.uiCenter}>
-                    {canControlVideo?.rewind && <RewindButton rewindMode="backward" onClick={() => handleRewind(-5)} />}
-                    {canControlVideo?.pause && <PlayPauseButton isPlaying={isPlaying} onClick={handleTogglePlay} scale={2} />}
-                    {canControlVideo?.rewind && <RewindButton rewindMode="forward" onClick={() => handleRewind(5)} />}
-                </div>
                 <div className={styles.uiBottom}>
                     <div className={styles.uiBottomLeft}>
-                        <div className={styles.mobileHideBottomPlayButton}>
+                        <div className={styles.transportControls}>
+                            {canControlVideo?.rewind && <RewindButton rewindMode="backward" onClick={() => handleRewind(-5)} />}
                             {canControlVideo?.pause && <PlayPauseButton isPlaying={isPlaying} onClick={handleTogglePlay} />}
+                            {canControlVideo?.rewind && <RewindButton rewindMode="forward" onClick={() => handleRewind(5)} />}
                         </div>
                         <VideoTimeDisplay currentTime={currentTime} duration={duration} />
                     </div>
                     <div className={styles.uiBottomRight}>
-                        <AudioControls
-                            audios={audios}
-                            mixerState={mixerState}
-                            isFullscreen={isFullscreen}
-                            onVolumeChange={handleVolumeChange}
-                            onVolumeCommit={handleVolumeCommit}
-                            onMasterVolumeChange={handleMasterVolumeChange}
-                            onMasterVolumeCommit={handleMasterVolumeCommit}
-                            onMuteToggle={handleMuteToggle}
-                            watchMode={watchMode}
-                        />
                         <ScreenModeButton onClick={handleToggleFullscreen} isFullscreen={isFullscreen} />
                     </div>
                 </div>
             </div>
+
+            <AudioControls
+                audios={audios}
+                mixerState={mixerState}
+                isFullscreen={isFullscreen}
+                onVolumeChange={handleVolumeChange}
+                onVolumeCommit={handleVolumeCommit}
+                onMasterVolumeChange={handleMasterVolumeChange}
+                onMasterVolumeCommit={handleMasterVolumeCommit}
+                onMuteToggle={handleMuteToggle}
+                watchMode={watchMode}
+                isExpanded={isAudioControlsExpanded}
+            />
         </div>
     );
 }

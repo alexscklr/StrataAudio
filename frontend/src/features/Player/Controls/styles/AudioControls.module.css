@@ -1,27 +1,32 @@
 .audioControlsBox {
-    --audio-controls-max-width: min(58vw, 26rem);
-    --audio-controls-padding-block: clamp(0.375rem, 0.6vw, 0.5rem);
-    --audio-controls-padding-inline: clamp(0.5rem, 0.8vw, 0.75rem);
-    --audio-controls-gap: clamp(0.5rem, 1vw, 0.75rem);
+    --audio-controls-max-width: min(80vw, 52rem);
+    --audio-controls-padding-block: clamp(0.5rem, 0.8vw, 0.75rem);
+    --audio-controls-padding-inline: clamp(0.5rem, 0.9vw, 0.9rem);
+    --audio-controls-gap: clamp(0.5rem, 1vw, 0.85rem);
     --audio-icon-size: clamp(1.6rem, 1vw + 1.2rem, 2rem);
     --audio-slider-height: clamp(5rem, 11vw, 6rem);
     --audio-slider-width: clamp(0.875rem, 0.6vw + 0.5rem, 1.125rem);
+    --audio-slider-horizontal-width: clamp(5.5rem, 10vw, 7.75rem);
     display: flex;
     align-items: flex-end;
-    max-width: var(--audio-controls-max-width, min(52vw, 400px));
+    max-width: var(--audio-controls-max-width);
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: clamp(0.875rem, 1vw, 1.125rem);
-    background: rgba(0, 0, 0, 0.61);
-    padding: var(--audio-controls-padding-block, 0.375rem) var(--audio-controls-padding-inline, 0.5rem);
+    background: rgba(0, 0, 0, 0.45);
+    padding: var(--audio-controls-padding-block) var(--audio-controls-padding-inline);
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: thin;
-    cursor: pointer;
-    position: relative;
+    position: absolute;
+    right: clamp(0.5rem, 1.2vw, 1rem);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 12;
+    backdrop-filter: blur(4px);
 }
 
 .audioControlsBoxFullscreen {
-    --audio-controls-max-width: min(62vw, 34rem);
+    --audio-controls-max-width: min(86vw, 62rem);
     --audio-controls-padding-block: clamp(0.5rem, 0.8vw, 0.75rem);
     --audio-controls-padding-inline: clamp(0.625rem, 1vw, 1rem);
     --audio-controls-gap: clamp(0.625rem, 1vw, 0.9rem);
@@ -31,7 +36,7 @@
 }
 
 .audioControlsBoxExpanded {
-    background: rgba(0, 0, 0, 0.68);
+    background: rgba(0, 0, 0, 0.72);
 }
 
 .audioControlsToggle {
@@ -56,16 +61,18 @@
 
 .audioControlsRow {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: var(--audio-controls-gap, 0.625rem);
     width: max-content;
+    flex-direction: column;
 }
 
 .audioControlWrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: clamp(0.375rem, 0.8vw, 0.5rem);
+    gap: clamp(0.3rem, 0.7vw, 0.45rem);
+    min-width: clamp(2.25rem, 4vw, 3rem);
 }
 
 .audioIconButton {
@@ -100,23 +107,76 @@
 }
 
 .trackDivider {
-    width: 1px;
-    align-self: stretch;
+    width: 70%;
+    height: 1px;
+    align-self: center;
     background: rgba(255, 255, 255, 0.3);
-    margin-inline: clamp(0.125rem, 0.3vw, 0.25rem);
+    margin-block: clamp(0.25rem, 0.4vw, 0.35rem);
     flex-shrink: 0;
+}
+
+.audioTrackLabel {
+    display: none;
+    max-width: var(--audio-slider-horizontal-width, clamp(5.5rem, 10vw, 7.75rem));
+    font-size: clamp(0.68rem, 0.4vw + 0.58rem, 0.85rem);
+    line-height: 1.2;
+    color: var(--text-main);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audioControlsBoxExpanded .audioControlsRow {
+    align-items: flex-start;
+    flex-direction: row;
+}
+
+.audioControlsBoxExpanded .trackDivider {
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+    margin-inline: clamp(0.125rem, 0.3vw, 0.25rem);
+    margin-block: 0;
+}
+
+.audioControlsBoxExpanded .audioTrackLabel {
+    display: block;
 }
 
 @media (max-width: 768px) {
     .audioControlsBox {
-        --audio-controls-max-width: min(100%, 18rem);
-        --audio-icon-size: clamp(1.4rem, 5vw, 1.8rem);
-        --audio-slider-height: clamp(4.5rem, 18vw, 5.5rem);
-        --audio-slider-width: clamp(0.875rem, 3vw, 1rem);
-        min-width: 0;
+        --audio-controls-padding-block: clamp(0.35rem, 2vw, 0.5rem);
+        --audio-controls-padding-inline: clamp(0.4rem, 2.5vw, 0.65rem);
+        --audio-controls-gap: clamp(0.35rem, 2vw, 0.55rem);
+        --audio-icon-size: clamp(1.35rem, 5vw, 1.7rem);
+        --audio-slider-height: clamp(3.5rem, 14vw, 4.5rem);
+        --audio-slider-width: clamp(0.8rem, 2.8vw, 0.95rem);
+        width: max-content;
+        max-width: calc(100% - clamp(0.7rem, 4vw, 1.3rem));
+        top: auto;
+        right: clamp(0.35rem, 2vw, 0.65rem);
+        transform: none;
+        bottom: clamp(3.75rem, 15vw, 5.25rem);
+        align-items: center;
+        overflow-y: hidden;
+        overflow-x: auto;
+        max-height: calc(100% - clamp(5rem, 19vw, 7rem));
     }
 
+    /* Collapsed: column layout */
     .audioControlsRow {
-        gap: var(--audio-controls-gap, 0.5rem);
+        flex-direction: column;
+        align-items: center;
+        width: max-content;
+    }
+
+    /* Divider stays horizontal in collapsed state */
+    .trackDivider {
+        width: 70%;
+        height: 1px;
+        align-self: center;
+        margin-inline: 0;
+        margin-block: clamp(0.2rem, 0.5vw, 0.3rem);
     }
 }
