@@ -285,6 +285,14 @@ const enPages = {
     liability: "Liability notice",
     liabilityText:
       "This website was created as part of a bachelor thesis at Hamm-Lippstadt University of Applied Sciences (HSHL). It is intended exclusively for scientific purposes and does not pursue commercial interests. Despite careful content control, I accept no liability for the content of external links. The operators of linked pages are solely responsible for their content.",
+    iconCreditsTitle: "Icon Attributions",
+    iconCreditsText:
+      "The following icons are used in the application. The list includes icon image, source website, and author.",
+    iconCreditsEmpty: "No icon entries available.",
+    iconCreditsLoadError: "Error loading icon list: {{message}}",
+    iconHeader: "Icon",
+    sourceHeader: "Source",
+    authorHeader: "Author",
   },
   privacyPolicyPage: {
     metaTitle: "Privacy Policy",

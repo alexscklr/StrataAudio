@@ -31,6 +31,15 @@ export interface Audio extends Omit<BaseEntity, "created_at"> {
   default_volume: number;
 }
 
+export interface IconAttribution {
+  id: string;
+  file_name: string;
+  source_name: string;
+  source_url: string | null;
+  author_name: string;
+  author_url: string | null;
+}
+
 export interface VideoControlPermissions {
   seek: boolean;
   rewind: boolean;

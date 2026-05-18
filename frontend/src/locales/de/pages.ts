@@ -296,6 +296,14 @@ const dePages = {
     liability: "Haftungshinweis",
     liabilityText:
       "Diese Website wurde im Rahmen einer Bachelorarbeit an der Hochschule Hamm-Lippstadt (HSHL) erstellt. Sie dient ausschließlich wissenschaftlichen Zwecken und verfolgt keine kommerziellen Interessen. Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.",
+    iconCreditsTitle: "Icon-Quellen",
+    iconCreditsText:
+      "Folgende Icons werden in der Anwendung verwendet. Angegeben sind das Icon, die Quellen-Website und der Ersteller.",
+    iconCreditsEmpty: "Keine Icon-Einträge vorhanden.",
+    iconCreditsLoadError: "Fehler beim Laden der Icon-Liste: {{message}}",
+    iconHeader: "Icon-Bild",
+    sourceHeader: "Quelle",
+    authorHeader: "Autor",
   },
   privacyPolicyPage: {
     metaTitle: "Datenschutzerklärung",

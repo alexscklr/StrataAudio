@@ -68,4 +68,4 @@ export function resetAudioContext() {
 }
 
 export type { AudioContextProps };
-export type { AudioNodes } from "../utils/audioNodeManagement";;
+export type { AudioNodes } from "../utils/audioNodeManagement";

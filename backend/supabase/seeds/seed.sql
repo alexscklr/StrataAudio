@@ -17,6 +17,19 @@ INSERT INTO video_contents (video_id, title_de, title_en, description_de, descri
 ('797b40c6-fd6f-4de8-b13d-b63d4e94ff58', 'SCOUTs Reise', NULL, 'Dies ist ein Kurzfilm mit 3D-Animation.', NULL),
 ('89ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'OBS-Aufnahmetest', NULL, 'Dies ist ein kurzer Clip von Solitaire mit mehreren Audiotracks.', NULL);
 
+INSERT INTO icons (file_name, source_name, source_url, author_name, author_url) VALUES
+('microphone.png', 'Flaticon', 'https://www.flaticon.com/', 'Unknown', NULL),
+('music.png', 'Flaticon', 'https://www.flaticon.com/', 'Unknown', NULL),
+('phone.png', 'Flaticon', 'https://www.flaticon.com/', 'Unknown', NULL),
+('game.png', 'Flaticon', 'https://www.flaticon.com/', 'Unknown', NULL),
+('sfx.png', 'Flaticon', 'https://www.flaticon.com/', 'Unknown', NULL)
+ON CONFLICT (file_name) DO UPDATE
+SET
+	source_name = EXCLUDED.source_name,
+	source_url = EXCLUDED.source_url,
+	author_name = EXCLUDED.author_name,
+	author_url = EXCLUDED.author_url;
+
 INSERT INTO audios (id, video_id, hls_url, icon_url, default_volume) VALUES
 ('d1b2c3e4-5678-90ab-cdef-1234567890ab', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio1.m3u8', 'microphone.png', 0.3),
 ('d1b2c3e4-5678-90ab-cdef-1234567890ac', '67ae997e-9b26-46f0-a8bc-9a4bd34c2b17', 'output_audio2.m3u8', 'music.png', 0.7),

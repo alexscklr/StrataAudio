@@ -124,6 +124,19 @@ const ensureGenre = async (genreDe: string, genreEn?: string): Promise<string> =
   return genreId;
 };
 
+const ensureIcons = async (iconFileNames: string[]): Promise<void> => {
+  if (iconFileNames.length === 0) {
+    return;
+  }
+
+  const iconRows = iconFileNames.map((fileName) => ({ file_name: fileName }));
+  const { error } = await supabase.from("icons").upsert(iconRows, { onConflict: "file_name" });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
 const uploadAudioIcon = async (videoId: string, streamFolder: string, file: File): Promise<string> => {
   const baseName = sanitizeFileName(file.name);
   if (!baseName) {
@@ -622,6 +635,7 @@ export const uploadVideo = async (input: UploadVideoInput): Promise<string> => {
       icon_url: string | null;
       default_volume: number;
     }[] = [];
+    const iconFileNames: string[] = [];
 
     const audioContentRows: {
       audio_id: string;
@@ -639,6 +653,7 @@ export const uploadVideo = async (input: UploadVideoInput): Promise<string> => {
       if (track.iconFile) {
         iconFileName = await uploadAudioIcon(videoId, streamFolder, track.iconFile);
         uploadedIconPaths.push(`icons/${iconFileName}`);
+        iconFileNames.push(iconFileName);
       }
 
       const titleDe = track.titleDe.trim();
@@ -660,6 +675,8 @@ export const uploadVideo = async (input: UploadVideoInput): Promise<string> => {
         title_en: track.titleEn?.trim() || null,
       });
     }
+
+    await ensureIcons(iconFileNames);
 
     const { error: insertAudioError } = await supabase.from("audios").insert(audioRows);
     if (insertAudioError) {
