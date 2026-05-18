@@ -18,6 +18,33 @@
     margin: 1.25rem 0 1.5rem;
 }
 
+.activeModeHint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0 1rem;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid rgb(51 199 89 / 0.5);
+    border-radius: 999px;
+    background: rgb(51 199 89 / 0.12);
+    font-size: 0.92rem;
+}
+
+.activeModeHintBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: rgb(51 199 89 / 0.2);
+    color: rgb(179 255 198);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+}
+
 .technicalMetadataSection h2 {
     margin: 0 0 0.75rem;
     font-size: 1.1rem;

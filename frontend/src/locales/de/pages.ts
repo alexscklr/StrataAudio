@@ -137,6 +137,10 @@ const dePages = {
   watchPage: {
     playbackNote:
       "Hinweis: Das Video wird zwei Mal abgespielt, einmal im Mixer-Modus und einmal im Standard-Modus. Die Umfrage wird anschließend freigeschaltet.",
+    playbackNoteMidSwitch:
+      "Hinweis: Bei diesem Video wird der Modus in der Mitte gewechselt (Mixer und Standard in zufaelliger Reihenfolge). Die Umfrage wird anschließend freigeschaltet.",
+    activeModeBadge: "Aktiv",
+    activeModeHint: "Moduswechsel in der Videomitte ist eingeschaltet.",
     technicalMetadataTitle: "Credits",
     technicalMetadataCategory: "Kategorie",
     technicalMetadataSource: "Quelle",
@@ -241,7 +245,7 @@ const dePages = {
     lead: "Studienleitung: Alexander Sickler, Hochschule Hamm-Lippstadt (HSHL)",
     contactLabel: "Kontakt",
     duration:
-      "Der Test dauert je nach Wunsch etwa 10 bis 30 Minuten. Du hast anschließend die Möglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Forschung zu unterstützen.",
+      "Der Test dauert etwa 10 Minuten und kann auf Wunsch verlängert werden. Du schaust Videos in zwei Modi (Mixer und Standard) in zufälliger Reihenfolge und beantwortest dazu Fragen. Videos bis 2 Minuten werden in beiden Modi vollständig geschaut, bei längeren Videos erfolgt der Moduswechsel in der Mitte. Du hast anschließend die Möglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Arbeit zu unterstützen.",
     sections: {
       purposeTitle: "Zweck der Datenerhebung",
       purposeText:

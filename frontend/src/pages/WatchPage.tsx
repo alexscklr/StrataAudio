@@ -43,6 +43,7 @@ function WatchPage() {
     const [completedModes, setCompletedModes] = useState<WatchMode[]>(repairedCompletedModes);
     const [currentMode, setCurrentMode] = useState<WatchMode>(initialCurrentMode);
     const [audioConfigurationSnapshots, setAudioConfigurationSnapshots] = useState<Partial<Record<WatchMode, AudioConfigurationSnapshot>>>(persistedAudioConfigurationSnapshots);
+    const [hasMidpointSwitchTriggered, setHasMidpointSwitchTriggered] = useState(false);
 
     const navigate = useNavigate();
 
@@ -59,11 +60,34 @@ function WatchPage() {
     const firstWatchMode = modeSequence[0] ?? VideoWatchMode.Mixer;
     const hasMixerConfiguration = Boolean(audioConfigurationSnapshots[VideoWatchMode.Mixer]);
     const surveyUnlocked = completedCount === totalModes;
+    const shouldSwitchAtMidpoint = (video?.duration_seconds ?? 0) > 120;
+
+    useEffect(() => {
+        setHasMidpointSwitchTriggered(false);
+    }, [resolvedVideoId]);
+
+    const persistAudioConfigurationSnapshot = (mode: WatchMode, snapshot: AudioConfigurationSnapshot) => {
+        if (!hasTrackingConsent) {
+            return;
+        }
+
+        if (resolvedVideoId) {
+            saveAudioConfigurationSnapshot(resolvedVideoId, mode, snapshot);
+        }
+
+        setAudioConfigurationSnapshots((currentSnapshots) => ({
+            ...currentSnapshots,
+            [mode]: snapshot,
+        }));
+    };
 
     const handleVideoEnd = () => {
         if (!resolvedVideoId) return;
 
-        const nextCompletedModes = markWatchModeCompleted(resolvedVideoId, currentMode);
+        const nextCompletedModes = shouldSwitchAtMidpoint
+            ? setCompletedWatchModes(resolvedVideoId, [...completedModes, currentMode])
+            : markWatchModeCompleted(resolvedVideoId, currentMode);
+
         setCompletedModes(nextCompletedModes);
 
         const remainingModes = modeSequence.filter((mode) => !nextCompletedModes.includes(mode));
@@ -75,19 +99,26 @@ function WatchPage() {
         setCurrentMode(remainingModes[0]);
     }
 
-    const handleAudioConfigurationReady = (snapshot: AudioConfigurationSnapshot) => {
-        if (!hasTrackingConsent) {
+    const handleMidpointReached = (snapshot: AudioConfigurationSnapshot) => {
+        if (!shouldSwitchAtMidpoint || hasMidpointSwitchTriggered || !resolvedVideoId) {
             return;
         }
 
-        if (resolvedVideoId) {
-            saveAudioConfigurationSnapshot(resolvedVideoId, currentMode, snapshot);
+        persistAudioConfigurationSnapshot(currentMode, snapshot);
+
+        const nextCompletedModes = markWatchModeCompleted(resolvedVideoId, currentMode);
+        setCompletedModes(nextCompletedModes);
+
+        const remainingModes = modeSequence.filter((mode) => !nextCompletedModes.includes(mode));
+        if (remainingModes.length > 0) {
+            setCurrentMode(remainingModes[0]);
         }
 
-        setAudioConfigurationSnapshots((currentSnapshots) => ({
-            ...currentSnapshots,
-            [currentMode]: snapshot,
-        }));
+        setHasMidpointSwitchTriggered(true);
+    };
+
+    const handleAudioConfigurationReady = (snapshot: AudioConfigurationSnapshot) => {
+        persistAudioConfigurationSnapshot(currentMode, snapshot);
     };
 
     const technicalMetadataRows = video?.technical_metadata ?? [];
@@ -100,7 +131,13 @@ function WatchPage() {
             />
             <h1>{video?.title}</h1>
             
-            <p>{t('watchPage.playbackNote')}</p>
+            <p>{shouldSwitchAtMidpoint ? t('watchPage.playbackNoteMidSwitch') : t('watchPage.playbackNote')}</p>
+            {shouldSwitchAtMidpoint && (
+                <p className={styles.activeModeHint} role="status" aria-live="polite">
+                    <span className={styles.activeModeHintBadge}>{t('watchPage.activeModeBadge')}</span>
+                    {t('watchPage.activeModeHint')}
+                </p>
+            )}
             <section className={styles.technicalMetadataSection} aria-label={t('watchPage.technicalMetadataTitle')}>
                 <h2>{t('watchPage.technicalMetadataTitle')}</h2>
                 <div className={styles.technicalMetadataTableWrapper}>
@@ -147,13 +184,14 @@ function WatchPage() {
                         videoUrl={getPublicUrl(`${videoid}/${video.hls_url}`, "videos")}
                         title={video.title}
                         audios={audios}
-                        key={`${videoid}-${currentMode}`}
+                        key={shouldSwitchAtMidpoint ? `${videoid}-single-pass` : `${videoid}-${currentMode}`}
                         canControlVideo={{ 
                             seek: import.meta.env.VITE_VIDEO_CONTROLS_CAN_SEEK === 'true',
                             rewind: import.meta.env.VITE_VIDEO_CONTROLS_CAN_REWIND === 'true', 
                             pause: import.meta.env.VITE_VIDEO_CONTROLS_CAN_PAUSE === 'true', 
                             fullscreen: import.meta.env.VITE_VIDEO_CONTROLS_CAN_FULLSCREEN === 'true' }}
                         watchMode={currentMode}
+                        onMidpointReached={shouldSwitchAtMidpoint ? handleMidpointReached : undefined}
                         onAudioConfigurationReady={handleAudioConfigurationReady}
                         onVideoEnd={handleVideoEnd}
                     />

@@ -133,6 +133,10 @@ const enPages = {
   watchPage: {
     playbackNote:
       "Note: The video plays twice, once in mixer mode and once in standard mode. The survey unlocks afterwards.",
+    playbackNoteMidSwitch:
+      "Note: For this video, the watch mode switches at the midpoint (mixer and standard remain in random order). The survey unlocks afterwards.",
+    activeModeBadge: "Active",
+    activeModeHint: "Midpoint watch mode switching is enabled.",
     technicalMetadataTitle: "Credits",
     technicalMetadataCategory: "Category",
     technicalMetadataSource: "Source",
@@ -231,7 +235,7 @@ const enPages = {
     lead: "Study lead: Alexander Sickler, Hamm-Lippstadt University of Applied Sciences (HSHL)",
     contactLabel: "Contact",
     duration:
-      "Depending on your preference, this test takes about 10 to 30 minutes. Afterwards, you can continue watching and rating additional videos to support the research.",
+      "This test takes about 10 minutes and can be extended if desired. You will watch videos in two modes (mixer and standard) in random order and answer related questions. Videos up to 2 minutes are watched fully in both modes, while longer videos switch mode at the midpoint. Afterwards, you can continue watching and rating additional videos to support the research.",
     sections: {
       purposeTitle: "Purpose of data collection",
       purposeText:

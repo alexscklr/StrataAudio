@@ -56,7 +56,7 @@ function ConsentPage() {
                     {t('consentPage.lead')}<br />
                     {t('consentPage.contactLabel')}: <a href="mailto:alexander.sickler@stud.hshl.de">alexander.sickler@stud.hshl.de</a>
                 </p>
-                <p className={styles.subheader}>
+                <p className={`${styles.subheader} ${styles.durationNotice}`}>
                     {t('consentPage.duration')}
                 </p>
             </header>

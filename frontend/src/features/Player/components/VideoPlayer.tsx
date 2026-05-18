@@ -21,11 +21,12 @@ interface VideoPlayerProps {
     autoplay?: boolean;
     canControlVideo?: VideoControlPermissions;
     onVideoEnd?: () => void;
+    onMidpointReached?: (snapshot: AudioConfigurationSnapshot) => void;
     onAudioConfigurationReady?: (snapshot: AudioConfigurationSnapshot) => void;
     watchMode: VideoWatchMode;
 }
 
-function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canControlVideo, onVideoEnd, onAudioConfigurationReady, watchMode }: VideoPlayerProps) {
+function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canControlVideo, onVideoEnd, onMidpointReached, onAudioConfigurationReady, watchMode }: VideoPlayerProps) {
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -33,6 +34,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
     const [isTouchOpen, setIsTouchOpen] = useState(false);
     const touchCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const hasReachedMidpointRef = useRef(false);
 
     const handleTouchStart = () => {
         if (touchCloseTimerRef.current) clearTimeout(touchCloseTimerRef.current);
@@ -84,6 +86,21 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
         onAudioConfigurationReady?.(getAudioConfigurationSnapshot());
         onVideoEnd?.();
     };
+
+    useEffect(() => {
+        hasReachedMidpointRef.current = false;
+    }, [videoId, videoUrl]);
+
+    useEffect(() => {
+        if (!onMidpointReached) return;
+        if (hasReachedMidpointRef.current) return;
+        if (!Number.isFinite(duration) || duration <= 0) return;
+
+        if (currentTime >= duration / 2) {
+            hasReachedMidpointRef.current = true;
+            onMidpointReached(getAudioConfigurationSnapshot());
+        }
+    }, [currentTime, duration, getAudioConfigurationSnapshot, onMidpointReached]);
 
     useEffect(() => {
         if (isPlaying && isInitialOpen) {
