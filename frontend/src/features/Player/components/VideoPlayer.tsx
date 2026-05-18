@@ -70,8 +70,13 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
         handleVolumeCommit,
         handleMasterVolumeChange,
         handleMasterVolumeCommit,
+        handlePanChange,
+        handlePanCommit,
+        handleMasterPanChange,
+        handleMasterPanCommit,
         handleMuteToggle,
         calculateEffectiveVolume,
+        calculateEffectivePan,
         getAudioConfigurationSnapshot,
     } = useMixer(audios);
 
@@ -110,7 +115,14 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
             <video ref={videoRef} muted playsInline className={styles.video} onEnded={handleVideoEnded} onCanPlay={() => setIsVideoReady(true)}>
                 Your browser does not support the video tag.
             </video>
-            <AudioEngine videoId={videoId} audios={audios} masterVideoRef={videoRef} calculateEffectiveVolume={calculateEffectiveVolume} />
+            <AudioEngine
+                videoId={videoId}
+                audios={audios}
+                masterVideoRef={videoRef}
+                calculateEffectiveVolume={calculateEffectiveVolume}
+                calculateEffectivePan={calculateEffectivePan}
+                masterPan={mixerState.masterPan}
+            />
 
             
             <div className={styles.overlay} >
@@ -142,6 +154,10 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
                 onVolumeCommit={handleVolumeCommit}
                 onMasterVolumeChange={handleMasterVolumeChange}
                 onMasterVolumeCommit={handleMasterVolumeCommit}
+                onPanChange={handlePanChange}
+                onPanCommit={handlePanCommit}
+                onMasterPanChange={handleMasterPanChange}
+                onMasterPanCommit={handleMasterPanCommit}
                 onMuteToggle={handleMuteToggle}
                 watchMode={watchMode}
                 isExpanded={isAudioControlsExpanded}

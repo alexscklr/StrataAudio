@@ -59,6 +59,7 @@ const enSurveys = {
         sections: {
             section1: 'Questions about synchronization',
             section2: 'Questions about user experience',
+            section3: 'Questions about stereo panning control',
         },
         questions: {
             sync1: {
@@ -84,6 +85,16 @@ const enSurveys = {
                     Standard: 'Standard',
                     Mixer: 'Mixer',
                 },
+            },
+            pan1: {
+                question: 'How helpful was the PAN control (left/right) for placing individual tracks?',
+                minDescription: 'Not helpful at all',
+                maxDescription: 'Very helpful',
+            },
+            pan2: {
+                question: 'How intuitive was using the PAN sliders?',
+                minDescription: 'Not intuitive at all',
+                maxDescription: 'Very intuitive',
             },
         },
     },

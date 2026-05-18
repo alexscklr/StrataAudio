@@ -1,7 +1,7 @@
-import styles from './AudioSlider.module.css';
+import styles from './VolumeSlider.module.css';
 import { useTranslation } from 'react-i18next';
 
-interface AudioSliderProps {
+interface VolumeSliderProps {
     audioId: string;
     volume: number;
     onVolumeChange: (id: string, val: number) => void;
@@ -9,7 +9,7 @@ interface AudioSliderProps {
     orientation?: 'vertical' | 'horizontal';
 }
 
-function AudioSlider({ audioId, volume, onVolumeChange, onVolumeCommit, orientation = 'vertical' }: AudioSliderProps) {
+function VolumeSlider({ audioId, volume, onVolumeChange, onVolumeCommit, orientation = 'vertical' }: VolumeSliderProps) {
     const { t } = useTranslation();
 
     const handleCommit = (value: number) => {
@@ -40,4 +40,4 @@ function AudioSlider({ audioId, volume, onVolumeChange, onVolumeCommit, orientat
     );
 }
 
-export default AudioSlider;
+export default VolumeSlider;

@@ -9,6 +9,7 @@ const enBase = {
         close: 'Close',
         back: 'Back',
         volume: 'Volume',
+        pan: 'Pan',
         optional: '(optional)',
         noAnswer: 'Prefer not to say',
         pleaseAnswerQuestion: 'Please answer this question',

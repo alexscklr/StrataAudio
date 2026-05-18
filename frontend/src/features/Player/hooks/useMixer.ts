@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import type { Audio } from '@/shared/types/media';
 import type { AudioConfigurationSnapshot, MixerInteractionEntry, MixerState } from '@/shared/types/mixer';
 
-const DEFAULT_TRACK_STATE = { volume: 1, isMuted: false };
+const DEFAULT_TRACK_STATE = { volume: 1, isMuted: false, pan: 0 };
 
 function createDefaultTrackState(audio: Audio) {
     return {
         volume: Number.isFinite(audio.default_volume) ? audio.default_volume : DEFAULT_TRACK_STATE.volume,
         isMuted: DEFAULT_TRACK_STATE.isMuted,
+        pan: DEFAULT_TRACK_STATE.pan,
     };
 }
 
@@ -30,6 +31,7 @@ function useMixer(audios: Audio[] | undefined) {
 
     const [mixerState, setMixerState] = useState<MixerState>(() => ({
         masterVolume: 1,
+        masterPan: 0,
         trackstates: createTrackStates(audios),
         isMasterMuted: false,
     }));
@@ -102,6 +104,38 @@ function useMixer(audios: Audio[] | undefined) {
         appendInteraction('master.volume', val);
     };
 
+    const handlePanChange = (id: string, val: number) => {
+        const clampedVal = Math.max(-1, Math.min(1, val));
+        setMixerState(prev => ({
+            ...prev,
+            trackstates: {
+                ...prev.trackstates,
+                [id]: {
+                    ...(prev.trackstates[id] ?? DEFAULT_TRACK_STATE),
+                    pan: clampedVal
+                }
+            }
+        }));
+    };
+
+    const handlePanCommit = (id: string, val: number) => {
+        const clampedVal = Math.max(-1, Math.min(1, val));
+        appendInteraction(`${id}.pan`, clampedVal);
+    };
+
+    const handleMasterPanChange = (val: number) => {
+        const clampedVal = Math.max(-1, Math.min(1, val));
+        setMixerState(prev => ({
+            ...prev,
+            masterPan: clampedVal,
+        }));
+    };
+
+    const handleMasterPanCommit = (val: number) => {
+        const clampedVal = Math.max(-1, Math.min(1, val));
+        appendInteraction('master.pan', clampedVal);
+    };
+
     const calculateEffectiveVolume = (id: string) => {
         const trackState = mixerState.trackstates[id];
         if (!trackState) return mixerState.masterVolume;
@@ -109,10 +143,18 @@ function useMixer(audios: Audio[] | undefined) {
         return trackState.volume * mixerState.masterVolume;
     };
 
+    const calculateEffectivePan = (id: string) => {
+        const trackState = mixerState.trackstates[id];
+        if (!trackState) return 0;
+        if (trackState.isMuted || mixerState.isMasterMuted) return 0;
+        return Math.max(-1, Math.min(1, trackState.pan));
+    };
+
     const getAudioConfigurationSnapshot = (): AudioConfigurationSnapshot => {
         return {
             final_settings: {
                 masterVolume: mixerState.masterVolume,
+                masterPan: mixerState.masterPan,
                 isMasterMuted: mixerState.isMasterMuted,
                 trackstates: mixerState.trackstates,
             },
@@ -128,8 +170,13 @@ function useMixer(audios: Audio[] | undefined) {
         handleVolumeCommit,
         handleMasterVolumeChange,
         handleMasterVolumeCommit,
+        handlePanChange,
+        handlePanCommit,
+        handleMasterPanChange,
+        handleMasterPanCommit,
         handleMuteToggle,
         calculateEffectiveVolume,
+        calculateEffectivePan,
         getAudioConfigurationSnapshot,
     };
 }

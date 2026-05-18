@@ -9,6 +9,7 @@ const deBase = {
         close: 'Schließen',
         back: 'Zurück',
         volume: 'Lautstärke',
+        pan: 'Pan',
         optional: '(optional)',
         noAnswer: 'Keine Angabe',
         pleaseAnswerQuestion: 'Bitte beantworte diese Frage',

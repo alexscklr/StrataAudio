@@ -27,7 +27,8 @@ export const saveAudioConfiguration = async ({
     });
 
   if (error) {
-    throw error;
+    const detailParts = [error.message, error.details, error.hint, error.code].filter(Boolean);
+    throw new Error(detailParts.join(' | '));
   }
 
   return configurationId;

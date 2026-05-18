@@ -2,6 +2,7 @@
 export interface AudioTrackState {
     volume: number;
     isMuted: boolean;
+    pan: number; // -1 (left) to +1 (right), 0 = center
     //isSolo: boolean;
 }
 
@@ -14,6 +15,7 @@ export interface MixerInteractionEntry {
 export interface AudioConfigurationSnapshot {
     final_settings: {
         masterVolume: number;
+        masterPan: number;
         isMasterMuted: boolean;
         trackstates: Record<string, AudioTrackState>;
     };
@@ -24,6 +26,7 @@ export interface AudioConfigurationSnapshot {
 
 export interface MixerState {
     masterVolume: number;
+    masterPan: number; // -1 (left) to +1 (right), 0 = center
     trackstates: Record<string, AudioTrackState>; 
     isMasterMuted: boolean;
 }

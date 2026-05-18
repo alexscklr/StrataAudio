@@ -45,6 +45,30 @@ export const videoSurvey: Survey = {
                     options: ["Standard", "Mixer"]
                 }
             ]
+        },
+        {
+            id: "section-3",
+            title: "surveys.video.sections.section3",
+            questions: [
+                {
+                    id: "pan-1",
+                    type: QuestionType.LinearRating,
+                    question: "surveys.video.questions.pan1.question",
+                    minValue: 1,
+                    maxValue: 7,
+                    minDescription: "surveys.video.questions.pan1.minDescription",
+                    maxDescription: "surveys.video.questions.pan1.maxDescription"
+                },
+                {
+                    id: "pan-2",
+                    type: QuestionType.LinearRating,
+                    question: "surveys.video.questions.pan2.question",
+                    minValue: 1,
+                    maxValue: 7,
+                    minDescription: "surveys.video.questions.pan2.minDescription",
+                    maxDescription: "surveys.video.questions.pan2.maxDescription"
+                }
+            ]
         }
     ]
 }

@@ -3,7 +3,8 @@ import type { Audio, VideoWatchMode } from "@/shared/types/media";
 import styles from "./styles/AudioControls.module.css";
 import StemControl from "./StemControl";
 import type { MixerState } from "@/shared/types/mixer";
-import AudioSlider from "../../../shared/components/UI/AudioSlider/AudioSlider";
+import VolumeSlider from "../../../shared/components/UI/VolumeSlider/VolumeSlider";
+import PanSlider from "../../../shared/components/UI/PanSlider/PanSlider";
 import { LuVolume2 } from "react-icons/lu";
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +14,10 @@ interface AudioControlsProps {
     onVolumeCommit: (id: string, val: number) => void;
     onMasterVolumeChange: (val: number) => void;
     onMasterVolumeCommit: (val: number) => void;
+    onPanChange: (id: string, val: number) => void;
+    onPanCommit: (id: string, val: number) => void;
+    onMasterPanChange: (val: number) => void;
+    onMasterPanCommit: (val: number) => void;
     mixerState: MixerState;
     audios: Audio[] | undefined;
     isFullscreen: boolean;
@@ -21,7 +26,7 @@ interface AudioControlsProps {
     isExpanded: boolean;
 }
 
-function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode, isExpanded }: AudioControlsProps) {
+function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, onPanChange, onPanCommit, onMasterPanChange, onMasterPanCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode, isExpanded }: AudioControlsProps) {
     const { t } = useTranslation();
 
     const shouldRenderTracks = watchMode !== 'standard';
@@ -40,12 +45,20 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
             <div className={styles.audioControlsRow}>
                 <div className={styles.audioControlWrapper}>
                     {isExpanded && (
-                        <AudioSlider
-                            audioId="master"
-                            volume={mixerState.masterVolume}
-                            onVolumeChange={(_, val) => onMasterVolumeChange(val)}
-                            onVolumeCommit={(_, val) => onMasterVolumeCommit(val)}
-                        />
+                        <div className={styles.controlStack}>
+                            <VolumeSlider
+                                audioId="master"
+                                volume={mixerState.masterVolume}
+                                onVolumeChange={(_, val) => onMasterVolumeChange(val)}
+                                onVolumeCommit={(_, val) => onMasterVolumeCommit(val)}
+                            />
+                            <PanSlider
+                                audioId="master"
+                                pan={mixerState.masterPan}
+                                onPanChange={(_, val) => onMasterPanChange(val)}
+                                onPanCommit={(_, val) => onMasterPanCommit(val)}
+                            />
+                        </div>
                     )}
                     <button
                         type="button"
@@ -65,9 +78,11 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
                         key={audio.id}
                         audio={audio}
                         isAudioControlsOpen={isExpanded}
-                        trackState={mixerState.trackstates[audio.id] ?? { volume: 1, isMuted: false }}
+                        trackState={mixerState.trackstates[audio.id] ?? { volume: 1, isMuted: false, pan: 0 }}
                         onVolumeChange={onVolumeChange}
                         onVolumeCommit={onVolumeCommit}
+                        onPanChange={onPanChange}
+                        onPanCommit={onPanCommit}
                         onToggleMute={() => onMuteToggle(audio.id)}
                     />
                 ))}

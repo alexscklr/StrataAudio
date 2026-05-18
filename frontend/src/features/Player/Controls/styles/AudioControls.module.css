@@ -71,8 +71,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: clamp(0.3rem, 0.7vw, 0.45rem);
+    gap: clamp(0.2rem, 0.5vw, 0.32rem);
     min-width: clamp(2.25rem, 4vw, 3rem);
+}
+
+.controlStack {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.12rem, 0.25vw, 0.22rem);
 }
 
 .audioIconButton {
@@ -164,14 +170,12 @@
         max-height: calc(100% - clamp(5rem, 19vw, 7rem));
     }
 
-    /* Collapsed: column layout */
     .audioControlsRow {
         flex-direction: column;
         align-items: center;
         width: max-content;
     }
 
-    /* Divider stays horizontal in collapsed state */
     .trackDivider {
         width: 70%;
         height: 1px;

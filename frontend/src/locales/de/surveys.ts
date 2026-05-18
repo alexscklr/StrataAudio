@@ -59,6 +59,7 @@ const deSurveys = {
         sections: {
             section1: 'Fragen zum Thema Synchronisation',
             section2: 'Fragen zum Thema Erlebnis',
+            section3: 'Fragen zur Stereo-Panorama-Steuerung',
         },
         questions: {
             sync1: {
@@ -84,6 +85,16 @@ const deSurveys = {
                     Standard: 'Standard',
                     Mixer: 'Mixer',
                 },
+            },
+            pan1: {
+                question: 'Wie hilfreich war die PAN-Steuerung (Links/Rechts), um einzelne Spuren besser zu platzieren?',
+                minDescription: 'Gar nicht hilfreich',
+                maxDescription: 'Sehr hilfreich',
+            },
+            pan2: {
+                question: 'Wie intuitiv war die Bedienung der PAN-Slider?',
+                minDescription: 'Gar nicht intuitiv',
+                maxDescription: 'Sehr intuitiv',
             },
         },
     },

@@ -34,5 +34,8 @@ export const submitSurveyResponse = async ({
             feedback_text: null,
         });
 
-    if (error) throw error;
+    if (error) {
+        const detailParts = [error.message, error.details, error.hint, error.code].filter(Boolean);
+        throw new Error(detailParts.join(' | '));
+    }
 };

@@ -1,16 +1,23 @@
 import Hls from 'hls.js';
 import { useEffect, useRef } from 'react';
+import { useAudioContext, type AudioNodes } from '../hooks/useAudioContext';
 
 interface StemPlayerProps {
+    audioId: string;
     hls_url: string;
     volume: number;
+    pan: number;
+    masterPan: number;
     masterVideoRef: React.RefObject<HTMLVideoElement | null>;
 }
 
-function StemPlayer({ hls_url, volume, masterVideoRef }: StemPlayerProps) {
+function StemPlayer({ audioId, hls_url, volume, pan, masterPan, masterVideoRef }: StemPlayerProps) {
 
     const audioRef = useRef<HTMLAudioElement>(null);
     const hlsRef = useRef<Hls | null>(null);
+    const audioNodesRef = useRef<AudioNodes | null>(null);
+
+    const { audioContext, isAudioContextReady, createAudioNodes, masterPannerNode } = useAudioContext();
 
     useEffect(() => {
         const audioEl = audioRef.current;
@@ -31,10 +38,39 @@ function StemPlayer({ hls_url, volume, masterVideoRef }: StemPlayerProps) {
 
     useEffect(() => {
         const audioEl = audioRef.current;
-        if (!audioEl) return;
+        if (!audioEl || !isAudioContextReady || !audioContext) return;
 
-        audioEl.volume = Math.min(1, Math.max(0, volume));
+        try {
+            if (!audioNodesRef.current) {
+                audioNodesRef.current = createAudioNodes(audioEl);
+            }
+        } catch (error) {
+            console.error(`Failed to create audio nodes for ${audioId}:`, error);
+        }
+    }, [audioId, isAudioContextReady, audioContext, createAudioNodes]);
+
+    useEffect(() => {
+        const nodes = audioNodesRef.current;
+        if (!nodes) return;
+
+        const clampedVolume = Math.min(1, Math.max(0, volume));
+        nodes.gainNode.gain.value = clampedVolume;
     }, [volume]);
+
+    useEffect(() => {
+        const nodes = audioNodesRef.current;
+        if (!nodes) return;
+
+        const clampedPan = Math.max(-1, Math.min(1, pan));
+        nodes.pannerNode.pan.value = clampedPan;
+    }, [pan]);
+
+    useEffect(() => {
+        if (!masterPannerNode) return;
+
+        const clampedMasterPan = Math.max(-1, Math.min(1, masterPan));
+        masterPannerNode.pan.value = clampedMasterPan;
+    }, [masterPan, masterPannerNode]);
 
     useEffect(() => {
         const master = masterVideoRef.current;

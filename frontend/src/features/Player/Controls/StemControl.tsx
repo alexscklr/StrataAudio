@@ -1,6 +1,7 @@
 import type { Audio } from "@/shared/types/media";
 import styles from "./styles/AudioControls.module.css";
-import AudioSlider from "../../../shared/components/UI/AudioSlider/AudioSlider";
+import VolumeSlider from "../../../shared/components/UI/VolumeSlider/VolumeSlider";
+import PanSlider from "../../../shared/components/UI/PanSlider/PanSlider";
 import { getPublicUrl } from "@/shared/utils/storage";
 import type { AudioTrackState } from "@/shared/types/mixer";
 import { LuSlash } from "react-icons/lu";
@@ -12,16 +13,21 @@ interface StemControlProps {
     trackState: AudioTrackState;
     onVolumeChange: (id: string, val: number) => void;
     onVolumeCommit: (id: string, val: number) => void;
+    onPanChange: (id: string, val: number) => void;
+    onPanCommit: (id: string, val: number) => void;
     onToggleMute: (id: string) => void;
 }
 
-function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, onVolumeCommit, onToggleMute }: StemControlProps) {
+function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, onVolumeCommit, onPanChange, onPanCommit, onToggleMute }: StemControlProps) {
     const { t } = useTranslation();
 
     return (
         <div key={audio.id} className={styles.audioControlWrapper}>
             {isAudioControlsOpen && (
-                <AudioSlider audioId={audio.id} volume={trackState.volume} onVolumeChange={onVolumeChange} onVolumeCommit={onVolumeCommit} />
+                <div className={styles.controlStack}>
+                    <VolumeSlider audioId={audio.id} volume={trackState.volume} onVolumeChange={onVolumeChange} onVolumeCommit={onVolumeCommit} />
+                    <PanSlider audioId={audio.id} pan={trackState.pan} onPanChange={onPanChange} onPanCommit={onPanCommit} />
+                </div>
             )}
             <button
                 type="button"

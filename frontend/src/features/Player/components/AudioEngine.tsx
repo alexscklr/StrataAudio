@@ -7,9 +7,11 @@ interface AudioEngineProps {
     audios: Audio[] | undefined;
     masterVideoRef: React.RefObject<HTMLVideoElement | null>;
     calculateEffectiveVolume: (id: string) => number;
+    calculateEffectivePan: (id: string) => number;
+    masterPan: number;
 }
 
-function AudioEngine({ videoId, audios, masterVideoRef, calculateEffectiveVolume }: AudioEngineProps) {
+function AudioEngine({ videoId, audios, masterVideoRef, calculateEffectiveVolume, calculateEffectivePan, masterPan }: AudioEngineProps) {
     if (!audios) return null;
 
     return (
@@ -17,8 +19,11 @@ function AudioEngine({ videoId, audios, masterVideoRef, calculateEffectiveVolume
             {audios.map(audio => (
                 <StemPlayer
                     key={audio.id}
+                    audioId={audio.id}
                     hls_url={getPublicUrl(`${videoId}/${audio.hls_url}`, "videos")}
                     volume={calculateEffectiveVolume(audio.id)}
+                    pan={calculateEffectivePan(audio.id)}
+                    masterPan={masterPan}
                     masterVideoRef={masterVideoRef}
                 />
             ))}
