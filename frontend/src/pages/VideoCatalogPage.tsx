@@ -4,6 +4,7 @@ import mainPageStyles from "./styles/MainPageStyle.module.css";
 import CatalogItem from "@/shared/components/CatalogItem/CatalogItem";
 import ProgressBar from "@/shared/components/ProgressBar/ProgressBar";
 import { useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/features/auth/context/AuthContext";
 import type { CatalogItemStatus, VideoCatalogItem } from "@/shared/types/media";
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,7 @@ import { getPublicUrl } from "@/shared/utils/storage";
 
 function VideoCatalogPage() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { participantId } = useContext(AuthContext);
     const { data: videoCatalog, isLoading, error } = useVideoCatalog(participantId);
     const loadingPlaceholders = Array.from({ length: 3 }, (_, index) => `loading-${index}`);
@@ -87,6 +89,16 @@ function VideoCatalogPage() {
                         counter={`${mandatoryWatched}/${mandatoryTotal}`}
                     />
                 </div>
+
+                {mandatoryTotal > 0 && mandatoryWatched === mandatoryTotal && (
+                    <button
+                        type="button"
+                        className="primary"
+                        onClick={() => navigate('/endumfrage')}
+                    >
+                        {t('videoCatalog.proceedToSurvey')}
+                    </button>
+                )}
 
                 {isLoading ? (
                     <ul className={`${styles.catalogList} ${styles.catalogListLoading}`} aria-hidden="true">

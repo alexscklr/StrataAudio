@@ -7,6 +7,7 @@ const dePages = {
       "Diese Videos müssen abgeschlossen werden, um die Endumfrage freizuschalten.",
     progress: "Fortschritt",
     mandatoryEmpty: "Alle erforderlichen Videos sind abgeschlossen.",
+    proceedToSurvey: "Zur Endumfrage",
     optionalTitle: "Optionale Videos",
     optionalLockedHint:
       "Optionale Videos werden freigeschaltet, sobald alle erforderlichen Videos angesehen wurden.",

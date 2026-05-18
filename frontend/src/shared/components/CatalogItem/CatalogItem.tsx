@@ -54,7 +54,7 @@ function CatalogItem({ thumbnailUrl, title, videoid, hlsUrl, genre, description,
                             />
                         </div>
                         {badgeLabel && <span className={styles.statusBadge + ' ' + (isLocked ? styles.lockedBadge : styles.watchedBadge)}>{badgeLabel}</span>}
-                        {duration && <span className={styles.durationBadge}>2x {formatDuration(duration)}</span>}
+                        {duration && <span className={styles.durationBadge}>{duration <= 120 ? '2x ' : ''}{formatDuration(duration)}</span>}
                     </div>
                 )}
                 <h2 className={styles.catalogTitle + ' ' + (isInactive ? styles.inactive : '')}>{title}</h2>

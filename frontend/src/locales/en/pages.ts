@@ -6,6 +6,7 @@ const enPages = {
     mandatoryHint: "These videos must be completed to unlock the final survey.",
     progress: "Progress",
     mandatoryEmpty: "All required videos are completed.",
+    proceedToSurvey: "Go to final survey",
     optionalTitle: "Optional videos",
     optionalLockedHint:
       "Optional videos unlock after all required videos were watched.",
