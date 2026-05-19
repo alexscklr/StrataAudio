@@ -78,16 +78,24 @@ function PrivacyPolicyPage() {
         <p>{t("privacyPolicyPage.hostingIntro")}</p>
         <ul className={mainPageStyles.providerList}>
           <li>
+            <strong>{t("privacyPolicyPage.ionosLabel")}</strong> {t("privacyPolicyPage.ionosText")}{" "}
+            <a href="https://www.ionos.de" target="_blank" rel="noopener noreferrer">IONOS</a>
+          </li>
+          <li>
             <strong>{t("privacyPolicyPage.vercelLabel")}</strong> {t("privacyPolicyPage.vercelText")}{" "}
-            <a href="https://vercel.com/legal/privacy" target="_blank" rel="noopener noreferrer">Vercel Privacy</a>
+            <a href="https://www.vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a>
+          </li>
+          <li>
+            <strong>{t("privacyPolicyPage.cloudflareCdnLabel")}</strong> {t("privacyPolicyPage.cloudflareCdnText")}{" "}
+            <a href="https://www.cloudflare.com" target="_blank" rel="noopener noreferrer">Cloudflare</a>
           </li>
           <li>
             <strong>{t("privacyPolicyPage.supabaseLabel")}</strong> {t("privacyPolicyPage.supabaseText")}{" "}
-            <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">Supabase Privacy</a>
+            <a href="https://www.supabase.com" target="_blank" rel="noopener noreferrer">Supabase</a>
           </li>
           <li>
             <strong>{t("privacyPolicyPage.cloudflareLabel")}</strong> {t("privacyPolicyPage.cloudflareText")}{" "}
-            <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare Privacy</a>
+            <a href="https://www.cloudflare.com" target="_blank" rel="noopener noreferrer">Cloudflare</a>
           </li>
         </ul>
         <p style={{ marginTop: "20px" }}>

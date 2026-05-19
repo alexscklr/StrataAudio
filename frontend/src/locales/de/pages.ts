@@ -218,7 +218,7 @@ const dePages = {
     rewardPopup: {
       title: "Vielen Dank für deine Teilnahme",
       thanks:
-        "Deine Antworten helfen dabei, das Audio-Erlebnis in Webvideos zu verbessern.",
+        "Deine Antworten helfen dabei, das Audio-Erlebnis in Webvideos zu verbessern. Du kannst gerne zurück zum Videokatalog gehen und weitere Videos anschauen, wenn du möchtest.",
       codeText: "SurveyCircle-Code zum Einlösen der Punkte:",
       codeAria: "SurveyCircle Code",
       copyButton: "Code kopieren",
@@ -246,7 +246,7 @@ const dePages = {
     lead: "Studienleitung: Alexander Sickler, Hochschule Hamm-Lippstadt (HSHL)",
     contactLabel: "Kontakt",
     duration:
-      "Der Test dauert etwa 10 Minuten und kann auf Wunsch verlängert werden. Du schaust Videos in zwei Modi (Mixer und Standard) in zufälliger Reihenfolge und beantwortest dazu Fragen. Videos bis 2 Minuten werden in beiden Modi vollständig geschaut, bei längeren Videos erfolgt der Moduswechsel in der Mitte. Du hast anschließend die Möglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Arbeit zu unterstützen.",
+      "Der Test dauert etwa 20 bis 30 Minuten und kann auf Wunsch verlängert werden. Du schaust Videos in zwei Modi (Mixer und Standard) in zufälliger Reihenfolge und beantwortest dazu Fragen. Videos bis 2 Minuten werden in beiden Modi vollständig geschaut, bei längeren Videos erfolgt der Moduswechsel in der Mitte. Du hast anschließend die Möglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Arbeit zu unterstützen.",
     sections: {
       purposeTitle: "Zweck der Datenerhebung",
       purposeText:
@@ -334,28 +334,36 @@ const dePages = {
       "Technische Metadaten: Browsertyp und Gerätetyp (z. B. Smartphone/PC).",
       "Anonymisierung: Es werden keine IP-Adressen oder direkt identifizierbaren Daten (Namen, E-Mails) dauerhaft gespeichert. Zur Vermeidung von Mehrfachteilnahmen wird ein technischer User-Hash verwendet.",
     ],
-    retentionTitle: "Hosting und Infrastruktur",
+    retentionTitle: "Hosting, Infrastruktur und Content Delivery Network (CDN)",
     hostingIntro:
-      "Zur Bereitstellung dieser Anwendung werden Dienste von Drittanbietern genutzt, die als Auftragsverarbeiter fungieren:",
+      "Zur sicheren, performanten und DSGVO-konformen Bereitstellung dieser Forschungsanwendung werden Dienste spezialisierter Drittanbieter genutzt, die als Auftragsverarbeiter auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer technisch fehlerfreien, sicheren und stabilen Online-Präsenz) fungieren. Mit allen Anbietern wurden Verträge zur Auftragsverarbeitung (AVV) nach Art. 28 DSGVO geschlossen.",
 
-    supabaseLabel: "Datenbank & Backend:",
-    supabaseText:
-      "Supabase, Inc. zur Speicherung der Forschungsdaten (Region Frankfurt).",
+    ionosLabel: "Domain-Registrar:",
+    ionosText:
+      "1&1 IONOS SE (Elgendorfer Str. 57, 56410 Montabaur). IONOS stellt die Domain-Infrastruktur bereit. Beim Aufruf der Domain werden standardmäßig Server-Logfiles (inkl. gekürzter/anonymisierter IP-Adressen) verarbeitet.",
 
     vercelLabel: "Frontend-Hosting:",
     vercelText:
-      "Vercel Inc. zur Bereitstellung der Weboberfläche. Beim Zugriff werden technische Verbindungsdaten (z.B. IP-Adresse) verarbeitet, aber nicht dauerhaft gespeichert.",
+      "Vercel Inc. (www.vercel.com) zur Bereitstellung der React-Weboberfläche. Beim Zugriff werden technische Verbindungsdaten (z. B. IP-Adresse, Browsertyp) verarbeitet, um die Seite auszuliefern, jedoch nicht dauerhaft gespeichert.",
 
-    cloudflareLabel: "Medien-Speicher:",
+    cloudflareCdnLabel: "DNS, SSL & Content Delivery Network (CDN):",
+    cloudflareCdnText:
+      "Cloudflare, Inc. (www.cloudflare.com). Cloudflare verwaltet die Nameserver dieser Anwendung, stellt die SSL-Verschlüsselung (https://) bereit und schützt die Anwendung vor DDoS-Angriffen. Hierbei fließt der Datenverkehr durch die Infrastruktur von Cloudflare, wobei technische Logdaten verarbeitet werden.",
+
+    supabaseLabel: "Datenbank & Backend:",
+    supabaseText:
+      "Supabase, Inc. (www.supabase.com) zur strukturierten Speicherung der Forschungsdaten. Um ein hohes Datenschutzniveau zu gewährleisten, ist als Speicherort explizit die AWS-Region Frankfurt am Main (eu-central-1) konfiguriert.",
+
+    cloudflareLabel: "Medien-Speicher (Object Storage):",
     cloudflareText:
-      "Cloudflare, Inc. (R2 Storage) zur Bereitstellung der Audio- und Videodateien. Die Auslieferung erfolgt über Server in der EU (Region Westeuropa/Frankfurt).",
+      "Cloudflare, Inc. (R2 Storage) zur Bereitstellung der segmentierten Audio- und Videodateien (HLS-Infrastruktur). Die Auslieferung und Speicherung der Mediendaten erfolgt über Server innerhalb der Europäischen Union (Region Westeuropa/Frankfurt).",
 
     retentionPeriodLabel: "Geplante Speicherdauer:",
     retentionPeriodText:
-      "Die Daten werden bis zum endgültigen Abschluss des Prüfungsverfahrens der Bachelorarbeit gespeichert und anschließend gelöscht.",
+      "Die im Rahmen der Umfrage erhobenen Forschungsdaten werden bis zum endgültigen Abschluss des akademischen Prüfungsverfahrens dieser Bachelorarbeit gespeichert und anschließend vollständig gelöscht. Die von den Hostern erfassten technischen Logfiles werden nach den jeweiligen Standard-Fristen der Anbieter (in der Regel 7 bis 14 Tage) automatisch gelöscht oder anonymisiert.",
     cookiesTitle: "Cookies und lokale Speicherung",
     cookiesText:
-      "To ensure functionality, the application stores technical information (such as a user hash to avoid multiple participations and your individual progress when watching videos) locally in the browser (Local Storage). These data are used solely for technical purposes and are not used for tracking or profiling.",
+      "Zur Sicherstellung der Funktionalität speichert die Anwendung technische Informationen (z. B. einen User-Hash zur Vermeidung von Mehrfachteilnahmen sowie deinen individuellen Fortschritt beim Ansehen von Videos) lokal im Browser (Local Storage). Diese Daten werden ausschließlich für technische Zwecke verwendet und nicht für Tracking oder Profiling genutzt.",
     privacyNotesTitle: "Datenschutzhinweise",
     privacyNotesText:
       "Es werden keine IP-Adressen oder Tracking-Cookies gespeichert. Es werden nur technisch notwendige Daten (anonymisierter Benutzer-Hash, Upload-Metadaten) verarbeitet. Local Storage wird ausschließlich für den Benutzer-Hash und den Video-Fortschritt verwendet. Betroffenenrechte: Kontakt per E-Mail, mit Hinweis auf Anonymisierung und eingeschränkte Löschbarkeit. Datenverarbeitungsverträge bestehen mit Supabase, Cloudflare, Vercel und hCaptcha. Privacy by Design: Datenminimierung, Speicherbegrenzung, keine dauerhafte Identifizierung. Sicherheitsmaßnahmen: TLS, Supabase-Verschlüsselung, keine sensiblen Daten im Klartext. Drittlandübermittlungen: siehe hCaptcha und Cloudflare, abgesichert durch Standardvertragsklauseln.",
@@ -364,9 +372,9 @@ const dePages = {
       "Zum Schutz vor Missbrauch und Spam wird der Dienst hCaptcha (Intuition Machines, Inc., USA) eingesetzt. Bei der Nutzung kann es zur Übermittlung personenbezogener Daten (z. B. IP-Adresse, Browserdaten) in die USA kommen. Weitere Informationen finden Sie in der Datenschutzerklärung von hCaptcha: ",
     hcaptchaLinkText: "https://www.hcaptcha.com/privacy",
     hcaptchaLabel: "Datenschutzerklärung von hCaptcha",
-    withdrawalLabel: "Hinweis zum Widerruf:",
+    withdrawalLabel: "Hinweis zum Widerruf und Betroffenenrechten:",
     withdrawalText:
-      "Da die Erhebung anonymisiert erfolgt, können Daten nach dem Absenden der Umfrage technisch nicht mehr einer spezifischen Person zugeordnet werden. Eine nachträgliche Identifizierung oder Löschung einzelner Datensätze ist daher nicht möglich.",
+      "Die Erhebung der Umfragedaten erfolgt von Beginn an vollständig anonymisiert (es werden im Backend keine IP-Adressen, Namen oder Mailadressen mit den Antworten verknüpft). Da die Daten nach dem Absenden der Umfrage technisch keiner spezifischen natürlichen Person mehr zugeordnet werden können, ist eine nachträgliche Identifizierung, Auskunft oder Löschung einzelner Datensätze nicht möglich.",
     rightsTitle: "Ihre Rechte",
     rightsLead: "Ihnen stehen nach der DSGVO insbesondere folgende Rechte zu:",
     rightsList: [

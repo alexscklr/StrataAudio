@@ -208,7 +208,7 @@ const enPages = {
     updateButton: "Update final survey",
     rewardPopup: {
       title: "Thank you for your participation",
-      thanks: "Your answers help improve the audio experience in web videos.",
+      thanks: "Your answers help improve the audio experience in web videos. You can still go back to the video catalog and watch more videos if you like.",
       codeText: "Here is your code to redeem points:",
       codeAria: "SurveyCircle code",
       copyButton: "Copy code",
@@ -236,7 +236,7 @@ const enPages = {
     lead: "Study lead: Alexander Sickler, Hamm-Lippstadt University of Applied Sciences (HSHL)",
     contactLabel: "Contact",
     duration:
-      "This test takes about 10 minutes and can be extended if desired. You will watch videos in two modes (mixer and standard) in random order and answer related questions. Videos up to 2 minutes are watched fully in both modes, while longer videos switch mode at the midpoint. Afterwards, you can continue watching and rating additional videos to support the research.",
+      "This test takes about 20 to 30 minutes and can be extended if desired. You will watch videos in two modes (mixer and standard) in random order and answer related questions. Videos up to 2 minutes are watched fully in both modes, while longer videos switch mode at the midpoint. Afterwards, you can continue watching and rating additional videos to support the research.",
     sections: {
       purposeTitle: "Purpose of data collection",
       purposeText:
@@ -323,25 +323,33 @@ const enPages = {
       "Technical metadata: Browser type and device type (e.g., smartphone/PC).",
       "Anonymization: No IP addresses or directly identifiable data (names, emails) are stored permanently. A technical user hash is used to avoid multiple participations.",
     ],
-    retentionTitle: "Hosting and Infrastructure",
+    retentionTitle: "Hosting, Infrastructure and Content Delivery Network (CDN)",
     hostingIntro:
-      "To provide this application, services from third-party providers acting as data processors are used:",
+      "For the secure, high-performance, and GDPR-compliant delivery of this research application, services from specialized third-party providers are used as data processors on the basis of Art. 6(1)(f) GDPR (legitimate interest in a technically stable, secure, and reliable online presence). Data processing agreements (DPAs) according to Art. 28 GDPR have been concluded with all providers.",
 
-    supabaseLabel: "Database & Backend:",
-    supabaseText:
-      "Supabase, Inc. for storing research data (Frankfurt region).",
+    ionosLabel: "Domain registrar:",
+    ionosText:
+      "1&1 IONOS SE (Elgendorfer Str. 57, 56410 Montabaur, Germany). IONOS provides the domain infrastructure. When the domain is accessed, standard server log files (including shortened/anonymized IP addresses) are processed.",
 
-    vercelLabel: "Frontend Hosting:",
+    vercelLabel: "Frontend hosting:",
     vercelText:
-      "Vercel Inc. for providing the web interface. Technical connection data (e.g., IP address) is processed during access but not stored permanently.",
+      "Vercel Inc. (www.vercel.com) for delivering the React web interface. During access, technical connection data (e.g., IP address, browser type) is processed to deliver the site, but not stored permanently.",
 
-    cloudflareLabel: "Media Storage:",
+    cloudflareCdnLabel: "DNS, SSL & Content Delivery Network (CDN):",
+    cloudflareCdnText:
+      "Cloudflare, Inc. (www.cloudflare.com). Cloudflare manages this application's nameservers, provides SSL encryption (https://), and protects the application against DDoS attacks. In this process, traffic passes through Cloudflare infrastructure and technical log data is processed.",
+
+    supabaseLabel: "Database & backend:",
+    supabaseText:
+      "Supabase, Inc. (www.supabase.com) for structured storage of research data. To ensure a high level of data protection, the storage location is explicitly configured to the AWS Frankfurt region (eu-central-1).",
+
+    cloudflareLabel: "Media storage (object storage):",
     cloudflareText:
-      "Cloudflare, Inc. (R2 Storage) for providing audio and video files. Delivery is handled via servers in the EU (Western Europe/Frankfurt region).",
+      "Cloudflare, Inc. (R2 Storage) for delivering segmented audio and video files (HLS infrastructure). Media data delivery and storage take place on servers within the European Union (Western Europe/Frankfurt region).",
 
     retentionPeriodLabel: "Planned retention period:",
     retentionPeriodText:
-      "Data is stored until final completion of the bachelor thesis examination process and then deleted.",
+      "Research data collected as part of the survey is stored until the final completion of the academic examination process of this bachelor thesis and then fully deleted. Technical log files collected by hosting providers are automatically deleted or anonymized according to each provider's standard retention periods (typically 7 to 14 days).",
     cookiesTitle: "Cookies and Local Storage",
     cookiesText:
       "To ensure functionality, the application stores technical information (such as a user hash to avoid multiple participations and your individual progress when watching videos) locally in the browser (Local Storage). These data are used solely for technical purposes and are not used for tracking or profiling.",
@@ -353,9 +361,9 @@ const enPages = {
       "To protect against abuse and spam, the hCaptcha service (Intuition Machines, Inc., USA) is used. When using the service, personal data (e.g. IP address, browser data) may be transmitted to the USA. More information can be found in the hCaptcha privacy policy: ",
     hcaptchaLinkText: "https://www.hcaptcha.com/privacy",
     hcaptchaLabel: "hCaptcha Privacy Policy",
-    withdrawalLabel: "Withdrawal note:",
+    withdrawalLabel: "Note on withdrawal and data subject rights:",
     withdrawalText:
-      "Because collection is anonymized, data cannot be technically assigned to a specific person after survey submission. Subsequent identification or deletion of individual records is therefore not possible.",
+      "Survey data is collected in a fully anonymized manner from the start (no IP addresses, names, or email addresses are linked to responses in the backend). Since, after submission, the data can no longer be technically assigned to a specific natural person, subsequent identification, access requests for individual records, or deletion of individual records is not possible.",
     rightsTitle: "Your rights",
     rightsLead:
       "Under GDPR, you are entitled to the following rights in particular:",
