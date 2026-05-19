@@ -222,27 +222,21 @@ export interface UploadVideoInput {
 }
 
 export interface UploadRawSourceInput {
-  titleDe: string;
-  titleEn?: string;
-  descriptionDe?: string;
-  descriptionEn?: string;
-  genreDe: string;
-  genreEn?: string;
+  title: string;
+  description: string;
   isMandatory: boolean;
   durationSeconds?: number | null;
   videoFile: File;
   containsVideoAudio?: boolean;
   videoAudio?: {
-    titleDe: string;
-    titleEn?: string;
+    title: string;
     defaultVolume: number;
     iconFile?: File | null;
   };
   thumbnailFile?: File | null;
   audioFiles: {
     file: File;
-    titleDe: string;
-    titleEn?: string;
+    title: string;
     defaultVolume: number;
     iconFile?: File | null;
   }[];
@@ -413,18 +407,13 @@ const buildInfoFileContent = (
 ) => {
   const lines = [
     `upload_id=${uploadId}`,
-    `title_de=${input.titleDe.trim()}`,
-    `title_en=${input.titleEn?.trim() || ""}`,
-    `description_de=${input.descriptionDe?.trim() || ""}`,
-    `description_en=${input.descriptionEn?.trim() || ""}`,
-    `genre_de=${input.genreDe.trim()}`,
-    `genre_en=${input.genreEn?.trim() || ""}`,
+    `title=${input.title.trim()}`,
+    `description=${input.description.trim()}`,
     `is_mandatory=${input.isMandatory ? "true" : "false"}`,
     `duration_seconds=${input.durationSeconds ?? ""}`,
     `video_path=${uploadedVideoPath}`,
     `video_contains_audio=${input.containsVideoAudio ? "true" : "false"}`,
-    `video_audio_title_de=${input.videoAudio?.titleDe?.trim() || ""}`,
-    `video_audio_title_en=${input.videoAudio?.titleEn?.trim() || ""}`,
+    `video_audio_title=${input.videoAudio?.title?.trim() || ""}`,
     `video_audio_default_volume=${input.videoAudio ? clampVolume(input.videoAudio.defaultVolume) : ""}`,
     `video_audio_icon=${uploadedVideoAudioIconPath ?? ""}`,
     `thumbnail_path=${uploadedThumbnailPath ?? ""}`,
@@ -437,17 +426,16 @@ const buildInfoFileContent = (
   input.audioFiles.forEach((audio, index) => {
     const sanitizedAudioName = sanitizeFileName(audio.file.name);
     const audioExtension = sanitizedAudioName.includes(".") ? sanitizedAudioName.slice(sanitizedAudioName.lastIndexOf(".")) : "";
-    const storedAudioPath = `audios/${String(index + 1).padStart(2, "0")}-${sanitizePathSegment(audio.titleDe || `audio_${index + 1}`)}${audioExtension}`;
+    const storedAudioPath = `audios/${String(index + 1).padStart(2, "0")}-${sanitizePathSegment(audio.title || `audio_${index + 1}`)}${audioExtension}`;
     const iconExtension = audio.iconFile?.name.includes(".")
       ? audio.iconFile.name.slice(audio.iconFile.name.lastIndexOf("."))
       : "";
     const storedIconPath = audio.iconFile
-      ? `icons/${String(index + 1).padStart(2, "0")}-${sanitizePathSegment(audio.titleDe || `audio_${index + 1}`)}${iconExtension}`
+      ? `icons/${String(index + 1).padStart(2, "0")}-${sanitizePathSegment(audio.title || `audio_${index + 1}`)}${iconExtension}`
       : "";
 
     lines.push(`audio_${index + 1}_file=${storedAudioPath}`);
-    lines.push(`audio_${index + 1}_title_de=${audio.titleDe.trim()}`);
-    lines.push(`audio_${index + 1}_title_en=${audio.titleEn?.trim() || ""}`);
+    lines.push(`audio_${index + 1}_title=${audio.title.trim()}`);
     lines.push(`audio_${index + 1}_default_volume=${clampVolume(audio.defaultVolume)}`);
     lines.push(`audio_${index + 1}_icon=${storedIconPath}`);
     lines.push("");
@@ -478,7 +466,7 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
 
     let storedVideoAudioIconPath: string | null = null;
     if (input.containsVideoAudio) {
-      const normalizedVideoAudioTitle = input.videoAudio?.titleDe?.trim() || input.videoAudio?.titleEn?.trim() || "";
+      const normalizedVideoAudioTitle = input.videoAudio?.title?.trim() || "";
 
       if (!normalizedVideoAudioTitle) {
         throw new Error("Audio-Titel fuer im Video eingebettete Audiospur darf nicht leer sein.");
@@ -508,7 +496,7 @@ export const uploadRawSourcePackage = async (input: UploadRawSourceInput): Promi
 
     for (let index = 0; index < input.audioFiles.length; index += 1) {
       const audio = input.audioFiles[index];
-      const audioTitle = audio.titleDe.trim();
+      const audioTitle = audio.title.trim();
 
       if (!audioTitle) {
         throw new Error(`Audio-Titel fuer Datei ${audio.file.name} darf nicht leer sein.`);

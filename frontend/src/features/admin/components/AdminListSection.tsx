@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { getPublicUrl } from "@/shared/utils/storage";
 import type { Video } from "@/shared/types/media";
-import styles from "@/pages/styles/VideoManagementPage.module.css";
+import styles from "@/pages/styles/ManagementPage.module.css";
 
-interface VideoManagementAdminListSectionProps {
+interface AdminListSectionProps {
   videos: Video[];
   isLoading: boolean;
   error: Error | null;
@@ -13,14 +13,14 @@ interface VideoManagementAdminListSectionProps {
   onDelete: (videoId: string, videoTitle: string) => void;
 }
 
-export function VideoManagementAdminListSection({
+export function AdminListSection({
   videos,
   isLoading,
   error,
   deleteErrorMessage,
   isDeleting,
   onDelete,
-}: VideoManagementAdminListSectionProps) {
+}: AdminListSectionProps) {
   const { t } = useTranslation();
 
   const orderedVideos = useMemo(

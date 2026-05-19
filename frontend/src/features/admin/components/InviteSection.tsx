@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import styles from "@/pages/styles/VideoManagementPage.module.css";
+import styles from "@/pages/styles/ManagementPage.module.css";
 
-interface VideoManagementInviteSectionProps {
+interface InviteSectionProps {
   inviteLabel: string;
   inviteExpiresHours: string;
   inviteMaxUses: string;
@@ -15,7 +15,7 @@ interface VideoManagementInviteSectionProps {
   onCopyInviteLink: () => void;
 }
 
-export function VideoManagementInviteSection({
+export function InviteSection({
   inviteLabel,
   inviteExpiresHours,
   inviteMaxUses,
@@ -27,13 +27,15 @@ export function VideoManagementInviteSection({
   createdInviteLink,
   isCreatingInvite,
   onCopyInviteLink,
-}: VideoManagementInviteSectionProps) {
+}: InviteSectionProps) {
   const { t } = useTranslation();
 
   return (
     <section className={styles.sectionCard}>
       <h2>{t("videoManagement.inviteAdminTitle")}</h2>
-      <p className={styles.sectionHint}>{t("videoManagement.inviteAdminHint")}</p>
+      <p className={styles.sectionHint}>
+        {t("videoManagement.inviteAdminHint")}
+      </p>
 
       <form className={styles.formGrid} onSubmit={onCreateInvite}>
         <label>
@@ -77,16 +79,22 @@ export function VideoManagementInviteSection({
             className={styles.submitButton}
             disabled={isCreatingInvite}
           >
-            {isCreatingInvite ? t("videoManagement.inviteCreating") : t("videoManagement.inviteCreateAction")}
+            {isCreatingInvite
+              ? t("videoManagement.inviteCreating")
+              : t("videoManagement.inviteCreateAction")}
           </button>
         </div>
       </form>
 
-      {createInviteErrorMessage && <p className={styles.errorText}>{createInviteErrorMessage}</p>}
+      {createInviteErrorMessage && (
+        <p className={styles.errorText}>{createInviteErrorMessage}</p>
+      )}
 
       {createdInviteLink && (
         <div className={styles.inviteResultBox}>
-          <p className={styles.successText}>{t("videoManagement.inviteCreateSuccess")}</p>
+          <p className={styles.successText}>
+            {t("videoManagement.inviteCreateSuccess")}
+          </p>
           <textarea readOnly value={createdInviteLink} rows={3} />
           <button
             type="button"

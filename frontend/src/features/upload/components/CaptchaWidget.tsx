@@ -1,6 +1,6 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useRef } from 'react';
-import styles from '@/pages/styles/VideoManagementPage.module.css';
+import styles from '@/pages/styles/ManagementPage.module.css';
 
 interface CaptchaWidgetProps {
   siteKey: string;
