@@ -26,8 +26,6 @@ export function RawUploadSection() {
     setDescription,
     durationSeconds,
     setDurationSeconds,
-    isMandatory,
-    setIsMandatory,
     rawVideoFile,
     setRawVideoFile,
     rawVideoContainsAudio,
@@ -45,8 +43,6 @@ export function RawUploadSection() {
     onRawAudioFileChange,
     resetUploadForm,
     canUploadWithInvite,
-    canUpload,
-    isInviteRawUpload,
     minRawAudioFiles,
     hasRequiredRawAudios,
     hasRequiredRawVideoAudioMetadata,
@@ -60,18 +56,6 @@ export function RawUploadSection() {
 
   const uploadDisabled = isUploading || !isRawUploadReady;
 
-  if (!canUpload) {
-    return (
-      <section className={styles.sectionCard}>
-        <header className={styles.sectionHeader}>
-          <h1>{t("videoManagement.title")}</h1>
-          <p>{t("videoManagement.authRequired")}</p>
-        </header>
-        <p className={styles.sectionHint}>{t("videoManagement.inviteHint")}</p>
-      </section>
-    );
-  }
-
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -82,7 +66,7 @@ export function RawUploadSection() {
     rawUploadMutation.mutate({
       title: title.trim(),
       description: description.trim(),
-      isMandatory: isInviteRawUpload ? false : isMandatory,
+      isMandatory: false,
       durationSeconds: parseOptionalNumber(durationSeconds),
       videoFile: rawVideoFile,
       containsVideoAudio: rawVideoContainsAudio,
@@ -143,16 +127,12 @@ export function RawUploadSection() {
           title={title}
           description={description}
           durationSeconds={durationSeconds}
-          isMandatory={isMandatory}
-          showMandatory={!isInviteRawUpload}
           onTitleChange={setTitle}
           onDescriptionChange={setDescription}
           onDurationSecondsChange={setDurationSeconds}
-          onMandatoryChange={setIsMandatory}
         />
 
         <RawUploadFields
-          canUpload={canUpload}
           rawVideoFile={rawVideoFile}
           onRawVideoFileChange={setRawVideoFile}
           rawVideoContainsAudio={rawVideoContainsAudio}

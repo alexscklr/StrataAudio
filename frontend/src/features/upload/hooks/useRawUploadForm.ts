@@ -16,7 +16,6 @@ export function useRawUploadForm({ isAdmin }: UseRawUploadFormOptions) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [durationSeconds, setDurationSeconds] = useState("");
-  const [isMandatory, setIsMandatory] = useState(false);
 
   const [rawVideoFile, setRawVideoFile] = useState<File | null>(null);
   const [rawVideoContainsAudio, setRawVideoContainsAudio] = useState(false);
@@ -109,7 +108,6 @@ export function useRawUploadForm({ isAdmin }: UseRawUploadFormOptions) {
     setTitle("");
     setDescription("");
     setDurationSeconds("");
-    setIsMandatory(false);
     setRawVideoFile(null);
     setRawVideoContainsAudio(false);
     setRawVideoAudioMeta({
@@ -124,8 +122,6 @@ export function useRawUploadForm({ isAdmin }: UseRawUploadFormOptions) {
   };
 
   const canUploadWithInvite = !isAdmin && inviteGranted;
-  const canUpload = isAdmin || canUploadWithInvite;
-  const isInviteRawUpload = canUploadWithInvite;
   const minRawAudioFiles = rawVideoContainsAudio ? 1 : 2;
   const hasRequiredRawMetadata =
     Boolean(title.trim()) && Boolean(description.trim());
@@ -155,8 +151,6 @@ export function useRawUploadForm({ isAdmin }: UseRawUploadFormOptions) {
     setDescription,
     durationSeconds,
     setDurationSeconds,
-    isMandatory,
-    setIsMandatory,
     rawVideoFile,
     setRawVideoFile,
     rawVideoContainsAudio,
@@ -174,8 +168,6 @@ export function useRawUploadForm({ isAdmin }: UseRawUploadFormOptions) {
     onRawAudioFileChange,
     resetUploadForm,
     canUploadWithInvite,
-    canUpload,
-    isInviteRawUpload,
     minRawAudioFiles,
     hasRequiredRawMetadata,
     hasRequiredRawAudios,

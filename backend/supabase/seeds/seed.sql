@@ -148,3 +148,306 @@ SET
 	identity_data = EXCLUDED.identity_data,
 	updated_at = now(),
 	last_sign_in_at = EXCLUDED.last_sign_in_at;
+
+-- ============================================================
+-- TESTDATEN FÜR AUSWERTUNG
+-- 5 Teilnehmer mit vollständigen Antworten (Demographics,
+-- Audio-Konfigurationen, Video-Surveys, Abschluss-Survey).
+-- 3 der 5 Teilnehmer haben zusätzlich das optionale
+-- Gaming-Video (OBS-Aufnahmetest) abgeschlossen.
+-- ============================================================
+
+-- Teilnehmer
+-- p1: Chrome/Linux, male, 25-34
+-- p2: Firefox/Windows, female, 18-24
+-- p3: Chrome/macOS, male, 35-44
+-- p4: Safari/macOS, diverse, 25-34
+-- p5: Chrome/Windows, female, 45-54
+INSERT INTO participants (id, user_hash, browser_name, browser_version, os_name, os_version, screen_res_width, screen_res_height) VALUES
+('a0000001-0000-0000-0000-000000000001', 'testhash_p1_aabbccdd', 'Chrome',  '124.0', 'Linux',   '22.04', 1920, 1080),
+('a0000001-0000-0000-0000-000000000002', 'testhash_p2_bbccddee', 'Firefox', '125.0', 'Windows', '11',    1920, 1200),
+('a0000001-0000-0000-0000-000000000003', 'testhash_p3_ccddeeff', 'Chrome',  '124.0', 'macOS',   '14.4',  2560, 1440),
+('a0000001-0000-0000-0000-000000000004', 'testhash_p4_ddeeffgg', 'Safari',  '17.4',  'macOS',   '14.4',  2560, 1600),
+('a0000001-0000-0000-0000-000000000005', 'testhash_p5_eeffgghh', 'Chrome',  '124.0', 'Windows', '10',    1366,  768)
+ON CONFLICT (id) DO NOTHING;
+
+-- Demographics
+INSERT INTO demographics (id, participant_id, streaming_usage, audio_output_type, audio_balance_disturbance, audio_settings_satisfaction, gender, age_group) VALUES
+('a0000002-0000-0000-0000-000000000001', 'a0000001-0000-0000-0000-000000000001', 'daily',              'headphones',       3, 5, 'male',    '25_34'),
+('a0000002-0000-0000-0000-000000000002', 'a0000001-0000-0000-0000-000000000002', 'multiple_per_week',  'headphones',       5, 6, 'female',  '18_24'),
+('a0000002-0000-0000-0000-000000000003', 'a0000001-0000-0000-0000-000000000003', 'weekly',             'external_speakers',2, 4, 'male',    '35_44'),
+('a0000002-0000-0000-0000-000000000004', 'a0000001-0000-0000-0000-000000000004', 'daily',              'headphones',       6, 3, 'diverse', '25_34'),
+('a0000002-0000-0000-0000-000000000005', 'a0000001-0000-0000-0000-000000000005', 'multiple_per_month', 'built_in_speakers',4, 5, 'female',  '45_54')
+ON CONFLICT (id) DO NOTHING;
+
+-- Audio-Konfigurationen für SCOUTs Reise (797b40c6, Pflicht-Video)
+-- Tracks: e1..aa=Hintergrundmusik, e1..ab=Roboterbewegungen, e1..ac=Soundeffekte
+INSERT INTO audio_configurations (id, participant_id, video_id, final_settings, interaction_log, total_interactions, time_to_mix_ms) VALUES
+
+-- p1: Musik hoch, Soundeffekte reduziert, leichtes Panning
+('b0000001-0000-0000-0000-000000000001',
+ 'a0000001-0000-0000-0000-000000000001',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 0.85,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 1.0,  "pan":  0.1,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.8,  "pan":  0.0,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.4,  "pan": -0.1,  "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 8200,  "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890aa", "val": 1.0},
+   {"t": 15400, "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890ac", "val": 0.4},
+   {"t": 22100, "label": "pan:e1b2c3e4-5678-90ab-cdef-1234567890aa",    "val": 0.1},
+   {"t": 31500, "label": "masterVolume",                                 "val": 0.85}
+ ]',
+ 4, 8200),
+
+-- p2: Ausgeglichener Mix, Standardeinstellungen weitgehend beibehalten
+('b0000001-0000-0000-0000-000000000002',
+ 'a0000001-0000-0000-0000-000000000002',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 1.0,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 0.9,  "pan":  0.0,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.85, "pan":  0.0,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.75, "pan":  0.0,  "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 12300, "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890aa", "val": 0.9},
+   {"t": 18700, "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890ab", "val": 0.85},
+   {"t": 25000, "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890ac", "val": 0.75}
+ ]',
+ 3, 12300),
+
+-- p3: Roboterbewegungen hervorgehoben, Musik reduziert, Panning für Raumgefühl
+('b0000001-0000-0000-0000-000000000003',
+ 'a0000001-0000-0000-0000-000000000003',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 0.9,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 0.5,  "pan": -0.3,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 1.0,  "pan":  0.2,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.7,  "pan":  0.0,  "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 5800,  "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890aa", "val": 0.5},
+   {"t": 9200,  "label": "pan:e1b2c3e4-5678-90ab-cdef-1234567890aa",    "val": -0.3},
+   {"t": 14600, "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890ab", "val": 1.0},
+   {"t": 19800, "label": "pan:e1b2c3e4-5678-90ab-cdef-1234567890ab",    "val": 0.2},
+   {"t": 28300, "label": "masterVolume",                                 "val": 0.9}
+ ]',
+ 5, 5800),
+
+-- p4: Soundeffekte stummgeschaltet, Musik ganz vorne
+('b0000001-0000-0000-0000-000000000004',
+ 'a0000001-0000-0000-0000-000000000004',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 0.8,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 1.0,  "pan":  0.0,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.6,  "pan":  0.0,  "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 1.0,  "pan":  0.0,  "isMuted": true}
+   }
+ }',
+ '[
+   {"t": 6500,  "label": "mute:e1b2c3e4-5678-90ab-cdef-1234567890ac",   "val": true},
+   {"t": 11200, "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890ab", "val": 0.6},
+   {"t": 20000, "label": "masterVolume",                                 "val": 0.8}
+ ]',
+ 3, 6500),
+
+-- p5: Kaum Interaktion, alles auf Standard, Master etwas reduziert
+('b0000001-0000-0000-0000-000000000005',
+ 'a0000001-0000-0000-0000-000000000005',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 0.7,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 1.0, "pan": 0.0, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 1.0, "pan": 0.0, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 1.0, "pan": 0.0, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 42000, "label": "masterVolume", "val": 0.7}
+ ]',
+ 1, 42000)
+
+ON CONFLICT (id) DO NOTHING;
+
+-- Audio-Konfigurationen für OBS-Aufnahmetest (89ae997e, optionales Gaming-Video)
+-- Tracks: f1..ab=Spiel, f1..ac=Hintergrundmusik, f1..ae=Sprache
+INSERT INTO audio_configurations (id, participant_id, video_id, final_settings, interaction_log, total_interactions, time_to_mix_ms) VALUES
+
+-- p1: Sprache im Vordergrund, Spiel-Audio und Musik reduziert
+('b0000001-0000-0000-0000-000000000006',
+ 'a0000001-0000-0000-0000-000000000001',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ '{
+   "masterVolume": 1.0,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "f1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.5, "pan":  0.0, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.3, "pan": -0.1, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ae": {"volume": 1.0, "pan":  0.1, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 4100, "label": "volume:f1b2c3e4-5678-90ab-cdef-1234567890ae", "val": 1.0},
+   {"t": 7600, "label": "volume:f1b2c3e4-5678-90ab-cdef-1234567890ab", "val": 0.5},
+   {"t": 9900, "label": "volume:f1b2c3e4-5678-90ab-cdef-1234567890ac", "val": 0.3}
+ ]',
+ 3, 4100),
+
+-- p2: Musik stumm, Spiel- und Sprach-Audio gleichgewichtet
+('b0000001-0000-0000-0000-000000000007',
+ 'a0000001-0000-0000-0000-000000000002',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ '{
+   "masterVolume": 0.9,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "f1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.8, "pan": 0.0, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 1.0, "pan": 0.0, "isMuted": true},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ae": {"volume": 0.8, "pan": 0.0, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 3500, "label": "mute:f1b2c3e4-5678-90ab-cdef-1234567890ac",   "val": true},
+   {"t": 8200, "label": "volume:f1b2c3e4-5678-90ab-cdef-1234567890ab", "val": 0.8},
+   {"t": 12400,"label": "masterVolume",                                 "val": 0.9}
+ ]',
+ 3, 3500),
+
+-- p3: Alles aktiv, leichte Anpassungen
+('b0000001-0000-0000-0000-000000000008',
+ 'a0000001-0000-0000-0000-000000000003',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ '{
+   "masterVolume": 0.85,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "f1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.9, "pan":  0.0, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.6, "pan": -0.2, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ae": {"volume": 0.9, "pan":  0.2, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 7100,  "label": "volume:f1b2c3e4-5678-90ab-cdef-1234567890ac", "val": 0.6},
+   {"t": 10500, "label": "pan:f1b2c3e4-5678-90ab-cdef-1234567890ac",    "val": -0.2},
+   {"t": 16800, "label": "pan:f1b2c3e4-5678-90ab-cdef-1234567890ae",    "val": 0.2}
+ ]',
+ 3, 7100)
+
+ON CONFLICT (id) DO NOTHING;
+
+-- Video-Survey-Antworten für SCOUTs Reise
+-- Felder: sync-1 (1-7), sync-2 ("Ja"|"Nein"), experience-1 (1-7), experience-2 ("Standard"|"Mixer")
+-- Optional: pan-1 (1-7), pan-2 (1-7)
+INSERT INTO survey_responses (id, participant_id, config_id, video_id, first_watch_mode, responses) VALUES
+('c0000001-0000-0000-0000-000000000001',
+ 'a0000001-0000-0000-0000-000000000001',
+ 'b0000001-0000-0000-0000-000000000001',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'mixer',
+ '{"survey_id":"video-survey","answers":{"sync-1":6,"sync-2":"Nein","experience-1":6,"experience-2":"Mixer","pan-1":5,"pan-2":4}}'),
+
+('c0000001-0000-0000-0000-000000000002',
+ 'a0000001-0000-0000-0000-000000000002',
+ 'b0000001-0000-0000-0000-000000000002',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":5,"sync-2":"Nein","experience-1":5,"experience-2":"Standard","pan-1":3,"pan-2":4}}'),
+
+('c0000001-0000-0000-0000-000000000003',
+ 'a0000001-0000-0000-0000-000000000003',
+ 'b0000001-0000-0000-0000-000000000003',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'mixer',
+ '{"survey_id":"video-survey","answers":{"sync-1":7,"sync-2":"Nein","experience-1":7,"experience-2":"Mixer","pan-1":6,"pan-2":5}}'),
+
+('c0000001-0000-0000-0000-000000000004',
+ 'a0000001-0000-0000-0000-000000000004',
+ 'b0000001-0000-0000-0000-000000000004',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":4,"sync-2":"Ja","experience-1":4,"experience-2":"Mixer"}}'),
+
+('c0000001-0000-0000-0000-000000000005',
+ 'a0000001-0000-0000-0000-000000000005',
+ 'b0000001-0000-0000-0000-000000000005',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":5,"sync-2":"Nein","experience-1":4,"experience-2":"Standard"}}')
+
+ON CONFLICT (id) DO NOTHING;
+
+-- Video-Survey-Antworten für OBS-Aufnahmetest (p1-p3)
+INSERT INTO survey_responses (id, participant_id, config_id, video_id, first_watch_mode, responses) VALUES
+('c0000001-0000-0000-0000-000000000006',
+ 'a0000001-0000-0000-0000-000000000001',
+ 'b0000001-0000-0000-0000-000000000006',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ 'mixer',
+ '{"survey_id":"video-survey","answers":{"sync-1":6,"sync-2":"Nein","experience-1":6,"experience-2":"Mixer","pan-1":5,"pan-2":5}}'),
+
+('c0000001-0000-0000-0000-000000000007',
+ 'a0000001-0000-0000-0000-000000000002',
+ 'b0000001-0000-0000-0000-000000000007',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ 'mixer',
+ '{"survey_id":"video-survey","answers":{"sync-1":5,"sync-2":"Nein","experience-1":5,"experience-2":"Mixer","pan-1":4,"pan-2":3}}'),
+
+('c0000001-0000-0000-0000-000000000008',
+ 'a0000001-0000-0000-0000-000000000003',
+ 'b0000001-0000-0000-0000-000000000008',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":6,"sync-2":"Nein","experience-1":6,"experience-2":"Standard","pan-1":5,"pan-2":4}}')
+
+ON CONFLICT (id) DO NOTHING;
+
+-- Abschluss-Surveys (alle 5 Teilnehmer)
+-- Felder: sus-1 bis sus-4 (1-7), ueq-1 bis ueq-5 (1-7), nps-1 (1-10), optional feedback-1
+INSERT INTO end_survey_responses (id, participant_id, responses) VALUES
+('d0000001-0000-0000-0000-000000000001',
+ 'a0000001-0000-0000-0000-000000000001',
+ '{"survey_id":"endSurvey","answers":{"sus-1":6,"sus-2":5,"sus-3":6,"sus-4":5,"ueq-1":6,"ueq-2":5,"ueq-3":6,"ueq-4":5,"ueq-5":6,"nps-1":8,"feedback-1":"Sehr intuitiv, das Panning hat mir gut gefallen."}}'),
+
+('d0000001-0000-0000-0000-000000000002',
+ 'a0000001-0000-0000-0000-000000000002',
+ '{"survey_id":"endSurvey","answers":{"sus-1":5,"sus-2":4,"sus-3":5,"sus-4":4,"ueq-1":5,"ueq-2":4,"ueq-3":5,"ueq-4":4,"ueq-5":5,"nps-1":7}}'),
+
+('d0000001-0000-0000-0000-000000000003',
+ 'a0000001-0000-0000-0000-000000000003',
+ '{"survey_id":"endSurvey","answers":{"sus-1":7,"sus-2":6,"sus-3":7,"sus-4":6,"ueq-1":7,"ueq-2":6,"ueq-3":7,"ueq-4":6,"ueq-5":7,"nps-1":9,"feedback-1":"Toll! Der Mixer war sehr angenehm zu bedienen."}}'),
+
+('d0000001-0000-0000-0000-000000000004',
+ 'a0000001-0000-0000-0000-000000000004',
+ '{"survey_id":"endSurvey","answers":{"sus-1":4,"sus-2":3,"sus-3":4,"sus-4":4,"ueq-1":4,"ueq-2":3,"ueq-3":4,"ueq-4":4,"ueq-5":3,"nps-1":5,"feedback-1":"Manche Bedienelemente waren etwas verwirrend."}}'),
+
+('d0000001-0000-0000-0000-000000000005',
+ 'a0000001-0000-0000-0000-000000000005',
+ '{"survey_id":"endSurvey","answers":{"sus-1":5,"sus-2":5,"sus-3":5,"sus-4":4,"ueq-1":5,"ueq-2":5,"ueq-3":4,"ueq-4":5,"ueq-5":5,"nps-1":7}}')
+
+ON CONFLICT (id) DO NOTHING;

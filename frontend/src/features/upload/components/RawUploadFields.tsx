@@ -8,7 +8,6 @@ import type {
 import { AudioContentFields } from "./AudioContentFields";
 
 interface RawUploadFieldsProps {
-  canUpload: boolean;
   rawVideoFile: File | null;
   onRawVideoFileChange: (file: File | null) => void;
   rawVideoContainsAudio: boolean;
@@ -32,7 +31,6 @@ interface RawUploadFieldsProps {
 }
 
 export function RawUploadFields({
-  canUpload,
   rawVideoFile,
   onRawVideoFileChange,
   rawVideoContainsAudio,
@@ -57,10 +55,6 @@ export function RawUploadFields({
       Math.max(previous, rawAudioFiles.length + 1),
     );
   }, [rawAudioFiles.length]);
-
-  if (!canUpload) {
-    return null;
-  }
 
   const rawAudioInputSlots = Math.max(
     rawAudioInputCount,

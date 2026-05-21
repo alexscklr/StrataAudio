@@ -11,6 +11,7 @@ import DemographicsPage from './pages/DemographicsPage';
 import Footer from './layout/Footer/Footer';
 import { ProtectedRoute } from './features/auth/components/ProtectedRoute';
 import { AdminRoute } from './features/auth/components/AdminRoute';
+import { AdminOrInvitedRoute } from './features/auth/components/AdminOrInvitedRoute';
 import DemographicsRequiredRoute from './features/analytics/components/DemographicsRequiredRoute';
 import EndSurveyRequiredRoute from './features/analytics/components/EndSurveyRequiredRoute';
 import ImprintPage from './pages/ImprintPage';
@@ -18,6 +19,7 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import UploadPage from './pages/UploadPage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
+import AnalysisPage from './pages/AnalysisPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -41,8 +43,9 @@ function App() {
           <Route path="/demografie" element={<ProtectedRoute><DemographicsPage /></ProtectedRoute>} />
           <Route path="/videos" element={<ProtectedRoute><DemographicsRequiredRoute><VideoCatalogPage /></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/upload" element={<UploadPage />} />
+          <Route path="/upload" element={<AdminOrInvitedRoute inviteStorageKey="upload-invite-token"><UploadPage /></AdminOrInvitedRoute>} />
           <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+          <Route path="/analysis" element={<AdminRoute><AnalysisPage /></AdminRoute>} />
           <Route path="/videos/:videoid" element={<ProtectedRoute><DemographicsRequiredRoute><WatchPage /></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/endumfrage" element={<ProtectedRoute><DemographicsRequiredRoute><EndSurveyRequiredRoute><EndSurveyPage /></EndSurveyRequiredRoute></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/impressum" element={<ImprintPage />} />

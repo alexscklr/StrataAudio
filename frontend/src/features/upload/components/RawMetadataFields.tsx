@@ -5,24 +5,18 @@ interface RawMetadataFieldsProps {
   title: string;
   description: string;
   durationSeconds: string;
-  isMandatory: boolean;
-  showMandatory: boolean;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onDurationSecondsChange: (value: string) => void;
-  onMandatoryChange: (value: boolean) => void;
 }
 
 export function RawMetadataFields({
   title,
   description,
   durationSeconds,
-  isMandatory,
-  showMandatory,
   onTitleChange,
   onDescriptionChange,
   onDurationSecondsChange,
-  onMandatoryChange,
 }: RawMetadataFieldsProps) {
   const { t } = useTranslation();
 
@@ -63,19 +57,6 @@ export function RawMetadataFields({
           placeholder="z. B. 147"
         />
       </label>
-
-      {showMandatory && (
-        <label className={styles.switchLabel}>
-          <input
-            type="checkbox"
-            checked={isMandatory}
-            onChange={(event) => {
-              onMandatoryChange(event.target.checked);
-            }}
-          />
-          {t("videoManagement.mandatory")}
-        </label>
-      )}
     </>
   );
 }
