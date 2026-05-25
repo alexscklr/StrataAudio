@@ -1,11 +1,16 @@
-
+import { AnalysisDashboard } from "@/features/analysis/components/AnalysisDashboard";
+import { PageMeta } from "@/shared/components/Seo/PageMeta";
+import styles from "./styles/AnalysisPage.module.css";
 
 function AnalysisPage() {
   return (
-    <div className={``}>
-      <h1>Analysis Page</h1>
-      <p>This page is under construction.</p>
-    </div>
+    <section className={styles.analysisPage}>
+      <PageMeta
+        title="Analysis Dashboard"
+        description="Aggregierte Analyse von Survey- und Interaction-Daten"
+      />
+      <AnalysisDashboard />
+    </section>
   );
 }
 
