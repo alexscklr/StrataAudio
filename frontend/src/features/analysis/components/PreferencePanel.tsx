@@ -45,15 +45,15 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
           const volPercent = Math.min(100, Math.abs(track.averageVolumeDelta) * 100);
           
           return (
-            <div key={track.trackId} className={styles.logSummary} style={{ padding: "1rem", background: "rgba(255,255,255,0.03)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.8rem" }}>
-                <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>{track.trackId}</span>
-                <span className={styles.badge} style={{ opacity: 0.6 }}>n={track.sampleCount}</span>
+            <div key={track.trackId} className={styles.logSummary} style={{ padding: "1.2rem", background: "rgba(255,255,255,0.03)", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <span style={{ fontWeight: 700, fontSize: "0.95rem", lineHeight: "1.3", color: "var(--text-main)" }}>{track.trackId}</span>
+                <span className={styles.badge} style={{ opacity: 0.6, fontSize: "0.7rem", flexShrink: 0 }}>n={track.sampleCount}</span>
               </div>
 
               {/* Volume Delta Visualization */}
-              <div style={{ marginBottom: "1rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.3rem" }}>
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.4rem" }}>
                   <span className={styles.muted}>Lautstärke-Tendenz</span>
                   <span style={{ color: volColor, fontWeight: 700 }}>
                     {track.averageVolumeDelta > 0 ? "+" : ""}{(track.averageVolumeDelta * 100).toFixed(1)}%
@@ -81,7 +81,7 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
 
               {/* Pan Visualization */}
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.3rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.4rem" }}>
                   <span className={styles.muted}>Stereo-Position & Streuung</span>
                   <span style={{ fontWeight: 600 }}>
                     {track.averagePan < -0.1 ? "L" : track.averagePan > 0.1 ? "R" : "M"} 

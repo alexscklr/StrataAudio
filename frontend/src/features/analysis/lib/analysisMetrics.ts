@@ -796,7 +796,10 @@ export const buildAnalysisDerivedData = (
 
   const audioLabelMap = new Map<string, string>();
   for (const a of raw.audios) {
-    const content = a.audio_contents as any;
+    let content = a.audio_contents;
+    if (Array.isArray(content)) {
+      content = content[0];
+    }
     const title = content?.title_de || content?.title_en;
     if (title) {
       audioLabelMap.set(a.id, title);
