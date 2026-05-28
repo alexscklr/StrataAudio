@@ -655,6 +655,12 @@
   padding: 0.5rem;
 }
 
+.timelineContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .axisLine {
   stroke: #9ca3af;
   stroke-width: 0.5;

@@ -21,6 +21,8 @@ const DEFAULT_FILTERS: AnalysisFilters = {
   genre: "all",
   audioOutputType: "all",
   ageGroup: "all",
+  osName: "all",
+  browserName: "all",
   disturbanceMin: 1,
   disturbanceMax: 7,
   excludeNoVideos: false,
@@ -212,6 +214,15 @@ const collectParticipantIdsByFilter = (
       if (filters.syncDisturbance === "nein" && hasJa) return false;
     }
 
+    // 3. Filter: OS & Browser
+    if (filters.osName !== "all" || filters.browserName !== "all") {
+      const p = raw.participants.find(p => p.id === participantId);
+      if (p) {
+        if (filters.osName !== "all" && p.os_name !== filters.osName) return false;
+        if (filters.browserName !== "all" && p.browser_name !== filters.browserName) return false;
+      }
+    }
+
     const entry = demographicsByParticipant.get(participantId);
 
     if (!entry) {
@@ -316,21 +327,34 @@ const buildPreferenceBreakdown = (surveyResponses: SurveyResponseRow[]): Prefere
 
 const buildInteractionTimeline = (
   configurations: AudioConfigurationRow[],
+  audioLabelMap: Map<string, string>,
 ): InteractionTimelinePoint[] => {
-  const bins = new Map<number, { count: number; mute: number; pan: number; volume: number }>();
+  const interactionBins = new Map<number, { count: number; mute: number; pan: number; volume: number }>();
+  const stateBins = new Map<number, Record<string, { sum: number; count: number }>>();
   let maxDuration = 180;
 
+  // 1. Identify max duration across all selected configurations
   for (const configuration of configurations) {
+    for (const entry of configuration.interaction_log ?? []) {
+      if (typeof entry?.t === "number" && Number.isFinite(entry.t)) {
+        const second = Math.max(0, Math.floor(entry.t / 1000));
+        if (second > maxDuration && second < 1200) { // Cap at 20 min sanity check
+          maxDuration = second;
+        }
+      }
+    }
+  }
+
+  for (const configuration of configurations) {
+    // Interaction event counting
     for (const entry of configuration.interaction_log ?? []) {
       if (typeof entry?.t !== "number" || !Number.isFinite(entry.t)) {
         continue;
       }
       const second = Math.max(0, Math.floor(entry.t / 1000));
-      if (second > 600) {
-        continue;
-      }
+      if (second > 1200) continue;
 
-      const current = bins.get(second) ?? { count: 0, mute: 0, pan: 0, volume: 0 };
+      const current = interactionBins.get(second) ?? { count: 0, mute: 0, pan: 0, volume: 0 };
       current.count += 1;
 
       const label = String(entry.label || "").toLowerCase();
@@ -342,22 +366,89 @@ const buildInteractionTimeline = (
         current.volume += 1;
       }
 
-      bins.set(second, current);
-      if (second > maxDuration) {
-        maxDuration = second;
+      interactionBins.set(second, current);
+    }
+
+    // Reconstruct volume state over time
+    let masterVol = 1.0;
+    let masterMuted = false;
+    const trackStates = new Map<string, { vol: number; muted: boolean }>();
+    
+    // Initialize track states from final_settings if available, or default to 1.0
+    // Actually, usually they start at 1.0 unless we have the metadata.
+    const trackIds = Object.keys(configuration.final_settings?.trackstates ?? {});
+    for (const id of trackIds) {
+      trackStates.set(id, { vol: 1.0, muted: false });
+    }
+
+    const log = [...(configuration.interaction_log ?? [])].sort((a, b) => (a.t || 0) - (b.t || 0));
+    let logIdx = 0;
+
+    for (let s = 0; s <= maxDuration; s++) {
+      while (logIdx < log.length && (log[logIdx].t || 0) <= s * 1000) {
+        const entry = log[logIdx];
+        const label = String(entry.label || "").toLowerCase();
+        const val = entry.val;
+
+        // Support various label formats: "master.volume", "masterVolume", "volume", "master.mute", "masterMuted", etc.
+        if (label === "master.volume" || label === "mastervolume" || label === "volume") {
+          masterVol = typeof val === "number" ? val : masterVol;
+        } else if (label === "master.mute" || label === "mastermute" || label === "mastermuted" || label === "mute") {
+          masterMuted = !!val;
+        } else {
+          // Check for track specific changes: "trackId.volume", "volume:trackId", etc.
+          let id = "";
+          let type = "";
+          if (label.includes(":")) {
+            [type, id] = label.split(":");
+          } else if (label.includes(".")) {
+            [id, type] = label.split(".");
+          }
+
+          if (id && type) {
+            const state = trackStates.get(id) || { vol: 1.0, muted: false };
+            if (type === "volume") {
+              state.vol = typeof val === "number" ? val : state.vol;
+            } else if (type === "mute") {
+              state.muted = !!val;
+            }
+            trackStates.set(id, state);
+          }
+        }
+        logIdx++;
       }
+
+      const bin = stateBins.get(s) ?? {};
+      for (const [id, state] of trackStates.entries()) {
+        const trackLabel = audioLabelMap.get(id) || id || "Unknown Track";
+        const effectiveVol = masterMuted || state.muted ? 0 : masterVol * state.vol;
+
+        const stats = bin[trackLabel] ?? { sum: 0, count: 0 };
+        stats.sum += effectiveVol;
+        stats.count += 1;
+        bin[trackLabel] = stats;
+      }
+      stateBins.set(s, bin);
     }
   }
 
   const points: InteractionTimelinePoint[] = [];
   for (let second = 0; second <= maxDuration; second += 1) {
-    const data = bins.get(second) ?? { count: 0, mute: 0, pan: 0, volume: 0 };
+    const interactionData = interactionBins.get(second) ?? { count: 0, mute: 0, pan: 0, volume: 0 };
+    const stateData = stateBins.get(second) ?? {};
+
+    const trackVolumes: Record<string, number> = {};
+    for (const [label, stats] of Object.entries(stateData)) {
+      trackVolumes[label] = stats.count > 0 ? stats.sum / stats.count : 0;
+    }
+
     points.push({
       second,
-      count: data.count,
-      muteCount: data.mute,
-      panCount: data.pan,
-      volumeCount: data.volume,
+      count: interactionData.count,
+      muteCount: interactionData.mute,
+      panCount: interactionData.pan,
+      volumeCount: interactionData.volume,
+      trackVolumes,
     });
   }
   return points;
@@ -745,6 +836,14 @@ export const buildAnalysisDerivedData = (
     new Set(raw.demographics.map((entry) => entry.age_group).filter((value): value is string => Boolean(value))),
   ).sort();
 
+  const availableOsNames = Array.from(
+    new Set(raw.participants.map((p) => p.os_name).filter((value): value is string => Boolean(value))),
+  ).sort();
+
+  const availableBrowserNames = Array.from(
+    new Set(raw.participants.map((p) => p.browser_name).filter((value): value is string => Boolean(value))),
+  ).sort();
+
   const allowedParticipantIds = collectParticipantIdsByFilter(raw, raw.demographics, filters);
 
   const filteredParticipants = participants.filter((p) => allowedParticipantIds.has(p.id));
@@ -777,6 +876,8 @@ export const buildAnalysisDerivedData = (
     availableGenres,
     availableAudioOutputs,
     availableAgeGroups,
+    availableOsNames,
+    availableBrowserNames,
     kpis: buildKpis(
       filteredParticipants.length,
       filteredDemographics.length,
@@ -787,7 +888,7 @@ export const buildAnalysisDerivedData = (
     ),
     likertBoxPlots: buildLikertItems(filteredSurveyResponses),
     preferenceBreakdown,
-    interactionTimeline: buildInteractionTimeline(filteredConfigurations),
+    interactionTimeline: buildInteractionTimeline(filteredConfigurations, audioLabelMap),
     trackDeviations: buildTrackDeviations(filteredConfigurations, audioLabelMap),
     participantDetails: buildParticipantDetails(
       filteredParticipants,

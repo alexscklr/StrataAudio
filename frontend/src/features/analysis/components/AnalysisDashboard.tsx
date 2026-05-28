@@ -167,9 +167,9 @@ export function AnalysisDashboard() {
           </div>
 
           <div className={styles.explanationItem}>
-            <h4>Interaction Timeline</h4>
+            <h4>Interaction Trends</h4>
             <p>
-              Zeigt die kumulierten Interaktionen (Mute, Volume, Pan) über die Videodauer. Hilft zu verstehen, wann und wie intensiv Teilnehmer den Mixer genutzt haben.
+              Zeigt den durchschnittlichen Lautstärkeverlauf (isMute * masterVolume * trackVolume) über die Videodauer. Hilft zu verstehen, wann welche Spuren tendenziell lauter oder leiser gemischt wurden.
             </p>
           </div>
 

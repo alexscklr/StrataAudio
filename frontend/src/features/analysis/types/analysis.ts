@@ -3,6 +3,8 @@ export interface AnalysisFilters {
   genre: string;
   audioOutputType: string;
   ageGroup: string;
+  osName: string;
+  browserName: string;
   disturbanceMin: number;
   disturbanceMax: number;
   excludeNoVideos: boolean;
@@ -168,6 +170,7 @@ export interface InteractionTimelinePoint {
   muteCount: number;
   panCount: number;
   volumeCount: number;
+  trackVolumes: Record<string, number>;
 }
 
 export interface TrackDeviationItem {
@@ -208,6 +211,8 @@ export interface AnalysisDerivedData {
   availableGenres: string[];
   availableAudioOutputs: string[];
   availableAgeGroups: string[];
+  availableOsNames: string[];
+  availableBrowserNames: string[];
   kpis: KpiSummary;
   likertBoxPlots: LikertBoxPlotItem[];
   preferenceBreakdown: PreferenceBreakdown;

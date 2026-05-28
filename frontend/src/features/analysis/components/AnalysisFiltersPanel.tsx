@@ -88,6 +88,42 @@ export function AnalysisFiltersPanel({
         </select>
       </label>
 
+      <label>
+        Betriebssystem (OS)
+        <select
+          value={filters.osName}
+          onChange={(event) => {
+            const next = event.target.value;
+            setFilters((current) => ({ ...current, osName: next }));
+          }}
+        >
+          <option value="all">Alle</option>
+          {derived.availableOsNames.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label>
+        Browser
+        <select
+          value={filters.browserName}
+          onChange={(event) => {
+            const next = event.target.value;
+            setFilters((current) => ({ ...current, browserName: next }));
+          }}
+        >
+          <option value="all">Alle</option>
+          {derived.availableBrowserNames.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </label>
+
       <label style={{ flexDirection: "row", alignItems: "center", cursor: "pointer", gap: "0.8rem", marginTop: "0.4rem" }}>
         <input
           type="checkbox"
