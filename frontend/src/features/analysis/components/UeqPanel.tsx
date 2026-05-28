@@ -19,7 +19,7 @@ export function UeqPanel({ items }: UeqPanelProps) {
         gap: "1.5rem", 
         marginTop: "1.5rem" 
       }}>
-        {items.map((item, index) => {
+        {items.map((item) => {
           const percent = ((item.score + 3) / 6) * 100;
           const isPositive = item.score >= 0.8;
           const isAggregate = ["Pragmatische Qualität", "Hedonische Qualität", "Gesamtqualität"].includes(item.dimension);
