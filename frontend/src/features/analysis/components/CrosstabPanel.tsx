@@ -10,56 +10,72 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
     <section className={styles.panel}>
       <h3>Kreuztabellen (Gruppenvergleich)</h3>
       <p className={styles.muted}>
-        Vergleich der SUS- und NPS-Werte zwischen verschiedenen demografischen Gruppen.
+        Vergleich der wichtigsten Metriken zwischen verschiedenen demografischen Gruppen.
       </p>
 
-      <div style={{ display: "grid", gap: "2.2rem", marginTop: "1.5rem" }}>
+      <div style={{ 
+        display: "grid", 
+        gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", 
+        gap: "1.5rem", 
+        marginTop: "1.5rem" 
+      }}>
         {data.map((table) => (
-          <div key={table.attribute}>
-            <h4 style={{ color: "var(--strata-accent)", marginBottom: "1rem" }}>{table.attribute}</h4>
-            <div className={styles.tableResponsive}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid var(--border-color)", textAlign: "left" }}>
-                    <th style={{ padding: "0.8rem" }}>Gruppe</th>
-                    <th style={{ padding: "0.8rem" }}>n</th>
-                    <th style={{ padding: "0.8rem" }}>Ø SUS (0-100)</th>
-                    <th style={{ padding: "0.8rem" }}>Ø NPS (Rating)</th>
-                    <th style={{ padding: "0.8rem" }}>Ø Aktivität (Delta Vol)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {table.groups.map((group) => (
-                    <tr key={group.name} style={{ borderBottom: "1px solid #2a2a2a" }}>
-                      <td style={{ padding: "0.8rem", fontWeight: 500 }}>{group.name}</td>
-                      <td style={{ padding: "0.8rem" }}>{group.count}</td>
-                      <td style={{ padding: "0.8rem" }}>
-                        {group.avgSus ? (
-                          <span style={{ 
-                            color: group.avgSus > 68 ? "var(--audio-wave)" : "inherit",
-                            fontWeight: group.avgSus > 68 ? "bold" : "normal"
-                          }}>
-                            {group.avgSus.toFixed(1)}
-                          </span>
-                        ) : "—"}
-                      </td>
-                      <td style={{ padding: "0.8rem" }}>
+          <div key={table.attribute} className={styles.detailCard} style={{ padding: "1.2rem" }}>
+            <h4 style={{ 
+              color: "var(--strata-accent)", 
+              marginBottom: "1.2rem",
+              fontSize: "1rem",
+              borderBottom: "1px solid #333",
+              paddingBottom: "0.5rem"
+            }}>
+              {table.attribute}
+            </h4>
+            
+            <div style={{ display: "grid", gap: "1rem" }}>
+              {table.groups.map((group) => (
+                <div key={group.name} style={{ 
+                  background: "rgba(255,255,255,0.02)", 
+                  padding: "0.8rem", 
+                  borderRadius: "8px",
+                  border: "1px solid rgba(255,255,255,0.05)"
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.8rem", alignItems: "baseline" }}>
+                    <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>{group.name}</span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>n = {group.count}</span>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+                    <div style={{ textAlign: "center", padding: "0.4rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                      <p style={{ fontSize: "0.65rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.2rem" }}>SUS</p>
+                      <span style={{ 
+                        fontSize: "0.9rem",
+                        fontWeight: "bold",
+                        color: (group.avgSus ?? 0) > 68 ? "var(--audio-wave)" : "inherit"
+                      }}>
+                        {group.avgSus ? group.avgSus.toFixed(1) : "—"}
+                      </span>
+                    </div>
+                    
+                    <div style={{ textAlign: "center", padding: "0.4rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                      <p style={{ fontSize: "0.65rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.2rem" }}>NPS (Ø)</p>
+                      <span style={{ fontSize: "0.9rem", fontWeight: "bold" }}>
                         {group.avgNps ? group.avgNps.toFixed(1) : "—"}
-                      </td>
-                      <td style={{ padding: "0.8rem" }}>
-                        {group.avgDeltaVol ? (
-                          <span style={{ 
-                            color: group.avgDeltaVol > 15 ? "var(--strata-accent)" : "inherit",
-                            fontWeight: group.avgDeltaVol > 15 ? 600 : 400
-                          }}>
-                            {group.avgDeltaVol.toFixed(1)}%
-                          </span>
-                        ) : "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>
+                    </div>
+
+                    <div style={{ textAlign: "center", padding: "0.4rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                      <p style={{ fontSize: "0.65rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.2rem" }}>Aktivität</p>
+                      <span style={{ 
+                        fontSize: "0.9rem", 
+                        fontWeight: "bold",
+                        color: (group.avgDeltaVol ?? 0) > 15 ? "var(--strata-accent)" : "inherit"
+                      }}>
+                        {group.avgDeltaVol ? `${group.avgDeltaVol.toFixed(1)}%` : "—"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ))}
