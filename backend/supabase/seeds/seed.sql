@@ -352,8 +352,7 @@ INSERT INTO participant_analysis_flags (participant_id, is_biased, reason) VALUE
 ON CONFLICT (participant_id) DO UPDATE
 SET
   is_biased = EXCLUDED.is_biased,
-  reason = EXCLUDED.reason,
-  updated_at = now();
+  reason = EXCLUDED.reason;
 
 -- Demographics
 INSERT INTO demographics (id, participant_id, streaming_usage, audio_output_type, audio_balance_disturbance, audio_settings_satisfaction, gender, age_group) VALUES

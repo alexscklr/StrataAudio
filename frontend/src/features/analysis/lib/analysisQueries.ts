@@ -58,7 +58,7 @@ export const fetchAnalysisRawData = async (): Promise<AnalysisRawData> => {
 
   const participantBiasFlagsPromise = supabase
     .from("participant_analysis_flags")
-    .select("participant_id, is_biased, reason, created_at, updated_at")
+    .select("participant_id, is_biased, reason")
     .returns<ParticipantBiasFlagRow[]>();
 
   const surveyResponsesPromise = supabase

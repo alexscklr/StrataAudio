@@ -16,8 +16,6 @@ export interface ParticipantBiasFlagRow {
   participant_id: string;
   is_biased: boolean;
   reason: string | null;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface ParticipantRow {

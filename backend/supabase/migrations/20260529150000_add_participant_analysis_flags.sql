@@ -6,14 +6,6 @@ CREATE TABLE IF NOT EXISTS "public"."participant_analysis_flags" (
 
 ALTER TABLE "public"."participant_analysis_flags" ENABLE ROW LEVEL SECURITY;
 
-DROP TRIGGER IF EXISTS "set_participant_analysis_flags_updated_at"
-ON "public"."participant_analysis_flags";
-
-CREATE TRIGGER "set_participant_analysis_flags_updated_at"
-BEFORE UPDATE ON "public"."participant_analysis_flags"
-FOR EACH ROW
-EXECUTE FUNCTION "public"."set_current_timestamp_updated_at"();
-
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "public"."participant_analysis_flags" TO authenticated;
 
 DROP POLICY IF EXISTS "Allow authenticated select from participant_analysis_flags"
