@@ -142,7 +142,7 @@ export function AnalysisFiltersPanel({
         <select
           value={filters.syncDisturbance}
           onChange={(event) => {
-            const next = event.target.value as any;
+            const next = event.target.value as AnalysisFilters["syncDisturbance"];
             setFilters((current) => ({ ...current, syncDisturbance: next }));
           }}
         >
@@ -150,6 +150,30 @@ export function AnalysisFiltersPanel({
           <option value="nein">Nur ohne Störungen</option>
           <option value="ja">Nur mit Störungen</option>
         </select>
+      </label>
+
+      <label
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          cursor: "pointer",
+          gap: "0.8rem",
+          marginTop: "0.1rem",
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={filters.excludeBiasedParticipants}
+          onChange={(event) => {
+            const next = event.target.checked;
+            setFilters((current) => ({
+              ...current,
+              excludeBiasedParticipants: next,
+            }));
+          }}
+          style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }}
+        />
+        Als biased markierte Teilnehmer ausschließen
       </label>
 
       <div className={styles.disturbanceRangeGroup}>

@@ -231,6 +231,9 @@ const enPages = {
       suffix:
         " users: You will receive the code to redeem points after completing the final survey.",
     },
+    compatibilityWarningTitle: "Important notice for Apple devices",
+    compatibilityWarningText:
+      "On iOS devices and on macOS when using Safari, severe video and audio issues may occur. Audio may repeatedly cut out and return (roughly/randomly). For more stable participation, using a different device or browser is recommended. If you still complete the study under these conditions, we kindly ask for a fair evaluation that takes these technical limitations into account.",
     topic:
       "Topic: User-centered audio mixing of individual audio tracks for web videos",
     lead: "Study lead: Alexander Sickler, Hamm-Lippstadt University of Applied Sciences (HSHL)",

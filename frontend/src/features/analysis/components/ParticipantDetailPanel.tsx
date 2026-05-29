@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { supabase } from "@/api/supabaseClient";
 import type { ParticipantDetail, SurveyResponseRow } from "@/features/analysis/types/analysis";
 import styles from "./AnalysisDashboard.module.css";
 
@@ -41,6 +42,10 @@ export function ParticipantDetailPanel({
   videoLabelMap,
 }: ParticipantDetailPanelProps) {
   const [selectedParticipantId, setSelectedParticipantId] = useState<string>("");
+  const [reasonDraftByParticipant, setReasonDraftByParticipant] = useState<Record<string, string>>({});
+  const [localBiasByParticipant, setLocalBiasByParticipant] = useState<Record<string, { is_biased: boolean; reason: string | null }>>({});
+  const [savingBiasFlag, setSavingBiasFlag] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const effectiveParticipantId = selectedParticipantId || participants[0]?.participant.id || "";
 
@@ -48,6 +53,57 @@ export function ParticipantDetailPanel({
     () => participants.find((item) => item.participant.id === effectiveParticipantId) ?? null,
     [participants, effectiveParticipantId],
   );
+
+  const selectedBiasState = selected
+    ? localBiasByParticipant[selected.participant.id] ?? {
+        is_biased: Boolean(selected.biasFlag?.is_biased),
+        reason: selected.biasFlag?.reason ?? null,
+      }
+    : { is_biased: false, reason: null };
+
+  const reasonDraft = selected
+    ? reasonDraftByParticipant[selected.participant.id] ?? selectedBiasState.reason ?? ""
+    : "";
+
+  const saveBiasFlag = async (isBiased: boolean) => {
+    if (!selected) {
+      return;
+    }
+
+    setSavingBiasFlag(true);
+    setSaveMessage(null);
+
+    const participantId = selected.participant.id;
+    const reasonValue = (reasonDraftByParticipant[participantId] ?? selected.biasFlag?.reason ?? "").trim();
+
+    const { error } = await supabase
+      .from("participant_analysis_flags")
+      .upsert(
+        {
+          participant_id: participantId,
+          is_biased: isBiased,
+          reason: reasonValue.length > 0 ? reasonValue : null,
+        },
+        { onConflict: "participant_id" },
+      );
+
+    if (error) {
+      setSaveMessage(`Speichern fehlgeschlagen: ${error.message}`);
+      setSavingBiasFlag(false);
+      return;
+    }
+
+    setLocalBiasByParticipant((current) => ({
+      ...current,
+      [participantId]: {
+        is_biased: isBiased,
+        reason: reasonValue.length > 0 ? reasonValue : null,
+      },
+    }));
+
+    setSaveMessage(isBiased ? "Bias-Flag gespeichert." : "Bias-Flag entfernt.");
+    setSavingBiasFlag(false);
+  };
 
   if (participants.length === 0) {
     return (
@@ -106,6 +162,64 @@ export function ParticipantDetailPanel({
                 <DataField label="Mixer Zufriedenheit" value={selected.demographics.audio_settings_satisfaction} />
               </div>
             ) : <p className={styles.muted}>Keine demografischen Daten vorhanden.</p>}
+          </article>
+
+          <article className={styles.detailCard}>
+            <h4>Analyse-Bias-Flag</h4>
+            <p className={styles.muted} style={{ marginBottom: "0.6rem" }}>
+              Status: {selectedBiasState.is_biased ? "Biased (wird ausgeschlossen)" : "Nicht biased"}
+            </p>
+
+            <label style={{ display: "grid", gap: "0.4rem" }}>
+              Reason
+              <textarea
+                value={reasonDraft}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setReasonDraftByParticipant((current) => ({
+                    ...current,
+                    [selected.participant.id]: next,
+                  }));
+                }}
+                rows={3}
+                placeholder="Grund für Bias-Markierung"
+                style={{
+                  width: "100%",
+                  resize: "vertical",
+                  borderRadius: "8px",
+                  border: "1.5px solid var(--border-color)",
+                  background: "#232323",
+                  color: "var(--text-main)",
+                  padding: "0.55rem 0.65rem",
+                  fontSize: "0.9rem",
+                  boxSizing: "border-box",
+                }}
+              />
+            </label>
+
+            <div style={{ display: "flex", gap: "0.6rem", marginTop: "0.8rem", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                onClick={() => void saveBiasFlag(true)}
+                disabled={savingBiasFlag}
+              >
+                Als biased speichern
+              </button>
+              <button
+                type="button"
+                onClick={() => void saveBiasFlag(false)}
+                disabled={savingBiasFlag}
+                style={{ background: "#475569" }}
+              >
+                Bias-Flag entfernen
+              </button>
+            </div>
+
+            {saveMessage && (
+              <p className={styles.muted} style={{ marginTop: "0.7rem" }}>
+                {saveMessage}
+              </p>
+            )}
           </article>
 
           <article className={styles.detailCard}>

@@ -241,6 +241,9 @@ const dePages = {
       suffix:
         "-Nutzer: Sie erhalten den Code, um Punkte einzulösen nach Beantwortung der Endumfrage.",
     },
+    compatibilityWarningTitle: "Wichtiger Hinweis zu Apple-Geräten",
+    compatibilityWarningText:
+      "Auf iOS-Geräten sowie auf macOS in Verbindung mit Safari kann es zu sehr starken Video- und Audioproblemen kommen. Der Ton kann dort teils wiederholt (roughly/randomly) aus- und wieder einschalten. Für eine stabile Durchführung werden nach Möglichkeit andere Geräte oder Browser empfohlen. Falls Sie die Studie dennoch unter diesen Bedingungen durchführen, bitten wir um eine faire Bewertung unter Berücksichtigung der technischen Einschränkungen.",
     topic:
       "Thema: Nutzerzentriertes Audio-Mixing individueller Audio-Tracks für Videos im Web",
     lead: "Studienleitung: Alexander Sickler, Hochschule Hamm-Lippstadt (HSHL)",

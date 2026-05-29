@@ -179,6 +179,31 @@ export function AnalysisDashboard() {
               Detaillierte Liste aller Einzelsessions. Ermöglicht die Einsicht in spezifische Antworten, demografische Profile und individuelle Interaktionsverläufe.
             </p>
           </div>
+
+          <div className={styles.explanationItem}>
+            <h4>Fragecode-Legende</h4>
+            <p><strong>SUS (Endsurvey):</strong></p>
+            <p>sus-1: System einfach zu bedienen</p>
+            <p>sus-2: Bedienung schnell lernbar</p>
+            <p>sus-3: Sicherheit bei der Nutzung</p>
+            <p>sus-4: Funktionen gut integriert</p>
+            <p><strong>Video-Survey:</strong></p>
+            <p>sync-1: Synchronitaet von Ton und Bild</p>
+            <p>sync-2: Stoerungen beim Tonmischen (Ja/Nein)</p>
+            <p>experience-1: Interesse durch den Mixer</p>
+            <p>experience-2: Bevorzugter Modus (Standard/Mixer)</p>
+            <p>pan-1: Hilfreichkeit der PAN-Steuerung</p>
+            <p>pan-2: Intuitivitaet der PAN-Slider</p>
+            <p><strong>UEQ (Endsurvey):</strong></p>
+            <p>ueq-1: Unerfreulich ↔ Erfreulich</p>
+            <p>ueq-2: Ueberladen ↔ Uebersichtlich</p>
+            <p>ueq-3: Ineffizient ↔ Effizient</p>
+            <p>ueq-4: Phantasielos ↔ Kreativ</p>
+            <p>ueq-5: Herkoemmlich ↔ Neuartig</p>
+            <p><strong>NPS/Feedback (Endsurvey):</strong></p>
+            <p>nps-1: Weiterempfehlungsbereitschaft (1-10)</p>
+            <p>feedback-1: Offenes Freitext-Feedback</p>
+          </div>
         </div>
       </aside>
     </div>

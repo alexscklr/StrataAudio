@@ -4,6 +4,7 @@ import type {
   AudioConfigurationRow,
   DemographicsRow,
   EndSurveyResponseRow,
+  ParticipantBiasFlagRow,
   ParticipantRow,
   SurveyResponseRow,
   VideoRow,
@@ -55,6 +56,11 @@ export const fetchAnalysisRawData = async (): Promise<AnalysisRawData> => {
     )
     .returns<DemographicsRow[]>();
 
+  const participantBiasFlagsPromise = supabase
+    .from("participant_analysis_flags")
+    .select("participant_id, is_biased, reason, created_at, updated_at")
+    .returns<ParticipantBiasFlagRow[]>();
+
   const surveyResponsesPromise = supabase
     .from("survey_responses")
     .select("participant_id, video_id, first_watch_mode, responses, created_at")
@@ -85,6 +91,7 @@ export const fetchAnalysisRawData = async (): Promise<AnalysisRawData> => {
   const [
     participantsResult,
     demographicsResult,
+    participantBiasFlagsResult,
     surveyResponsesResult,
     endSurveyResponsesResult,
     audioConfigurationsResult,
@@ -93,6 +100,7 @@ export const fetchAnalysisRawData = async (): Promise<AnalysisRawData> => {
   ] = await Promise.all([
     participantsPromise,
     demographicsPromise,
+    participantBiasFlagsPromise,
     surveyResponsesPromise,
     endSurveyResponsesPromise,
     audioConfigurationsPromise,
@@ -107,6 +115,10 @@ export const fetchAnalysisRawData = async (): Promise<AnalysisRawData> => {
   const demographics = demographicsResult.error
     ? (warnings.push(formatWarning("demographics", demographicsResult.error)), [])
     : (demographicsResult.data ?? []);
+
+  const participantBiasFlags = participantBiasFlagsResult.error
+    ? (warnings.push(formatWarning("participant_analysis_flags", participantBiasFlagsResult.error)), [])
+    : (participantBiasFlagsResult.data ?? []);
 
   const surveyResponses = surveyResponsesResult.error
     ? (warnings.push(formatWarning("survey_responses", surveyResponsesResult.error)), [])
@@ -137,6 +149,7 @@ export const fetchAnalysisRawData = async (): Promise<AnalysisRawData> => {
   return {
     participants,
     demographics,
+    participantBiasFlags,
     surveyResponses,
     endSurveyResponses,
     audioConfigurations,

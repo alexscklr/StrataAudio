@@ -171,6 +171,190 @@ INSERT INTO participants (id, user_hash, browser_name, browser_version, os_name,
 ('a0000001-0000-0000-0000-000000000005', 'testhash_p5_eeffgghh', 'Chrome',  '124.0', 'Windows', '10',    1366,  768)
 ON CONFLICT (id) DO NOTHING;
 
+-- ============================================================
+-- ZUSATZDATEN FÜR ANALYSE-TESTS
+-- 3 weitere Teilnehmer (p6-p8), davon 2 Widerspruchsfaelle:
+-- - stark negatives Feedback/UEQ/NPS/Video
+-- - gleichzeitig positives SUS
+-- ============================================================
+
+-- Teilnehmer p6-p8
+INSERT INTO participants (id, user_hash, browser_name, browser_version, os_name, os_version, screen_res_width, screen_res_height) VALUES
+('a0000001-0000-0000-0000-000000000006', 'testhash_p6_ffgghhii', 'Edge',   '125.0', 'Windows', '11',   1920, 1080),
+('a0000001-0000-0000-0000-000000000007', 'testhash_p7_gghhiijj', 'Chrome', '125.0', 'Linux',   '22.04', 2560, 1440),
+('a0000001-0000-0000-0000-000000000008', 'testhash_p8_hhiijjkk', 'Firefox','126.0', 'macOS',   '14.5', 1728, 1117)
+ON CONFLICT (id) DO NOTHING;
+
+-- Demographics p6-p8
+INSERT INTO demographics (id, participant_id, streaming_usage, audio_output_type, audio_balance_disturbance, audio_settings_satisfaction, gender, age_group) VALUES
+('a0000002-0000-0000-0000-000000000006', 'a0000001-0000-0000-0000-000000000006', 'weekly',            'headphones',        2, 6, 'male',    '25_34'),
+('a0000002-0000-0000-0000-000000000007', 'a0000001-0000-0000-0000-000000000007', 'daily',             'headphones',        7, 2, 'female',  '35_44'),
+('a0000002-0000-0000-0000-000000000008', 'a0000001-0000-0000-0000-000000000008', 'multiple_per_week', 'built_in_speakers', 6, 2, 'diverse', '18_24')
+ON CONFLICT (id) DO NOTHING;
+
+-- Audio-Konfigurationen (Pflicht-Video SCOUTs Reise) fuer p6-p8
+INSERT INTO audio_configurations (id, participant_id, video_id, final_settings, interaction_log, total_interactions, time_to_mix_ms) VALUES
+('b0000001-0000-0000-0000-000000000009',
+ 'a0000001-0000-0000-0000-000000000006',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 0.95,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 0.9, "pan":  0.1, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.9, "pan":  0.0, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.8, "pan": -0.1, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 6900,  "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890aa", "val": 0.9},
+   {"t": 12300, "label": "pan:e1b2c3e4-5678-90ab-cdef-1234567890ac",    "val": -0.1}
+ ]',
+ 2, 6900),
+
+('b0000001-0000-0000-0000-000000000010',
+ 'a0000001-0000-0000-0000-000000000007',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 0.65,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 0.2, "pan": 0.0, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.2, "pan": 0.0, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.2, "pan": 0.0, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 5200, "label": "masterVolume", "val": 0.65}
+ ]',
+ 1, 5200),
+
+('b0000001-0000-0000-0000-000000000011',
+ 'a0000001-0000-0000-0000-000000000008',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ '{
+   "masterVolume": 0.7,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "e1b2c3e4-5678-90ab-cdef-1234567890aa": {"volume": 0.3, "pan": 0.0, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.3, "pan": 0.0, "isMuted": false},
+     "e1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.3, "pan": 0.0, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 6100, "label": "volume:e1b2c3e4-5678-90ab-cdef-1234567890aa", "val": 0.3}
+ ]',
+ 1, 6100)
+ON CONFLICT (id) DO NOTHING;
+
+-- Audio-Konfigurationen (optional: OBS-Aufnahmetest) fuer Widerspruchsfaelle p7/p8
+INSERT INTO audio_configurations (id, participant_id, video_id, final_settings, interaction_log, total_interactions, time_to_mix_ms) VALUES
+('b0000001-0000-0000-0000-000000000012',
+ 'a0000001-0000-0000-0000-000000000007',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ '{
+   "masterVolume": 0.6,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "f1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.2, "pan": 0.0, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.2, "pan": 0.0, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ae": {"volume": 0.2, "pan": 0.0, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 4800, "label": "masterVolume", "val": 0.6}
+ ]',
+ 1, 4800),
+
+('b0000001-0000-0000-0000-000000000013',
+ 'a0000001-0000-0000-0000-000000000008',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ '{
+   "masterVolume": 0.62,
+   "masterPan": 0.0,
+   "isMasterMuted": false,
+   "trackstates": {
+     "f1b2c3e4-5678-90ab-cdef-1234567890ab": {"volume": 0.2, "pan": 0.0, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ac": {"volume": 0.2, "pan": 0.0, "isMuted": false},
+     "f1b2c3e4-5678-90ab-cdef-1234567890ae": {"volume": 0.2, "pan": 0.0, "isMuted": false}
+   }
+ }',
+ '[
+   {"t": 5000, "label": "masterVolume", "val": 0.62}
+ ]',
+ 1, 5000)
+ON CONFLICT (id) DO NOTHING;
+
+-- Video-Survey: Pflicht-Video fuer p6-p8
+INSERT INTO survey_responses (id, participant_id, config_id, video_id, first_watch_mode, responses) VALUES
+('c0000001-0000-0000-0000-000000000009',
+ 'a0000001-0000-0000-0000-000000000006',
+ 'b0000001-0000-0000-0000-000000000009',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'mixer',
+ '{"survey_id":"video-survey","answers":{"sync-1":6,"sync-2":"Nein","experience-1":6,"experience-2":"Mixer","pan-1":5,"pan-2":5}}'),
+
+('c0000001-0000-0000-0000-000000000010',
+ 'a0000001-0000-0000-0000-000000000007',
+ 'b0000001-0000-0000-0000-000000000010',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":1,"sync-2":"Ja","experience-1":1,"experience-2":"Standard","pan-1":1,"pan-2":1}}'),
+
+('c0000001-0000-0000-0000-000000000011',
+ 'a0000001-0000-0000-0000-000000000008',
+ 'b0000001-0000-0000-0000-000000000011',
+ '797b40c6-fd6f-4de8-b13d-b63d4e94ff58',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":1,"sync-2":"Ja","experience-1":1,"experience-2":"Standard"}}')
+ON CONFLICT (id) DO NOTHING;
+
+-- Video-Survey: optionales Video fuer p7/p8 (beide Widerspruchsfaelle)
+INSERT INTO survey_responses (id, participant_id, config_id, video_id, first_watch_mode, responses) VALUES
+('c0000001-0000-0000-0000-000000000012',
+ 'a0000001-0000-0000-0000-000000000007',
+ 'b0000001-0000-0000-0000-000000000012',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":1,"sync-2":"Ja","experience-1":1,"experience-2":"Standard","pan-1":1,"pan-2":1}}'),
+
+('c0000001-0000-0000-0000-000000000013',
+ 'a0000001-0000-0000-0000-000000000008',
+ 'b0000001-0000-0000-0000-000000000013',
+ '89ae997e-9b26-46f0-a8bc-9a4bd34c2b17',
+ 'standard',
+ '{"survey_id":"video-survey","answers":{"sync-1":1,"sync-2":"Ja","experience-1":1,"experience-2":"Standard","pan-1":1,"pan-2":1}}')
+ON CONFLICT (id) DO NOTHING;
+
+-- End-Survey p6-p8 (inkl. 2 Widerspruchsfaelle)
+INSERT INTO end_survey_responses (id, participant_id, responses) VALUES
+('d0000001-0000-0000-0000-000000000006',
+ 'a0000001-0000-0000-0000-000000000006',
+ '{"survey_id":"endSurvey","answers":{"sus-1":6,"sus-2":6,"sus-3":6,"sus-4":6,"ueq-1":6,"ueq-2":6,"ueq-3":6,"ueq-4":6,"ueq-5":6,"nps-1":9,"feedback-1":"Sehr gute Kontrolle ueber den Mix."}}'),
+
+('d0000001-0000-0000-0000-000000000007',
+ 'a0000001-0000-0000-0000-000000000007',
+ '{"survey_id":"endSurvey","answers":{"sus-1":6,"sus-2":6,"sus-3":5,"sus-4":6,"ueq-1":1,"ueq-2":1,"ueq-3":1,"ueq-4":1,"ueq-5":1,"nps-1":1,"feedback-1":"Absolut furchtbar."}}'),
+
+('d0000001-0000-0000-0000-000000000008',
+ 'a0000001-0000-0000-0000-000000000008',
+ '{"survey_id":"endSurvey","answers":{"sus-1":5,"sus-2":5,"sus-3":5,"sus-4":5,"ueq-1":1,"ueq-2":1,"ueq-3":1,"ueq-4":1,"ueq-5":1,"nps-1":1,"feedback-1":"Das war absolut furchtbar fuer mich."}}')
+ON CONFLICT (id) DO NOTHING;
+
+-- Initial gesetzte Bias-Flags fuer bekannte Ausreisser
+INSERT INTO participant_analysis_flags (participant_id, is_biased, reason) VALUES
+('a0000001-0000-0000-0000-000000000007', true, 'Inkonsistente Bewertungen: stark negativ bei UEQ/NPS/Video, SUS jedoch positiv.'),
+('a0000001-0000-0000-0000-000000000008', true, 'Inkonsistente Bewertungen ueber mehrere Surveys (manuell markiert).')
+ON CONFLICT (participant_id) DO UPDATE
+SET
+  is_biased = EXCLUDED.is_biased,
+  reason = EXCLUDED.reason,
+  updated_at = now();
+
 -- Demographics
 INSERT INTO demographics (id, participant_id, streaming_usage, audio_output_type, audio_balance_disturbance, audio_settings_satisfaction, gender, age_group) VALUES
 ('a0000002-0000-0000-0000-000000000001', 'a0000001-0000-0000-0000-000000000001', 'daily',              'headphones',       3, 5, 'male',    '25_34'),

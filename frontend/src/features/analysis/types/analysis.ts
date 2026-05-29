@@ -9,6 +9,15 @@ export interface AnalysisFilters {
   disturbanceMax: number;
   excludeNoVideos: boolean;
   syncDisturbance: "all" | "ja" | "nein";
+  excludeBiasedParticipants: boolean;
+}
+
+export interface ParticipantBiasFlagRow {
+  participant_id: string;
+  is_biased: boolean;
+  reason: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ParticipantRow {
@@ -122,6 +131,7 @@ export interface AudioRowSnippet {
 export interface AnalysisRawData {
   participants: ParticipantRow[];
   demographics: DemographicsRow[];
+  participantBiasFlags: ParticipantBiasFlagRow[];
   surveyResponses: SurveyResponseRow[];
   endSurveyResponses: EndSurveyResponseRow[];
   audioConfigurations: AudioConfigurationRow[];
@@ -184,6 +194,7 @@ export interface TrackDeviationItem {
 export interface ParticipantDetail {
   participant: ParticipantRow;
   demographics: DemographicsRow | null;
+  biasFlag: ParticipantBiasFlagRow | null;
   videoResponses: SurveyResponseRow[];
   endSurveyResponse: EndSurveyResponseRow | null;
   configurations: AudioConfigurationRow[];

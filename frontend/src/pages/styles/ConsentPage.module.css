@@ -53,3 +53,47 @@
     background: color-mix(in srgb, var(--primary) 10%, transparent);
     color: var(--text-main);
 }
+
+.compatibilityWarning {
+    margin-top: 0.85rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid color-mix(in srgb, #ef4444 55%, transparent);
+    border-left: 5px solid #ef4444;
+    border-radius: 10px;
+    background: color-mix(in srgb, #ef4444 14%, transparent);
+    color: var(--text-main);
+}
+
+.collapsibleHeading {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.sectionToggle {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sectionToggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+.toggleIcon {
+    color: var(--primary);
+    font-size: 1rem;
+    line-height: 1;
+    flex: 0 0 auto;
+}

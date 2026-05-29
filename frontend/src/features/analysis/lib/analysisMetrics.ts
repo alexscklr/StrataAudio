@@ -27,6 +27,7 @@ const DEFAULT_FILTERS: AnalysisFilters = {
   disturbanceMax: 7,
   excludeNoVideos: false,
   syncDisturbance: "all",
+  excludeBiasedParticipants: true,
 };
 
 const getNumericAnswer = (value: unknown): number | null => {
@@ -196,6 +197,9 @@ const collectParticipantIdsByFilter = (
   const demographicsByParticipant = new Map(
     demographics.map((entry) => [entry.participant_id, entry]),
   );
+  const biasByParticipant = new Map(
+    raw.participantBiasFlags.map((entry) => [entry.participant_id, entry]),
+  );
 
   const filtered = participantIds.filter((participantId) => {
     // 1. Filter: excludeNoVideos
@@ -214,7 +218,15 @@ const collectParticipantIdsByFilter = (
       if (filters.syncDisturbance === "nein" && hasJa) return false;
     }
 
-    // 3. Filter: OS & Browser
+    // 3. Filter: exclude participants flagged as biased in admin drilldown
+    if (filters.excludeBiasedParticipants) {
+      const biasEntry = biasByParticipant.get(participantId);
+      if (biasEntry?.is_biased) {
+        return false;
+      }
+    }
+
+    // 4. Filter: OS & Browser
     if (filters.osName !== "all" || filters.browserName !== "all") {
       const p = raw.participants.find(p => p.id === participantId);
       if (p) {
@@ -577,12 +589,16 @@ const buildKpis = (
 const buildParticipantDetails = (
   participants: AnalysisRawData["participants"],
   demographics: AnalysisRawData["demographics"],
+  participantBiasFlags: AnalysisRawData["participantBiasFlags"],
   filteredSurveyResponses: SurveyResponseRow[],
   filteredEndSurveyResponses: EndSurveyResponseRow[],
   filteredConfigurations: AudioConfigurationRow[],
 ): ParticipantDetail[] => {
   const demographicsByParticipant = new Map(
     demographics.map((entry) => [entry.participant_id, entry]),
+  );
+  const biasByParticipant = new Map(
+    participantBiasFlags.map((entry) => [entry.participant_id, entry]),
   );
   const endSurveyByParticipant = new Map(
     filteredEndSurveyResponses.map((entry) => [entry.participant_id, entry]),
@@ -600,6 +616,7 @@ const buildParticipantDetails = (
       return {
         participant,
         demographics: demographicsByParticipant.get(participant.id) ?? null,
+        biasFlag: biasByParticipant.get(participant.id) ?? null,
         videoResponses,
         endSurveyResponse: endSurveyByParticipant.get(participant.id) ?? null,
         configurations,
@@ -896,6 +913,7 @@ export const buildAnalysisDerivedData = (
     participantDetails: buildParticipantDetails(
       filteredParticipants,
       raw.demographics,
+      raw.participantBiasFlags,
       filteredSurveyResponses,
       filteredEndSurveyResponses,
       filteredConfigurations,
