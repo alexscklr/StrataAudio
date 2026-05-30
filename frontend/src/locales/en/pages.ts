@@ -236,10 +236,10 @@ const enPages = {
       "On iOS devices and on macOS when using Safari, severe video and audio issues may occur. Audio may repeatedly cut out and return (roughly/randomly). For more stable participation, using a different device or browser is recommended. If you still complete the study under these conditions, we kindly ask for a fair evaluation that takes these technical limitations into account.",
     topic:
       "Topic: User-centered audio mixing of individual audio tracks for web videos",
-    lead: "Study lead: Alexander Sickler, Hamm-Lippstadt University of Applied Sciences (HSHL)",
+    lead: "Study lead: Alexander Sickler, University of Applied Sciences Hamm-Lippstadt (HSHL)",
     contactLabel: "Contact",
     duration:
-      "This test takes about 20 to 30 minutes and can be extended if desired. You will watch videos in two modes (mixer and standard) in random order and answer related questions. Videos up to 2 minutes are watched fully in both modes, while longer videos switch mode at the midpoint. Afterwards, you can continue watching and rating additional videos to support the research.",
+      "This test takes about 12 to 16 minutes and can be extended if desired. You will watch videos in two modes (mixer and standard) in random order and answer related questions. Videos up to 2 minutes are watched fully in both modes, while longer videos switch mode at the midpoint. Afterwards, you can continue watching and rating additional videos to support the research.",
     sections: {
       purposeTitle: "Purpose of data collection",
       purposeText:

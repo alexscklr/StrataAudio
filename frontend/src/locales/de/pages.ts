@@ -249,7 +249,7 @@ const dePages = {
     lead: "Studienleitung: Alexander Sickler, Hochschule Hamm-Lippstadt (HSHL)",
     contactLabel: "Kontakt",
     duration:
-      "Der Test dauert etwa 20 bis 30 Minuten und kann auf Wunsch verlängert werden. Du schaust Videos in zwei Modi (Mixer und Standard) in zufälliger Reihenfolge und beantwortest dazu Fragen. Videos bis 2 Minuten werden in beiden Modi vollständig geschaut, bei längeren Videos erfolgt der Moduswechsel in der Mitte. Du hast anschließend die Möglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Arbeit zu unterstützen.",
+      "Der Test dauert etwa 12 bis 16 Minuten und kann auf Wunsch verlängert werden. Du schaust Videos in zwei Modi (Mixer und Standard) in zufälliger Reihenfolge und beantwortest dazu Fragen. Videos bis 2 Minuten werden in beiden Modi vollständig geschaut, bei längeren Videos erfolgt der Moduswechsel in der Mitte. Du hast anschließend die Möglichkeit, auch weitere Videos zu schauen und zu bewerten, um die Arbeit zu unterstützen.",
     sections: {
       purposeTitle: "Zweck der Datenerhebung",
       purposeText:
