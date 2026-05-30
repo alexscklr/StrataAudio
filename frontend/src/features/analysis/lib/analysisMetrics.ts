@@ -294,6 +294,61 @@ const filterAudioConfigurations = (
     return participantMatch && genreMatch && videoMatch;
   });
 
+const buildLatestSurveyResponseByParticipantVideo = (
+  surveyResponses: SurveyResponseRow[],
+): Map<string, SurveyResponseRow> => {
+  const map = new Map<string, SurveyResponseRow>();
+
+  for (const response of surveyResponses) {
+    const key = `${response.participant_id}::${response.video_id}`;
+    const existing = map.get(key);
+
+    if (!existing || response.created_at.localeCompare(existing.created_at) > 0) {
+      map.set(key, response);
+    }
+  }
+
+  return map;
+};
+
+const normalizeTimeToMixConfigurations = (
+  configurations: AudioConfigurationRow[],
+  surveyResponses: SurveyResponseRow[],
+  videos: AnalysisRawData["videos"],
+): AudioConfigurationRow[] => {
+  const latestSurveyByParticipantVideo = buildLatestSurveyResponseByParticipantVideo(surveyResponses);
+  const videoDurationMsById = new Map(
+    videos
+      .filter((video) => typeof video.duration_seconds === "number" && Number.isFinite(video.duration_seconds))
+      .map((video) => [video.id, Number(video.duration_seconds) * 1000]),
+  );
+
+  return configurations.map((configuration) => {
+    if (typeof configuration.time_to_mix_ms !== "number" || !Number.isFinite(configuration.time_to_mix_ms)) {
+      return configuration;
+    }
+
+    const key = `${configuration.participant_id}::${configuration.video_id}`;
+    const matchingSurvey = latestSurveyByParticipantVideo.get(key);
+
+    if (matchingSurvey?.first_watch_mode !== "standard") {
+      return configuration;
+    }
+
+    const videoDurationMs = videoDurationMsById.get(configuration.video_id);
+    if (!videoDurationMs || videoDurationMs <= 120_000) {
+      return configuration;
+    }
+
+    const correctedTimeToMixMs = Math.max(0, configuration.time_to_mix_ms - videoDurationMs / 2);
+
+    return {
+      ...configuration,
+      time_to_mix_ms: correctedTimeToMixMs,
+    };
+  });
+};
+
 const buildLikertItems = (surveyResponses: SurveyResponseRow[]): LikertBoxPlotItem[] => {
   const keys: Array<{ id: string; label: string }> = [
     { id: "sync-1", label: "Sync-Passung (1-7)" },
@@ -960,6 +1015,11 @@ export const buildAnalysisDerivedData = (
     filters,
     videoGenreMap,
   );
+  const normalizedConfigurations = normalizeTimeToMixConfigurations(
+    filteredConfigurations,
+    filteredSurveyResponses,
+    raw.videos,
+  );
 
   const filteredDemographics = raw.demographics.filter((d) =>
     allowedParticipantIds.has(d.participant_id),
@@ -980,20 +1040,20 @@ export const buildAnalysisDerivedData = (
       filteredDemographics.length,
       filteredSurveyResponses,
       filteredEndSurveyResponses,
-      filteredConfigurations,
+      normalizedConfigurations,
       preferenceBreakdown,
     ),
     likertBoxPlots: buildLikertItems(filteredSurveyResponses),
     preferenceBreakdown,
-    interactionTimeline: buildInteractionTimeline(filteredConfigurations, audioLabelMap),
-    trackDeviations: buildTrackDeviations(filteredConfigurations, audioLabelMap),
+    interactionTimeline: buildInteractionTimeline(normalizedConfigurations, audioLabelMap),
+    trackDeviations: buildTrackDeviations(normalizedConfigurations, audioLabelMap),
     participantDetails: buildParticipantDetails(
       filteredParticipants,
       raw.demographics,
       raw.participantBiasFlags,
       filteredSurveyResponses,
       filteredEndSurveyResponses,
-      filteredConfigurations,
+      normalizedConfigurations,
     ),
     audioDisturbances: buildAudioDisturbances(filteredSurveyResponses),
     ueqResults: buildUeqResults(filteredEndSurveyResponses),
@@ -1001,7 +1061,7 @@ export const buildAnalysisDerivedData = (
       filteredDemographics,
       filteredEndSurveyResponses,
       filteredSurveyResponses,
-      filteredConfigurations,
+      normalizedConfigurations,
     ),
     videoLabelMap: Object.fromEntries(videoLabelMap),
     audioLabelMap: Object.fromEntries(audioLabelMap),
