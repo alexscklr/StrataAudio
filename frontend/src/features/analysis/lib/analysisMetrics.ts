@@ -341,6 +341,78 @@ const buildInteractionTimeline = (
   configurations: AudioConfigurationRow[],
   audioLabelMap: Map<string, string>,
 ): InteractionTimelinePoint[] => {
+  const audioIdByLower = new Map<string, string>();
+  for (const id of audioLabelMap.keys()) {
+    audioIdByLower.set(id.toLowerCase(), id);
+  }
+  const unknownTrackLabels = new Map<string, string>();
+
+  const isMasterTrackId = (trackId: string): boolean => {
+    const normalized = trackId.trim().toLowerCase();
+    return (
+      normalized === "master" ||
+      normalized === "master_track" ||
+      normalized === "master-track" ||
+      normalized === "mastertrack"
+    );
+  };
+
+  const resolveCanonicalTrackId = (trackId: string): string => {
+    return audioIdByLower.get(trackId.toLowerCase()) ?? trackId;
+  };
+
+  const resolveTrackLabel = (trackId: string): string => {
+    const mapped = audioLabelMap.get(trackId);
+    if (mapped) {
+      return mapped;
+    }
+
+    const existing = unknownTrackLabels.get(trackId);
+    if (existing) {
+      return existing;
+    }
+
+    const generated = `Spur ${unknownTrackLabels.size + 1}`;
+    unknownTrackLabels.set(trackId, generated);
+    return generated;
+  };
+
+  const parseTrackChangeLabel = (
+    rawLabel: string,
+  ): { id: string; type: "volume" | "mute" } | null => {
+    const trimmed = rawLabel.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    // Accept labels like "volume:trackId".
+    if (trimmed.includes(":")) {
+      const [rawType, ...rest] = trimmed.split(":");
+      const type = rawType.trim().toLowerCase();
+      const id = rest.join(":").trim();
+      if (!id || (type !== "volume" && type !== "mute")) {
+        return null;
+      }
+      return { id, type };
+    }
+
+    // Accept labels like "trackId.volume".
+    if (trimmed.includes(".")) {
+      const parts = trimmed.split(".");
+      if (parts.length < 2) {
+        return null;
+      }
+      const type = parts[parts.length - 1].trim().toLowerCase();
+      const id = parts.slice(0, -1).join(".").trim();
+      if (!id || (type !== "volume" && type !== "mute")) {
+        return null;
+      }
+      return { id, type };
+    }
+
+    return null;
+  };
+
   const interactionBins = new Map<number, { count: number; mute: number; pan: number; volume: number }>();
   const stateBins = new Map<number, Record<string, { sum: number; count: number }>>();
   let maxDuration = 180;
@@ -390,7 +462,11 @@ const buildInteractionTimeline = (
     // Actually, usually they start at 1.0 unless we have the metadata.
     const trackIds = Object.keys(configuration.final_settings?.trackstates ?? {});
     for (const id of trackIds) {
-      trackStates.set(id, { vol: 1.0, muted: false });
+      const canonicalId = resolveCanonicalTrackId(id);
+      if (isMasterTrackId(canonicalId)) {
+        continue;
+      }
+      trackStates.set(canonicalId, { vol: 1.0, muted: false });
     }
 
     const log = [...(configuration.interaction_log ?? [])].sort((a, b) => (a.t || 0) - (b.t || 0));
@@ -399,7 +475,8 @@ const buildInteractionTimeline = (
     for (let s = 0; s <= maxDuration; s++) {
       while (logIdx < log.length && (log[logIdx].t || 0) <= s * 1000) {
         const entry = log[logIdx];
-        const label = String(entry.label || "").toLowerCase();
+        const rawLabel = String(entry.label || "");
+        const label = rawLabel.trim().toLowerCase();
         const val = entry.val;
 
         // Support various label formats: "master.volume", "masterVolume", "volume", "master.mute", "masterMuted", etc.
@@ -408,23 +485,23 @@ const buildInteractionTimeline = (
         } else if (label === "master.mute" || label === "mastermute" || label === "mastermuted" || label === "mute") {
           masterMuted = !!val;
         } else {
-          // Check for track specific changes: "trackId.volume", "volume:trackId", etc.
-          let id = "";
-          let type = "";
-          if (label.includes(":")) {
-            [type, id] = label.split(":");
-          } else if (label.includes(".")) {
-            [id, type] = label.split(".");
-          }
+          // Check for track specific changes while preserving track ID casing.
+          const parsed = parseTrackChangeLabel(rawLabel);
 
-          if (id && type) {
-            const state = trackStates.get(id) || { vol: 1.0, muted: false };
-            if (type === "volume") {
+          if (parsed) {
+            const canonicalId = resolveCanonicalTrackId(parsed.id);
+            if (isMasterTrackId(canonicalId)) {
+              logIdx++;
+              continue;
+            }
+
+            const state = trackStates.get(canonicalId) || { vol: 1.0, muted: false };
+            if (parsed.type === "volume") {
               state.vol = typeof val === "number" ? val : state.vol;
-            } else if (type === "mute") {
+            } else if (parsed.type === "mute") {
               state.muted = !!val;
             }
-            trackStates.set(id, state);
+            trackStates.set(canonicalId, state);
           }
         }
         logIdx++;
@@ -432,7 +509,7 @@ const buildInteractionTimeline = (
 
       const bin = stateBins.get(s) ?? {};
       for (const [id, state] of trackStates.entries()) {
-        const trackLabel = audioLabelMap.get(id) || id || "Unknown Track";
+        const trackLabel = resolveTrackLabel(id);
         const effectiveVol = masterMuted || state.muted ? 0 : masterVol * state.vol;
 
         const stats = bin[trackLabel] ?? { sum: 0, count: 0 };

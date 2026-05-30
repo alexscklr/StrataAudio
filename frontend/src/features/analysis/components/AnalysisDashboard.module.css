@@ -35,10 +35,6 @@
   position: absolute;
 }
 
-.disturbanceRangeThumbMin,
-.disturbanceRangeThumbMax {
-}
-
 /* Webkit Thumb */
 .disturbanceRangeThumbMin::-webkit-slider-thumb,
 .disturbanceRangeThumbMax::-webkit-slider-thumb {
@@ -52,7 +48,9 @@
   box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
   cursor: pointer;
   margin-top: -6px;
-  transition: border 0.2s, box-shadow 0.2s;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
   pointer-events: auto; /* Thumbs remain interactive */
 }
 .disturbanceRangeThumbMax::-webkit-slider-thumb {
@@ -82,7 +80,9 @@
   background: #0b1220;
   box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
   cursor: pointer;
-  transition: border 0.2s, box-shadow 0.2s;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
   pointer-events: auto;
 }
 .disturbanceRangeThumbMax::-moz-range-thumb {
@@ -108,7 +108,6 @@
   background: transparent;
   height: 8px;
 }
-
 
 .disturbanceRangeGroup {
   display: grid;
@@ -195,7 +194,9 @@
   background: #232323;
   color: var(--text-main);
   font-size: 0.95rem;
-  transition: border 0.2s, box-shadow 0.2s;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
 }
 
 .filterSidebar select:focus {
@@ -272,7 +273,9 @@
   padding: 0.6rem 1.2rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
+  transition:
+    opacity 0.2s,
+    transform 0.1s;
 }
 
 .analysisRoot button:hover {
@@ -367,7 +370,9 @@
   background: #232323;
   color: var(--text-main);
   font-size: 1.05rem;
-  transition: border 0.2s, box-shadow 0.2s;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
 }
 
 .filterGrid select:focus {
@@ -583,7 +588,11 @@
 }
 
 .preferenceMixer {
-  background: linear-gradient(90deg, var(--audio-wave) 0%, var(--strata-accent) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--audio-wave) 0%,
+    var(--strata-accent) 100%
+  );
   color: #fff;
   font-weight: 600;
 }
