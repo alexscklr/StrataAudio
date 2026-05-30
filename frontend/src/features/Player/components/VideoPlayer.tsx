@@ -68,6 +68,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
 
     const {
         mixerState,
+        resetMixerState,
         handleVolumeChange,
         handleVolumeCommit,
         handleMasterVolumeChange,
@@ -107,6 +108,10 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
             setIsInitialOpen(false);
         }
     }, [isPlaying, isInitialOpen, setIsInitialOpen]);
+
+    useEffect(() => {
+        resetMixerState();
+    }, [resetMixerState, watchMode]);
 
     const containerClassName = [
         styles.videoContainer,

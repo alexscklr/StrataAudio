@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Audio } from '@/shared/types/media';
 import type { AudioConfigurationSnapshot, MixerInteractionEntry, MixerState } from '@/shared/types/mixer';
 
@@ -58,6 +58,15 @@ function useMixer(audios: Audio[] | undefined) {
             ...prev,
             trackstates: createTrackStates(audios, prev.trackstates),
         }));
+    }, [audios]);
+
+    const resetMixerState = useCallback(() => {
+        setMixerState({
+            masterVolume: 1,
+            masterPan: 0,
+            trackstates: createTrackStates(audios),
+            isMasterMuted: false,
+        });
     }, [audios]);
 
     const handleVolumeChange = (id: string, val: number) => {
@@ -166,6 +175,7 @@ function useMixer(audios: Audio[] | undefined) {
 
     return {
         mixerState,
+        resetMixerState,
         handleVolumeChange,
         handleVolumeCommit,
         handleMasterVolumeChange,
