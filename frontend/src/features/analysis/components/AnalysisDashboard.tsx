@@ -164,7 +164,7 @@ export function AnalysisDashboard() {
           <div className={styles.explanationItem}>
             <h4>Nutzungspräferenz & Trends</h4>
             <p>
-              <strong>Lautstärke-Unterschiede zwischen Spuren:</strong> Gezeigt wird der mittlere Unterschied zwischen zwei Spuren (z. B. Musik vs. Stimme).
+              <strong>Lautstärke-Unterschiede zwischen Spuren:</strong> Gezeigt wird der Median-Unterschied zwischen zwei Spuren (z. B. Musik vs. Stimme).
             </p>
             <p>
               Positive Werte bedeuten: erste Spur lauter als zweite. Negative Werte bedeuten: erste Spur leiser als zweite.

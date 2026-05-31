@@ -228,7 +228,7 @@ export function InteractionTimelinePanel({ points }: InteractionTimelinePanelPro
           )}
         </div>
         <p className={styles.muted}>
-          Durchschnittliche effektive Lautstärke (isMute * masterVolume * trackVolume) über alle Teilnehmer.
+          Median effektive Lautstärke (isMute * masterVolume * trackVolume) über alle Teilnehmer.
           {showDifferenceLine && " Im Differenzmodus zeigt die gestrichelte Linie den Abstand zwischen zwei Spuren über die Zeit."}
         </p>
       </section>

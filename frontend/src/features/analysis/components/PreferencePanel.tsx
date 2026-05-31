@@ -2,6 +2,7 @@ import type {
   PreferenceBreakdown,
   TrackDeviationItem,
 } from "@/features/analysis/types/analysis";
+import { BoxPlotChart } from "./BoxPlotChart";
 import styles from "./AnalysisDashboard.module.css";
 
 interface PreferencePanelProps {
@@ -41,12 +42,10 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
 
       <div className={styles.trackGrid} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
         {trackDeviations.slice(0, 8).map((track) => {
-          const volColor = track.averageVolumeDifference > 0 ? "var(--audio-wave)" : "var(--primary)";
-          const volPercent = Math.min(100, Math.abs(track.averageVolumeDifference) * 100);
           const relationText =
-            track.averageVolumeDifference === 0
+            track.medianVolumeDifference === 0
               ? `${track.primaryTrackId} und ${track.secondaryTrackId} sind im Schnitt gleich laut.`
-              : track.averageVolumeDifference > 0
+              : track.medianVolumeDifference > 0
                 ? `${track.primaryTrackId} ist im Schnitt lauter als ${track.secondaryTrackId}.`
                 : `${track.primaryTrackId} ist im Schnitt leiser als ${track.secondaryTrackId}.`;
           
@@ -63,29 +62,17 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
 
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.4rem" }}>
-                  <span className={styles.muted}>Mittlerer Lautstärke-Unterschied</span>
-                  <span style={{ color: volColor, fontWeight: 700 }}>
-                    {track.averageVolumeDifference > 0 ? "+" : ""}{(track.averageVolumeDifference * 100).toFixed(1)}%
+                  <span className={styles.muted}>Median Lautstärke-Unterschied</span>
+                  <span style={{ fontWeight: 700 }}>
+                    {track.medianVolumeDifference > 0 ? "+" : ""}{(track.medianVolumeDifference * 100).toFixed(1)}%
                   </span>
                 </div>
-                <div style={{ height: "6px", background: "#222", borderRadius: "3px", position: "relative", overflow: "hidden" }}>
-                  <div style={{ 
-                    position: "absolute", 
-                    left: "50%", 
-                    width: "1px", 
-                    height: "100%", 
-                    background: "rgba(255,255,255,0.2)",
-                    zIndex: 2
-                  }} />
-                  <div style={{ 
-                    position: "absolute",
-                    left: track.averageVolumeDifference >= 0 ? "50%" : `${50 - volPercent/2}%`,
-                    width: `${volPercent/2}%`,
-                    height: "100%",
-                    background: volColor,
-                    borderRadius: "3px"
-                  }} />
-                </div>
+                <BoxPlotChart
+                  label="Verteilung"
+                  stats={track.volumeDifferenceStats}
+                  minScale={-1}
+                  maxScale={1}
+                />
               </div>
             </div>
           );

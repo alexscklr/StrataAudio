@@ -534,7 +534,7 @@ const buildInteractionTimeline = (
   };
 
   const interactionBins = new Map<number, { count: number; mute: number; pan: number; volume: number }>();
-  const stateBins = new Map<number, Record<string, { sum: number; count: number }>>();
+  const stateBins = new Map<number, Record<string, number[]>>();
   let maxDuration = 180;
 
   // 1. Identify max duration across all selected configurations
@@ -632,10 +632,9 @@ const buildInteractionTimeline = (
         const trackLabel = resolveTrackLabel(id);
         const effectiveVol = masterMuted || state.muted ? 0 : masterVol * state.vol;
 
-        const stats = bin[trackLabel] ?? { sum: 0, count: 0 };
-        stats.sum += effectiveVol;
-        stats.count += 1;
-        bin[trackLabel] = stats;
+        const values = bin[trackLabel] ?? [];
+        values.push(effectiveVol);
+        bin[trackLabel] = values;
       }
       stateBins.set(s, bin);
     }
@@ -647,8 +646,8 @@ const buildInteractionTimeline = (
     const stateData = stateBins.get(second) ?? {};
 
     const trackVolumes: Record<string, number> = {};
-    for (const [label, stats] of Object.entries(stateData)) {
-      trackVolumes[label] = stats.count > 0 ? stats.sum / stats.count : 0;
+    for (const [label, values] of Object.entries(stateData)) {
+      trackVolumes[label] = median(values) ?? 0;
     }
 
     points.push({
@@ -672,8 +671,7 @@ const buildTrackDeviations = (
     {
       primaryTrackId: string;
       secondaryTrackId: string;
-      volumeDifferenceTotal: number;
-      count: number;
+      volumeDifferences: number[];
     }
   >();
 
@@ -696,11 +694,9 @@ const buildTrackDeviations = (
         const current = map.get(key) ?? {
           primaryTrackId: primary.trackId,
           secondaryTrackId: secondary.trackId,
-          volumeDifferenceTotal: 0,
-          count: 0,
+          volumeDifferences: [],
         };
-        current.volumeDifferenceTotal += primary.volume - secondary.volume;
-        current.count += 1;
+        current.volumeDifferences.push(primary.volume - secondary.volume);
         map.set(key, current);
       }
     }
@@ -711,10 +707,11 @@ const buildTrackDeviations = (
       pairId,
       primaryTrackId: audioLabelMap.get(value.primaryTrackId) ?? value.primaryTrackId,
       secondaryTrackId: audioLabelMap.get(value.secondaryTrackId) ?? value.secondaryTrackId,
-      averageVolumeDifference: value.count > 0 ? value.volumeDifferenceTotal / value.count : 0,
-      sampleCount: value.count,
+      medianVolumeDifference: median(value.volumeDifferences) ?? 0,
+      volumeDifferenceStats: toBoxPlotStats(value.volumeDifferences),
+      sampleCount: value.volumeDifferences.length,
     }))
-    .sort((a, b) => Math.abs(b.averageVolumeDifference) - Math.abs(a.averageVolumeDifference));
+    .sort((a, b) => Math.abs(b.medianVolumeDifference) - Math.abs(a.medianVolumeDifference));
 };
 
 const calculateSUS = (endResponses: EndSurveyResponseRow[]): number | null => {

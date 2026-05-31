@@ -186,7 +186,8 @@ export interface TrackDeviationItem {
   pairId: string;
   primaryTrackId: string;
   secondaryTrackId: string;
-  averageVolumeDifference: number; // primaryTrackId volume minus secondaryTrackId volume
+  medianVolumeDifference: number; // median of (primaryTrackId volume minus secondaryTrackId volume)
+  volumeDifferenceStats: BoxPlotStats | null;
   sampleCount: number;
 }
 
