@@ -41,22 +41,31 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
 
       <div className={styles.trackGrid} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
         {trackDeviations.slice(0, 8).map((track) => {
-          const volColor = track.averageVolumeDelta > 0 ? "var(--audio-wave)" : "var(--primary)";
-          const volPercent = Math.min(100, Math.abs(track.averageVolumeDelta) * 100);
+          const volColor = track.averageVolumeDifference > 0 ? "var(--audio-wave)" : "var(--primary)";
+          const volPercent = Math.min(100, Math.abs(track.averageVolumeDifference) * 100);
+          const relationText =
+            track.averageVolumeDifference === 0
+              ? `${track.primaryTrackId} und ${track.secondaryTrackId} sind im Schnitt gleich laut.`
+              : track.averageVolumeDifference > 0
+                ? `${track.primaryTrackId} ist im Schnitt lauter als ${track.secondaryTrackId}.`
+                : `${track.primaryTrackId} ist im Schnitt leiser als ${track.secondaryTrackId}.`;
           
           return (
-            <div key={track.trackId} className={styles.logSummary} style={{ padding: "1.2rem", background: "rgba(255,255,255,0.03)", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+            <div key={track.pairId} className={styles.logSummary} style={{ padding: "1.2rem", background: "rgba(255,255,255,0.03)", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <span style={{ fontWeight: 700, fontSize: "0.95rem", lineHeight: "1.3", color: "var(--text-main)" }}>{track.trackId}</span>
+                <span style={{ fontWeight: 700, fontSize: "0.95rem", lineHeight: "1.3", color: "var(--text-main)" }}>
+                  {track.primaryTrackId} vs. {track.secondaryTrackId}
+                </span>
                 <span className={styles.badge} style={{ opacity: 0.6, fontSize: "0.7rem", flexShrink: 0 }}>n={track.sampleCount}</span>
               </div>
 
-              {/* Volume Delta Visualization */}
+              <p className={styles.muted} style={{ fontSize: "0.78rem", margin: 0 }}>{relationText}</p>
+
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.4rem" }}>
-                  <span className={styles.muted}>Lautstärke-Tendenz</span>
+                  <span className={styles.muted}>Mittlerer Lautstärke-Unterschied</span>
                   <span style={{ color: volColor, fontWeight: 700 }}>
-                    {track.averageVolumeDelta > 0 ? "+" : ""}{(track.averageVolumeDelta * 100).toFixed(1)}%
+                    {track.averageVolumeDifference > 0 ? "+" : ""}{(track.averageVolumeDifference * 100).toFixed(1)}%
                   </span>
                 </div>
                 <div style={{ height: "6px", background: "#222", borderRadius: "3px", position: "relative", overflow: "hidden" }}>
@@ -70,55 +79,11 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
                   }} />
                   <div style={{ 
                     position: "absolute",
-                    left: track.averageVolumeDelta >= 0 ? "50%" : `${50 - volPercent/2}%`,
+                    left: track.averageVolumeDifference >= 0 ? "50%" : `${50 - volPercent/2}%`,
                     width: `${volPercent/2}%`,
                     height: "100%",
                     background: volColor,
                     borderRadius: "3px"
-                  }} />
-                </div>
-              </div>
-
-              {/* Pan Visualization */}
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.4rem" }}>
-                  <span className={styles.muted}>Stereo-Position & Streuung</span>
-                  <span style={{ fontWeight: 600 }}>
-                    {track.averagePan < -0.1 ? "L" : track.averagePan > 0.1 ? "R" : "M"} 
-                    <small style={{ fontWeight: 400, marginLeft: "0.4rem", opacity: 0.7 }}>
-                      (±{(track.panAbsDeviation * 100).toFixed(0)}%)
-                    </small>
-                  </span>
-                </div>
-                <div style={{ height: "16px", background: "#222", borderRadius: "8px", position: "relative", border: "1px solid #333", overflow: "hidden" }}>
-                  {/* Spread Area */}
-                  <div style={{
-                    position: "absolute",
-                    left: `${((track.averagePan - track.panAbsDeviation + 1) / 2) * 100}%`,
-                    width: `${track.panAbsDeviation * 100}%`,
-                    height: "100%",
-                    background: "rgba(255,255,255,0.08)",
-                  }} />
-                  {/* Center Line */}
-                  <div style={{ 
-                    position: "absolute",
-                    left: "50%",
-                    width: "1px",
-                    height: "100%",
-                    background: "rgba(255,255,255,0.2)",
-                  }} />
-                  {/* Mean Marker */}
-                  <div style={{ 
-                    position: "absolute",
-                    left: `${((track.averagePan + 1) / 2) * 100}%`,
-                    top: "2px",
-                    width: "10px",
-                    height: "10px",
-                    background: "white",
-                    borderRadius: "50%",
-                    transform: "translateX(-50%)",
-                    boxShadow: "0 0 4px rgba(0,0,0,0.5)",
-                    zIndex: 3
                   }} />
                 </div>
               </div>

@@ -152,6 +152,28 @@ export function AnalysisFiltersPanel({
         </select>
       </label>
 
+      <label>
+        Max. Anteil gestörter Videos je Teilnehmer
+        <input
+          type="range"
+          min={0}
+          max={105}
+          step={5}
+          value={filters.maxDisturbanceSharePercent}
+          onChange={(event) => {
+            const raw = Number(event.target.value);
+            const next = Number.isFinite(raw) ? Math.max(0, Math.min(105, raw)) : 105;
+            setFilters((current) => ({
+              ...current,
+              maxDisturbanceSharePercent: next,
+            }));
+          }}
+        />
+        <span className={styles.muted}>
+          Teilnehmer wird ausgeschlossen, wenn der Anteil gestörter Videos mindestens diesen Wert erreicht: {filters.maxDisturbanceSharePercent}%
+        </span>
+      </label>
+
       <label
         style={{
           flexDirection: "row",

@@ -156,22 +156,22 @@ export function ParticipantDetailPanel({
               <div className={styles.dataList}>
                 <DataField label="Alter" value={selected.demographics.age_group} />
                 <DataField label="Geschlecht" value={selected.demographics.gender} />
-                <DataField label="Streaming" value={selected.demographics.streaming_usage} />
-                <DataField label="Output" value={selected.demographics.audio_output_type} />
-                <DataField label="Disturbance (1-7)" value={selected.demographics.audio_balance_disturbance} />
-                <DataField label="Mixer Zufriedenheit" value={selected.demographics.audio_settings_satisfaction} />
+                <DataField label="Streaming-Häufigkeit" value={selected.demographics.streaming_usage} />
+                <DataField label="Ausgabegerät" value={selected.demographics.audio_output_type} />
+                <DataField label="Aktuelles Störgefühl (1-7)" value={selected.demographics.audio_balance_disturbance} />
+                <DataField label="Aktuelle Mixing Zufriedenheit" value={selected.demographics.audio_settings_satisfaction} />
               </div>
             ) : <p className={styles.muted}>Keine demografischen Daten vorhanden.</p>}
           </article>
 
           <article className={styles.detailCard}>
-            <h4>Analyse-Bias-Flag</h4>
+            <h4>Flagged-Status</h4>
             <p className={styles.muted} style={{ marginBottom: "0.6rem" }}>
               Status: {selectedBiasState.is_biased ? "Biased (wird ausgeschlossen)" : "Nicht biased"}
             </p>
 
             <label style={{ display: "grid", gap: "0.4rem" }}>
-              Reason
+              Grund
               <textarea
                 value={reasonDraft}
                 onChange={(event) => {

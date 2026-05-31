@@ -68,7 +68,7 @@ export function AnalysisDashboard() {
           <section className={styles.warningPanel}>
             <h3>Datenzugriff-Hinweise ({warnings.length})</h3>
             <p className={styles.muted}>
-              Einige Tabellen konnten nicht gelesen werden. KPIs koennen dadurch 0 oder leer erscheinen.
+              Einige Tabellen konnten nicht gelesen werden. KPIs können dadurch 0 oder leer erscheinen.
             </p>
             <ul>
               {warnings.map((warning) => (
@@ -109,13 +109,19 @@ export function AnalysisDashboard() {
               <strong>Completion Rate:</strong> Anteil der Teilnehmer, die die gesamte Studie (inkl. End-Fragebogen) abgeschlossen haben.
             </p>
             <p>
-              <strong>SUS Score:</strong> System Usability Scale (0-100). Maß für die subjektiv empfundene Benutzerfreundlichkeit. Werte &gt; 68 gelten als gut.
+              <strong>Interpretation Completion Rate:</strong> Je höher, desto belastbarer sind die Ergebnisse. Sehr niedrige Werte deuten oft auf Abbrüche, Unklarheiten im Flow oder technische Probleme hin.
             </p>
             <p>
-              <strong>NPS Score:</strong> Net Promoter Score (-100 bis +100). Maß für die Weiterempfehlungsbereitschaft (Promotoren vs. Detraktoren).
+              <strong>SUS-4 Kurzindex (0-100):</strong> Interner Vergleichswert auf Basis von 4 SUS-Items. Höher bedeutet bessere wahrgenommene Bedienbarkeit. Am besten zwischen Versionen/Iterationen vergleichen.
             </p>
             <p>
-              <strong>UEQ Gesamt:</strong> Globaler Index der User Experience Questionnaire Kurzversion. Fokus auf pragmatische und hedonische Qualität.
+              <strong>Deutung SUS-4:</strong> Unter 50 = klarer Handlungsbedarf, 50-65 = mittel, 65-80 = gut, über 80 = sehr gut. Wichtiger als ein fixer Grenzwert ist die Entwicklung über mehrere Messungen.
+            </p>
+            <p>
+              <strong>NPS Score (-100 bis +100):</strong> Die Antworten werden für die NPS-Auswertung auf eine 0-10-Logik normiert. Unter 0 = kritisch, ab 0 = eher positiv, ab 30 = gut, ab 50 = sehr stark.
+            </p>
+            <p>
+              <strong>UEQ Gesamt (-3 bis +3):</strong> Unter 0 = eher negative Experience, 0 bis 0,8 = neutral bis leicht positiv, über 0,8 = deutlich positiv.
             </p>
           </div>
 
@@ -125,20 +131,23 @@ export function AnalysisDashboard() {
               Wertebereich von -3 (sehr schlecht) bis +3 (sehr gut).
             </p>
             <p>
-              <strong>Pragmatische Qualität:</strong> Beschreibt Aufgabenbezogenheit (Durchschaubarkeit, Effizienz).
+              <strong>Pragmatische Qualität:</strong> Wie gut Nutzer Aufgaben erledigen können. Hohe Werte bedeuten: klar, effizient, gut steuerbar.
             </p>
             <p>
-              <strong>Hedonische Qualität:</strong> Beschreibt Nicht-Aufgabenbezogenes (Stimulation, Originalität).
+              <strong>Hedonische Qualität:</strong> Wie ansprechend und neuartig sich das Erlebnis anfühlt. Hohe Werte bedeuten: motivierend und interessant.
             </p>
             <p>
-              Werte über 0,8 deuten auf eine positive Wahrnehmung hin.
+              Faustregel: Unter 0 kritisch, ab 0 positiv, ab 0,8 klar positiv.
             </p>
           </div>
 
           <div className={styles.explanationItem}>
             <h4>Kreuztabellen (Crosstabs)</h4>
             <p>
-              <strong>Ø Aktivität (Delta Vol):</strong> Mathematischer Beleg für die Nutzung. Zeigt, wie weit Regler im Schnitt bewegt wurden. Hohe Aktivität bei Mixer-Präferenz belegt den Nutzen.
+              <strong>Ø Aktivität (Delta Vol):</strong> Zeigt, wie stark Lautstärken vom Standard abweichen. Höhere Werte bedeuten mehr aktives Mischen, sehr niedrige Werte eher passives Zuschauen.
+            </p>
+            <p>
+              Für den Vergleich gilt: Unterschiede zwischen Gruppen sind wichtiger als der absolute Einzelwert.
             </p>
           </div>
 
@@ -147,59 +156,65 @@ export function AnalysisDashboard() {
             <p>
               Visualisieren die Verteilung der 7er-Likert-Fragen. Die farbige Box umfasst die mittleren 50% der Antworten (Interquartilsabstand). Die weiße Linie markiert den Median.
             </p>
+            <p>
+              Interpretation: Median nahe 6-7 = starke Zustimmung, nahe 1-2 = klare Ablehnung. Breite Box = uneinheitliche Meinungen, schmale Box = hohe Einigkeit.
+            </p>
           </div>
 
           <div className={styles.explanationItem}>
             <h4>Nutzungspräferenz & Trends</h4>
             <p>
-              <strong>Lautstärke-Tendenz:</strong> Visualisiert die Abweichung vom Video-Standard. Ein Balken unter der Null-Linie (blau) bedeutet, die Spur war tendenziell zu laut abgemischt.
+              <strong>Lautstärke-Unterschiede zwischen Spuren:</strong> Gezeigt wird der mittlere Unterschied zwischen zwei Spuren (z. B. Musik vs. Stimme).
             </p>
             <p>
-              <strong>Stereo & Streuung:</strong> Weißer Punkt = Mittelwert. Die schattierte Fläche zeigt die <em>Ø absolute Abweichung</em>. Je breiter, desto aktiver wurde im Raum verteilt.
+              Positive Werte bedeuten: erste Spur lauter als zweite. Negative Werte bedeuten: erste Spur leiser als zweite.
             </p>
           </div>
 
           <div className={styles.explanationItem}>
             <h4>Average Mix</h4>
             <p>
-              Gibt die durchschnittliche Abweichung der Audio-Einstellungen vom Standard (Vol: 100%, Pan: 0) zum Zeitpunkt des Beendens an.
+              Zeigt die durchschnittliche End-Einstellung gegenüber dem Standard (Vol: 100%, Pan: 0). Negative Volumenwerte bedeuten leiser als Standard, positive lauter.
             </p>
           </div>
 
           <div className={styles.explanationItem}>
             <h4>Interaction Trends</h4>
             <p>
-              Zeigt den durchschnittlichen Lautstärkeverlauf (isMute * masterVolume * trackVolume) über die Videodauer. Hilft zu verstehen, wann welche Spuren tendenziell lauter oder leiser gemischt wurden.
+              Zeigt den durchschnittlichen Lautstärkeverlauf über die Videodauer. Spitzen markieren Zeitpunkte mit besonders aktiver Anpassung, ruhige Abschnitte eher stabile Mischung.
             </p>
           </div>
 
           <div className={styles.explanationItem}>
             <h4>Teilnehmer-Drilldown</h4>
             <p>
-              Detaillierte Liste aller Einzelsessions. Ermöglicht die Einsicht in spezifische Antworten, demografische Profile und individuelle Interaktionsverläufe.
+              Detailansicht einzelner Sessions. Geeignet, um Ausreißer zu prüfen und zu verstehen, warum Gruppenwerte hoch oder niedrig ausfallen.
             </p>
           </div>
 
           <div className={styles.explanationItem}>
             <h4>Fragecode-Legende</h4>
+            <p>
+              Hinweis zur Deutung: Bei 1-7 Skalen steht 1 meist für negativ/gering und 7 für positiv/hoch.
+            </p>
             <p><strong>SUS (Endsurvey):</strong></p>
             <p>sus-1: System einfach zu bedienen</p>
             <p>sus-2: Bedienung schnell lernbar</p>
             <p>sus-3: Sicherheit bei der Nutzung</p>
             <p>sus-4: Funktionen gut integriert</p>
             <p><strong>Video-Survey:</strong></p>
-            <p>sync-1: Synchronitaet von Ton und Bild</p>
-            <p>sync-2: Stoerungen beim Tonmischen (Ja/Nein)</p>
+            <p>sync-1: Synchronität von Ton und Bild</p>
+            <p>sync-2: Störungen beim Tonmischen (Ja/Nein)</p>
             <p>experience-1: Interesse durch den Mixer</p>
             <p>experience-2: Bevorzugter Modus (Standard/Mixer)</p>
             <p>pan-1: Hilfreichkeit der PAN-Steuerung</p>
-            <p>pan-2: Intuitivitaet der PAN-Slider</p>
+            <p>pan-2: Intuitivität der PAN-Slider</p>
             <p><strong>UEQ (Endsurvey):</strong></p>
             <p>ueq-1: Unerfreulich ↔ Erfreulich</p>
-            <p>ueq-2: Ueberladen ↔ Uebersichtlich</p>
+            <p>ueq-2: Überladen ↔ Übersichtlich</p>
             <p>ueq-3: Ineffizient ↔ Effizient</p>
             <p>ueq-4: Phantasielos ↔ Kreativ</p>
-            <p>ueq-5: Herkoemmlich ↔ Neuartig</p>
+            <p>ueq-5: Herkömmlich ↔ Neuartig</p>
             <p><strong>NPS/Feedback (Endsurvey):</strong></p>
             <p>nps-1: Weiterempfehlungsbereitschaft (1-10)</p>
             <p>feedback-1: Offenes Freitext-Feedback</p>

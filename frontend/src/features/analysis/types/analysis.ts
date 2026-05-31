@@ -7,6 +7,7 @@ export interface AnalysisFilters {
   browserName: string;
   disturbanceMin: number;
   disturbanceMax: number;
+  maxDisturbanceSharePercent: number;
   excludeNoVideos: boolean;
   syncDisturbance: "all" | "ja" | "nein";
   excludeBiasedParticipants: boolean;
@@ -182,10 +183,10 @@ export interface InteractionTimelinePoint {
 }
 
 export interface TrackDeviationItem {
-  trackId: string;
-  averageVolumeDelta: number;
-  averagePan: number;
-  panAbsDeviation: number; // Average absolute deviation from center
+  pairId: string;
+  primaryTrackId: string;
+  secondaryTrackId: string;
+  averageVolumeDifference: number; // primaryTrackId volume minus secondaryTrackId volume
   sampleCount: number;
 }
 

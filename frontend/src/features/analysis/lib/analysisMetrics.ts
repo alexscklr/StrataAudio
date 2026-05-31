@@ -25,6 +25,7 @@ const DEFAULT_FILTERS: AnalysisFilters = {
   browserName: "all",
   disturbanceMin: 1,
   disturbanceMax: 7,
+  maxDisturbanceSharePercent: 105,
   excludeNoVideos: false,
   syncDisturbance: "all",
   excludeBiasedParticipants: true,
@@ -72,6 +73,29 @@ const extractAnswers = (payload: any): Record<string, unknown> => {
   }
 
   return payload;
+};
+
+const getSyncDisturbanceValue = (
+  response: SurveyResponseRow,
+): "ja" | "nein" | null => {
+  const answers = extractAnswers(response.responses);
+  const sync2 = answers["sync-2"] ?? answers["sync2"];
+
+  if (typeof sync2 === "boolean") {
+    return sync2 ? "ja" : "nein";
+  }
+
+  if (typeof sync2 === "string") {
+    const normalized = sync2.trim().toLowerCase();
+    if (normalized === "ja") {
+      return "ja";
+    }
+    if (normalized === "nein") {
+      return "nein";
+    }
+  }
+
+  return null;
 };
 
 const quantile = (sorted: number[], q: number): number => {
@@ -200,6 +224,32 @@ const collectParticipantIdsByFilter = (
   const biasByParticipant = new Map(
     raw.participantBiasFlags.map((entry) => [entry.participant_id, entry]),
   );
+  const latestSurveyResponses = Array.from(
+    buildLatestSurveyResponseByParticipantVideo(raw.surveyResponses).values(),
+  );
+  const disturbanceShareByParticipant = new Map<
+    string,
+    { withDisturbance: number; total: number }
+  >();
+
+  for (const response of latestSurveyResponses) {
+    const disturbance = getSyncDisturbanceValue(response);
+    if (disturbance === null) {
+      continue;
+    }
+
+    const current = disturbanceShareByParticipant.get(response.participant_id) ?? {
+      withDisturbance: 0,
+      total: 0,
+    };
+
+    current.total += 1;
+    if (disturbance === "ja") {
+      current.withDisturbance += 1;
+    }
+
+    disturbanceShareByParticipant.set(response.participant_id, current);
+  }
 
   const filtered = participantIds.filter((participantId) => {
     // 1. Filter: excludeNoVideos
@@ -209,16 +259,7 @@ const collectParticipantIdsByFilter = (
       if (!hasSurvey && !hasAudio) return false;
     }
 
-    // 2. Filter: sync-2 (Technical disturbances)
-    if (filters.syncDisturbance !== "all") {
-      const pResponses = raw.surveyResponses.filter((r) => r.participant_id === participantId);
-      const hasJa = pResponses.some((r) => extractAnswers(r.responses)["sync-2"] === "Ja");
-      
-      if (filters.syncDisturbance === "ja" && !hasJa) return false;
-      if (filters.syncDisturbance === "nein" && hasJa) return false;
-    }
-
-    // 3. Filter: exclude participants flagged as biased in admin drilldown
+    // 2. Filter: exclude participants flagged as biased in admin drilldown
     if (filters.excludeBiasedParticipants) {
       const biasEntry = biasByParticipant.get(participantId);
       if (biasEntry?.is_biased) {
@@ -226,12 +267,23 @@ const collectParticipantIdsByFilter = (
       }
     }
 
-    // 4. Filter: OS & Browser
+    // 3. Filter: OS & Browser
     if (filters.osName !== "all" || filters.browserName !== "all") {
       const p = raw.participants.find(p => p.id === participantId);
       if (p) {
         if (filters.osName !== "all" && p.os_name !== filters.osName) return false;
         if (filters.browserName !== "all" && p.browser_name !== filters.browserName) return false;
+      }
+    }
+
+    // 4. Filter: max share of watched videos with disturbances (sync-2 = Ja)
+    if (filters.maxDisturbanceSharePercent <= 100) {
+      const stats = disturbanceShareByParticipant.get(participantId);
+      if (stats && stats.total > 0) {
+        const disturbanceSharePercent = (stats.withDisturbance / stats.total) * 100;
+        if (disturbanceSharePercent >= filters.maxDisturbanceSharePercent) {
+          return false;
+        }
       }
     }
 
@@ -278,7 +330,11 @@ const filterSurveyResponses = (
     const participantMatch = allowedParticipantIds.has(response.participant_id);
     const genreMatch = filters.genre === "all" || videoGenreMap.get(response.video_id) === filters.genre;
     const videoMatch = filters.videoId === "all" || response.video_id === filters.videoId;
-    return participantMatch && genreMatch && videoMatch;
+    const syncDisturbanceValue = getSyncDisturbanceValue(response);
+    const syncMatch =
+      filters.syncDisturbance === "all" ||
+      syncDisturbanceValue === filters.syncDisturbance;
+    return participantMatch && genreMatch && videoMatch && syncMatch;
   });
 
 const filterAudioConfigurations = (
@@ -286,12 +342,15 @@ const filterAudioConfigurations = (
   allowedParticipantIds: Set<string>,
   filters: AnalysisFilters,
   videoGenreMap: Map<string, string>,
+  allowedSurveyKeys: Set<string>,
 ): AudioConfigurationRow[] =>
   configurations.filter((configuration) => {
     const participantMatch = allowedParticipantIds.has(configuration.participant_id);
     const genreMatch = filters.genre === "all" || videoGenreMap.get(configuration.video_id) === filters.genre;
     const videoMatch = filters.videoId === "all" || configuration.video_id === filters.videoId;
-    return participantMatch && genreMatch && videoMatch;
+    const surveyKey = `${configuration.participant_id}::${configuration.video_id}`;
+    const surveyMatch = allowedSurveyKeys.has(surveyKey);
+    return participantMatch && genreMatch && videoMatch && surveyMatch;
   });
 
 const buildLatestSurveyResponseByParticipantVideo = (
@@ -337,6 +396,12 @@ const normalizeTimeToMixConfigurations = (
 
     const videoDurationMs = videoDurationMsById.get(configuration.video_id);
     if (!videoDurationMs || videoDurationMs <= 120_000) {
+      return configuration;
+    }
+
+    // Apply midpoint correction only when the recorded timestamp plausibly
+    // still includes the first-half offset of long videos.
+    if (configuration.time_to_mix_ms < videoDurationMs / 2) {
       return configuration;
     }
 
@@ -602,31 +667,54 @@ const buildTrackDeviations = (
   configurations: AudioConfigurationRow[],
   audioLabelMap: Map<string, string>,
 ): TrackDeviationItem[] => {
-  const map = new Map<string, { volumeDeltaTotal: number; panTotal: number; panAbsTotal: number; count: number }>();
+  const map = new Map<
+    string,
+    {
+      primaryTrackId: string;
+      secondaryTrackId: string;
+      volumeDifferenceTotal: number;
+      count: number;
+    }
+  >();
 
   for (const configuration of configurations) {
     const trackstates = configuration.final_settings?.trackstates ?? {};
-    for (const [trackId, state] of Object.entries(trackstates)) {
-      const volume = typeof state.volume === "number" ? state.volume : 1;
-      const pan = typeof state.pan === "number" ? state.pan : 0;
-      const current = map.get(trackId) ?? { volumeDeltaTotal: 0, panTotal: 0, panAbsTotal: 0, count: 0 };
-      current.volumeDeltaTotal += volume - 1;
-      current.panTotal += pan;
-      current.panAbsTotal += Math.abs(pan);
-      current.count += 1;
-      map.set(trackId, current);
+
+    const tracks = Object.entries(trackstates)
+      .map(([trackId, state]) => ({
+        trackId,
+        label: audioLabelMap.get(trackId) ?? trackId,
+        volume: typeof state.volume === "number" ? state.volume : 1,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    for (let i = 0; i < tracks.length; i += 1) {
+      for (let j = i + 1; j < tracks.length; j += 1) {
+        const primary = tracks[i];
+        const secondary = tracks[j];
+        const key = `${primary.trackId}::${secondary.trackId}`;
+        const current = map.get(key) ?? {
+          primaryTrackId: primary.trackId,
+          secondaryTrackId: secondary.trackId,
+          volumeDifferenceTotal: 0,
+          count: 0,
+        };
+        current.volumeDifferenceTotal += primary.volume - secondary.volume;
+        current.count += 1;
+        map.set(key, current);
+      }
     }
   }
 
   return Array.from(map.entries())
-    .map(([trackId, value]) => ({
-      trackId: audioLabelMap.get(trackId) ?? trackId,
-      averageVolumeDelta: value.count > 0 ? value.volumeDeltaTotal / value.count : 0,
-      averagePan: value.count > 0 ? value.panTotal / value.count : 0,
-      panAbsDeviation: value.count > 0 ? value.panAbsTotal / value.count : 0,
+    .map(([pairId, value]) => ({
+      pairId,
+      primaryTrackId: audioLabelMap.get(value.primaryTrackId) ?? value.primaryTrackId,
+      secondaryTrackId: audioLabelMap.get(value.secondaryTrackId) ?? value.secondaryTrackId,
+      averageVolumeDifference: value.count > 0 ? value.volumeDifferenceTotal / value.count : 0,
       sampleCount: value.count,
     }))
-    .sort((a, b) => b.sampleCount - a.sampleCount);
+    .sort((a, b) => Math.abs(b.averageVolumeDifference) - Math.abs(a.averageVolumeDifference));
 };
 
 const calculateSUS = (endResponses: EndSurveyResponseRow[]): number | null => {
@@ -653,8 +741,27 @@ const calculateSUS = (endResponses: EndSurveyResponseRow[]): number | null => {
 };
 
 const calculateNPS = (endResponses: EndSurveyResponseRow[]): number | null => {
+  const normalizeNpsValue = (value: number): number | null => {
+    if (!Number.isFinite(value)) {
+      return null;
+    }
+
+    // Historical data can be 1-10, while standard NPS uses 0-10.
+    // Normalize 1-10 into 0-9 by shifting down one point.
+    if (value >= 1 && value <= 10) {
+      return value - 1;
+    }
+
+    if (value >= 0 && value <= 10) {
+      return value;
+    }
+
+    return null;
+  };
+
   const values = endResponses
     .map((response) => getNumericAnswer(extractAnswers(response.responses)["nps-1"]))
+    .map((value) => (value === null ? null : normalizeNpsValue(value)))
     .filter((value): value is number => value !== null);
 
   if (values.length === 0) {
@@ -669,8 +776,25 @@ const calculateNPS = (endResponses: EndSurveyResponseRow[]): number | null => {
 };
 
 const calculateAverageNPSRating = (endResponses: EndSurveyResponseRow[]): number | null => {
+  const normalizeNpsValue = (value: number): number | null => {
+    if (!Number.isFinite(value)) {
+      return null;
+    }
+
+    if (value >= 1 && value <= 10) {
+      return value - 1;
+    }
+
+    if (value >= 0 && value <= 10) {
+      return value;
+    }
+
+    return null;
+  };
+
   const values = endResponses
     .map((response) => getNumericAnswer(extractAnswers(response.responses)["nps-1"]))
+    .map((value) => (value === null ? null : normalizeNpsValue(value)))
     .filter((value): value is number => value !== null);
 
   return round(mean(values));
@@ -1006,6 +1130,9 @@ export const buildAnalysisDerivedData = (
     filters,
     videoGenreMap,
   );
+  const allowedSurveyKeys = new Set(
+    filteredSurveyResponses.map((entry) => `${entry.participant_id}::${entry.video_id}`),
+  );
   const filteredEndSurveyResponses = raw.endSurveyResponses.filter((entry) =>
     allowedParticipantIds.has(entry.participant_id),
   );
@@ -1014,6 +1141,7 @@ export const buildAnalysisDerivedData = (
     allowedParticipantIds,
     filters,
     videoGenreMap,
+    allowedSurveyKeys,
   );
   const normalizedConfigurations = normalizeTimeToMixConfigurations(
     filteredConfigurations,
