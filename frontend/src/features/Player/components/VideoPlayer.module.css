@@ -96,7 +96,8 @@
     border-radius: 0;
 }
 
-.videoContainer:hover .overlay,
+.videoContainer.controlsVisible .overlay,
+.videoContainer:not(.fullscreen):hover .overlay,
 .videoContainer:has(:focus-visible) .overlay,
 .videoContainer.initialOpen .overlay,
 .videoContainer.touchOpen .overlay {

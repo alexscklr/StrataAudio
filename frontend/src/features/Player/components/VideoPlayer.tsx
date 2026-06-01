@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Audio, VideoControlPermissions } from '@/shared/types/media';
 import styles from './VideoPlayer.module.css';
 import { PlayPauseButton } from '../Controls/PlayPauseButton';
@@ -27,13 +27,16 @@ interface VideoPlayerProps {
 }
 
 function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canControlVideo, onVideoEnd, onMidpointReached, onAudioConfigurationReady, watchMode }: VideoPlayerProps) {
+    const FULLSCREEN_CONTROLS_TIMEOUT_MS = 2200;
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const [isVideoReady, setIsVideoReady] = useState(false);
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
     const [isTouchOpen, setIsTouchOpen] = useState(false);
+    const [isFullscreenControlsVisible, setIsFullscreenControlsVisible] = useState(false);
     const touchCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const fullscreenControlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const hasReachedMidpointRef = useRef(false);
 
     const handleTouchStart = () => {
@@ -43,7 +46,10 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
     };
 
     useEffect(() => {
-        return () => { if (touchCloseTimerRef.current) clearTimeout(touchCloseTimerRef.current); };
+        return () => {
+            if (touchCloseTimerRef.current) clearTimeout(touchCloseTimerRef.current);
+            if (fullscreenControlsTimerRef.current) clearTimeout(fullscreenControlsTimerRef.current);
+        };
     }, []);
 
     const {
@@ -65,6 +71,19 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
         autoplay,
         canControlVideo,
     });
+
+    const showFullscreenControls = useCallback(() => {
+        if (!isFullscreen) return;
+
+        setIsFullscreenControlsVisible(true);
+        if (fullscreenControlsTimerRef.current) clearTimeout(fullscreenControlsTimerRef.current);
+
+        if (!isPlaying) return;
+
+        fullscreenControlsTimerRef.current = setTimeout(() => {
+            setIsFullscreenControlsVisible(false);
+        }, FULLSCREEN_CONTROLS_TIMEOUT_MS);
+    }, [isFullscreen, isPlaying]);
 
     const {
         mixerState,
@@ -113,14 +132,25 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
         resetMixerState();
     }, [resetMixerState, watchMode]);
 
+    useEffect(() => {
+        if (!isFullscreen) {
+            if (fullscreenControlsTimerRef.current) clearTimeout(fullscreenControlsTimerRef.current);
+            setIsFullscreenControlsVisible(false);
+            return;
+        }
+
+        showFullscreenControls();
+    }, [isFullscreen, isPlaying, showFullscreenControls]);
+
     const containerClassName = [
         styles.videoContainer,
         isFullscreen ? styles.fullscreen : '',
+        isFullscreen && isFullscreenControlsVisible ? styles.controlsVisible : '',
         isInitialOpen ? styles.initialOpen : '',
         isTouchOpen ? styles.touchOpen : '',
     ].filter(Boolean).join(' ');
 
-    const isAudioControlsExpanded = isPlayerHovered || isInitialOpen || isTouchOpen;
+    const isAudioControlsExpanded = (isFullscreen ? isFullscreenControlsVisible : isPlayerHovered) || isInitialOpen || isTouchOpen;
 
     return (
         <div
@@ -128,6 +158,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
             className={containerClassName}
             onMouseEnter={() => setIsPlayerHovered(true)}
             onMouseLeave={() => setIsPlayerHovered(false)}
+            onMouseMove={showFullscreenControls}
             onTouchStart={handleTouchStart}
         >
             <div
