@@ -231,8 +231,55 @@ export const buildTrackDeviations = (
     }
   >();
 
+  const parseTrackChangeLabel = (
+    rawLabel: string,
+  ): { id: string; type: "volume" | "mute" } | null => {
+    const trimmed = rawLabel.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    if (trimmed.includes(":")) {
+      const [rawType, ...rest] = trimmed.split(":");
+      const type = rawType.trim().toLowerCase();
+      const id = rest.join(":").trim();
+      if (!id || (type !== "volume" && type !== "mute")) {
+        return null;
+      }
+      return { id, type };
+    }
+
+    if (trimmed.includes(".")) {
+      const parts = trimmed.split(".");
+      if (parts.length < 2) {
+        return null;
+      }
+      const type = parts[parts.length - 1].trim().toLowerCase();
+      const id = parts.slice(0, -1).join(".").trim();
+      if (!id || (type !== "volume" && type !== "mute")) {
+        return null;
+      }
+      return { id, type };
+    }
+
+    return null;
+  };
+
   for (const configuration of configurations) {
     const trackstates = configuration.final_settings?.trackstates ?? {};
+    const touchedTrackIds = new Set<string>();
+
+    for (const entry of configuration.interaction_log ?? []) {
+      const parsed = parseTrackChangeLabel(String(entry.label || ""));
+      if (!parsed) {
+        continue;
+      }
+
+      const canonicalId = parsed.id.trim();
+      if (canonicalId) {
+        touchedTrackIds.add(canonicalId);
+      }
+    }
 
     const tracks = Object.entries(trackstates)
       .map(([trackId, state]) => ({
@@ -246,6 +293,9 @@ export const buildTrackDeviations = (
       for (let j = i + 1; j < tracks.length; j += 1) {
         const primary = tracks[i];
         const secondary = tracks[j];
+        if (!touchedTrackIds.has(primary.trackId) && !touchedTrackIds.has(secondary.trackId)) {
+          continue;
+        }
         const key = `${primary.trackId}::${secondary.trackId}`;
         const current = map.get(key) ?? {
           primaryTrackId: primary.trackId,
