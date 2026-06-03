@@ -1,9 +1,9 @@
 
-import { Fragment, useContext, useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useContext, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { AuthContext } from '@/features/auth/context/AuthContext';
 import { endSurvey } from '@/constants/endSurvey';
 import { fetchEndSurveyResponse, submitEndSurveyResponse } from '@/features/analytics/lib/endSurveyQueries';
-import SurveyQuestionRenderer from '@/features/analytics/components/questions/SurveyQuestionRenderer';
+import SurveySectionList from '@/features/analytics/components/questions/SurveySectionList';
 import { createInitialAnswers, getAllQuestions, hasMissingRequiredAnswers, type SurveyAnswers } from '@/features/analytics/utils/surveyUtils';
 import styles from '@/features/analytics/components/styles/VideoSurvey.module.css';
 import { useTranslation } from 'react-i18next';
@@ -127,23 +127,14 @@ function EndSurveyPage() {
                 {isLoadingExisting && <p>{t('endSurvey.loadingExisting')}</p>}
 
                 <form onSubmit={handleSubmit} className={styles.surveyForm}>
-                    {endSurvey.sections.map((section) => (
-                        <Fragment key={section.id}>
-                            <h3>{t(section.title, { defaultValue: section.title })}</h3>
-                            {section.description && <p>{t(section.description, { defaultValue: section.description })}</p>}
-                            {section.questions.map((question) => (
-                                <SurveyQuestionRenderer
-                                    key={question.id}
-                                    question={question}
-                                    answers={answers}
-                                    onAnswer={updateAnswer}
-                                />
-                            ))}
-                            <div className={styles.spacer} />
-                            <hr className={styles.questionDivider} />
-                            <div className={styles.spacer} />
-                        </Fragment>
-                    ))}
+                    <SurveySectionList
+                        sections={endSurvey.sections}
+                        answers={answers}
+                        onAnswer={updateAnswer}
+                        showDividers
+                        spacerClassName={styles.spacer}
+                        dividerClassName={styles.questionDivider}
+                    />
 
                     {submitError && <p className={styles.submitError}>{submitError}</p>}
                     {submitted && <p className={styles.submitSuccess}>{t('endSurvey.submitSuccess')}</p>}

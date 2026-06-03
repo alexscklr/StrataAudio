@@ -1,4 +1,4 @@
-import { Fragment, useContext, useMemo, useState, type FormEvent } from 'react';
+import { useContext, useMemo, useState, type FormEvent } from 'react';
 import styles from './styles/VideoSurvey.module.css';
 import { videoSurvey } from '@/constants/videoSurvey';
 import { AuthContext } from '@/features/auth/context/AuthContext';
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
 import { clearWatchModeState } from '@/shared/lib/watchModeSequence';
-import SurveyQuestionRenderer from './questions/SurveyQuestionRenderer';
+import SurveySectionList from './questions/SurveySectionList';
 import type { VideoWatchMode } from '@/shared/types/media';
 import { useTranslation } from 'react-i18next';
 
@@ -100,23 +100,14 @@ function VideoSurvey({ videoId, videoTitle, firstWatchMode, audioConfigurationSn
             {!unlocked && <p className={styles.lockedMessage}>{t('videoSurvey.lockedMessage')}</p>}
             {unlocked && (
                 <form onSubmit={handleSurveySubmit} className={styles.surveyForm}>
-                    {videoSurvey.sections.map((section) => (
-                        <Fragment key={section.id}>
-                            <h3>{t(section.title, { defaultValue: section.title })}</h3>
-                            {section.description && <p>{t(section.description, { defaultValue: section.description })}</p>}
-                            {section.questions.map((question) => (
-                                <SurveyQuestionRenderer
-                                    key={question.id}
-                                    question={question}
-                                    answers={answers}
-                                    onAnswer={updateAnswer}
-                                />
-                            ))}
-                            <div className={styles.spacer} />
-                            <hr className={styles.questionDivider} />
-                            <div className={styles.spacer} />
-                        </Fragment>
-                    ))}
+                    <SurveySectionList
+                        sections={videoSurvey.sections}
+                        answers={answers}
+                        onAnswer={updateAnswer}
+                        showDividers
+                        spacerClassName={styles.spacer}
+                        dividerClassName={styles.questionDivider}
+                    />
 
                     {submitError && <p className={styles.submitError}>{submitError}</p>}
                     {submitted && <p className={styles.submitSuccess}>{t('videoSurvey.submitSuccess')}</p>}

@@ -1,4 +1,4 @@
-import { Fragment, useContext, useMemo, useState, type FormEvent } from "react";
+import { useContext, useMemo, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/DemographicsSurvey.module.css";
 import { demographicsSurvey } from "@/constants/demographicsSurvey";
@@ -10,7 +10,7 @@ import {
     hasMissingRequiredDemographicsAnswers,
 } from "../utils/demographicsSurvey";
 import { saveDemographics } from "../lib/demographicsQueries";
-import SurveyQuestionRenderer from "./questions/SurveyQuestionRenderer";
+import SurveySectionList from "./questions/SurveySectionList";
 import { useTranslation } from 'react-i18next';
 
 
@@ -95,20 +95,11 @@ function DemographicsSurvey() {
             </section>
 
             <form onSubmit={handleSubmit} className={styles.surveyForm}>
-                {demographicsSurvey.sections.map((section) => (
-                    <Fragment key={section.id}>
-                        {section.title && <h3>{t(section.title, { defaultValue: section.title })}</h3>}
-                        {section.description && <p>{t(section.description, { defaultValue: section.description })}</p>}
-                        {section.questions.map((question) => (
-                            <SurveyQuestionRenderer
-                                key={question.id}
-                                question={question}
-                                answers={formValues}
-                                onAnswer={updateField}
-                            />
-                        ))}
-                    </Fragment>
-                ))}
+                <SurveySectionList
+                    sections={demographicsSurvey.sections}
+                    answers={formValues}
+                    onAnswer={updateField}
+                />
 
                 {submitError && <p className={styles.submitError}>{submitError}</p>}
 

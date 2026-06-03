@@ -1,4 +1,4 @@
-export type UploadMode = "catalog" | "raw";
+type UploadMode = "catalog" | "raw";
 
 export interface AudioTrackFormState {
   streamFolder: string;

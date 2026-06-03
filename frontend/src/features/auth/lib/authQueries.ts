@@ -30,7 +30,7 @@ export async function signOut() {
 /**
  * Holt die aktuelle Session
  */
-export async function getSession() {
+async function getSession() {
   const { data, error } = await supabase.auth.getSession();
   if (error) throw error;
   return data;

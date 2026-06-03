@@ -22,35 +22,6 @@
     color: var(--text-muted);
 }
 
-.authGate {
-    margin-top: 1rem;
-    border: 1px solid rgb(255 255 255 / 0.16);
-    border-radius: 0.8rem;
-    padding: 1rem;
-    background: rgb(255 255 255 / 0.04);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-}
-
-.authGate button {
-    border: 1px solid rgb(255 255 255 / 0.22);
-    background: rgb(from var(--strata-accent) r g b / 0.22);
-    color: #fff;
-    border-radius: 0.65rem;
-    padding: 0.62rem 0.95rem;
-    cursor: pointer;
-    font-weight: 700;
-}
-
-.modeSwitch {
-    display: inline-flex;
-    gap: 0.5rem;
-    margin-top: 0.3rem;
-    flex-wrap: wrap;
-}
-
 .modeButton {
     border: 1px solid rgb(255 255 255 / 0.18);
     background: rgb(255 255 255 / 0.04);
@@ -59,54 +30,6 @@
     padding: 0.5rem 0.85rem;
     cursor: pointer;
     font-weight: 600;
-}
-
-.modeButtonActive {
-    background: rgb(from var(--strata-accent) r g b / 0.28);
-    border-color: rgb(from var(--strata-accent) r g b / 0.5);
-}
-
-.uploadChecks {
-    margin: 0.9rem 0 1.1rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.45rem;
-}
-
-.checkOk,
-.checkMissing {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    border: 1px solid rgb(255 255 255 / 0.16);
-    border-radius: 0.55rem;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.9rem;
-}
-
-.checkOptional {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    border: 1px solid rgb(255 255 255 / 0.16);
-    border-radius: 0.55rem;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.9rem;
-}
-
-.checkOk {
-    color: #b7f7cc;
-    background: rgb(34 120 71 / 0.18);
-}
-
-.checkMissing {
-    color: #ffb4b4;
-    background: rgb(128 33 33 / 0.18);
-}
-
-.checkOptional {
-    color: #d5dbeb;
-    background: rgb(112 126 157 / 0.2);
 }
 
 .videoList {
@@ -370,10 +293,6 @@
     }
 
     .formGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .uploadChecks {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 

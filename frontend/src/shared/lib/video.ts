@@ -1,37 +1,6 @@
 import { supabase } from "@/api/supabaseClient";
-import i18n from "@/i18n";
+import { localizedNullableText, localizedText, readRelation, resolveLocale } from "./mediaLocalization";
 import type { Video, VideoTechnicalMetadataItem } from "../types/media";
-
-const readRelation = <T>(relation: T | T[] | null | undefined): T | null => {
-  if (!relation) {
-    return null;
-  }
-
-  return Array.isArray(relation) ? (relation[0] ?? null) : relation;
-};
-
-const resolveLocale = (): "de" | "en" => (i18n.language?.toLowerCase().startsWith("en") ? "en" : "de");
-
-const localizedText = (
-  deValue: string | null | undefined,
-  enValue: string | null | undefined,
-  locale: "de" | "en"
-): string => {
-  if (locale === "en") {
-    return enValue ?? deValue ?? "";
-  }
-
-  return deValue ?? enValue ?? "";
-};
-
-const localizedNullableText = (
-  deValue: string | null | undefined,
-  enValue: string | null | undefined,
-  locale: "de" | "en"
-): string | null => {
-  const value = localizedText(deValue, enValue, locale);
-  return value.length > 0 ? value : null;
-};
 
 const toTechnicalMetadataItems = (value: unknown): VideoTechnicalMetadataItem[] => {
   if (!Array.isArray(value)) {

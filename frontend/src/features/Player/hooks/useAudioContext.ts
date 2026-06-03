@@ -62,7 +62,7 @@ export function useAudioContext(): AudioContextProps {
   };
 }
 
-export function resetAudioContext() {
+function resetAudioContext() {
   closeAudioContext();
   resetAudioNodes();
 }

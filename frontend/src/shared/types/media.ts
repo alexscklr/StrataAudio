@@ -54,7 +54,7 @@ export const VideoWatchMode = {
 
 export type VideoWatchMode = typeof VideoWatchMode[keyof typeof VideoWatchMode];
 
-export interface AudioControlPermissions {
+interface AudioControlPermissions {
   changeSingleTracksVolume: boolean;
   muteSingleTracks: boolean;
 }

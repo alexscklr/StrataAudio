@@ -305,11 +305,6 @@
   box-shadow: var(--shadow-card);
 }
 
-.tableResponsive {
-  width: 100%;
-  overflow-x: auto;
-}
-
 .badge {
   display: inline-block;
   padding: 0.2rem 0.5rem;
@@ -347,38 +342,6 @@
 .muted {
   color: var(--text-muted);
   font-size: 1rem;
-}
-
-.filterGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.2rem;
-}
-
-.filterGrid label {
-  display: grid;
-  gap: 0.5rem;
-  font-size: 1.08rem;
-  color: var(--text-main);
-  font-weight: 500;
-}
-
-.filterGrid select {
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 0.6rem 0.8rem;
-  background: #232323;
-  color: var(--text-main);
-  font-size: 1.05rem;
-  transition:
-    border 0.2s,
-    box-shadow 0.2s;
-}
-
-.filterGrid select:focus {
-  border-color: var(--audio-wave);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.13);
 }
 
 .kpiGrid {
@@ -511,26 +474,6 @@
   font-weight: 500;
 }
 
-.surveyTable {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.surveyTable th,
-.surveyTable td {
-  padding: 0.8rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.surveyTable th {
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-}
-
 .logSummary {
   display: flex;
   gap: 1rem;
@@ -603,33 +546,6 @@
   font-weight: 600;
 }
 
-.tableWrap {
-  overflow-x: auto;
-}
-
-.tableWrap table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.tableWrap th,
-.tableWrap td {
-  border-bottom: 1px solid var(--border-color);
-  text-align: left;
-  padding: 0.45rem;
-  font-size: 0.9rem;
-}
-
-.tableWrap th {
-  background: #232323;
-  color: var(--text-main);
-  font-weight: 700;
-}
-
-.tableWrap td {
-  color: var(--text-muted);
-}
-
 .timelineLegend {
   display: flex;
   flex-wrap: wrap;
@@ -668,17 +584,6 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-}
-
-.axisLine {
-  stroke: #9ca3af;
-  stroke-width: 0.5;
-}
-
-.timelineLine {
-  fill: none;
-  stroke: #2563eb;
-  stroke-width: 1.1;
 }
 
 .detailGrid {

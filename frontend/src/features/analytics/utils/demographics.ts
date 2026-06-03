@@ -1,4 +1,4 @@
-export const DEMOGRAPHICS_COMPLETED_STORAGE_KEY = 'demographics-completed';
+const DEMOGRAPHICS_COMPLETED_STORAGE_KEY = 'demographics-completed';
 
 export const hasCompletedDemographics = (): boolean => {
     return localStorage.getItem(DEMOGRAPHICS_COMPLETED_STORAGE_KEY) === 'true';

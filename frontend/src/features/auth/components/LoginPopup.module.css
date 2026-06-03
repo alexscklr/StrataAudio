@@ -26,12 +26,6 @@
   position: relative;
 }
 
-.loginPopupH2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
 .loginPopupForm {
   display: flex;
   flex-direction: column;

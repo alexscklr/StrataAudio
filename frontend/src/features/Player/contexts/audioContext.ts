@@ -30,6 +30,6 @@ export function closeAudioContext(): void {
   }
 }
 
-export function getAudioContext(): AudioContext | null {
+function getAudioContext(): AudioContext | null {
   return audioContextInstance;
 }

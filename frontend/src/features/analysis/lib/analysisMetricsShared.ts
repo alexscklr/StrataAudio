@@ -101,7 +101,7 @@ export const getSyncDisturbanceValue = (
   return null;
 };
 
-export const quantile = (sorted: number[], q: number): number => {
+const quantile = (sorted: number[], q: number): number => {
   if (sorted.length === 0) {
     return 0;
   }
@@ -185,7 +185,7 @@ export const getVideoLabelMap = (raw: AnalysisRawData): Map<string, string> => {
   return map;
 };
 
-export const getGenreLabel = (video: VideoRow): string | null => {
+const getGenreLabel = (video: VideoRow): string | null => {
   const genres = video.video_genres;
   const primaryGenre = Array.isArray(genres) ? genres[0] : genres;
   return primaryGenre?.label_de || primaryGenre?.label_en || video.genre_id || null;

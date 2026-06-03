@@ -121,11 +121,11 @@ export const saveAudioConfigurationSnapshot = (
     localStorage.setItem(getAudioConfigurationStorageKey(videoId), JSON.stringify(nextSnapshots));
 };
 
-export const clearAudioConfigurationSnapshots = (videoId: string): void => {
+const clearAudioConfigurationSnapshots = (videoId: string): void => {
     localStorage.removeItem(getAudioConfigurationStorageKey(videoId));
 };
 
-export const clearWatchModeProgress = (videoId: string): void => {
+const clearWatchModeProgress = (videoId: string): void => {
     localStorage.removeItem(getProgressStorageKey(videoId));
 };
 

@@ -10,7 +10,7 @@ export const toRelativePath = (file: File): string => {
   return parts.length > 1 ? parts.slice(1).join("/") : parts[0] ?? file.name;
 };
 
-export const getFileIdentity = (file: File): string => `${file.name}-${file.size}-${file.lastModified}`;
+const getFileIdentity = (file: File): string => `${file.name}-${file.size}-${file.lastModified}`;
 
 interface LocalizedMetadataInput {
   titleDe: string;

@@ -1,37 +1,6 @@
 import { supabase } from "@/api/supabaseClient";
-import i18n from "@/i18n";
+import { localizedNullableText, localizedText, readRelation, resolveLocale } from "./mediaLocalization";
 import type { Video, VideoCatalogItem } from "../types/media";
-
-const readRelation = <T>(relation: T | T[] | null | undefined): T | null => {
-  if (!relation) {
-    return null;
-  }
-
-  return Array.isArray(relation) ? (relation[0] ?? null) : relation;
-};
-
-const resolveLocale = (): "de" | "en" => (i18n.language?.toLowerCase().startsWith("en") ? "en" : "de");
-
-const localizedText = (
-  deValue: string | null | undefined,
-  enValue: string | null | undefined,
-  locale: "de" | "en"
-): string => {
-  if (locale === "en") {
-    return enValue ?? deValue ?? "";
-  }
-
-  return deValue ?? enValue ?? "";
-};
-
-const localizedNullableText = (
-  deValue: string | null | undefined,
-  enValue: string | null | undefined,
-  locale: "de" | "en"
-): string | null => {
-  const value = localizedText(deValue, enValue, locale);
-  return value.length > 0 ? value : null;
-};
 
 const mapVideoRow = (row: any): Video => {
   const locale = resolveLocale();
@@ -74,7 +43,7 @@ export const fetchVideoCatalog = async (): Promise<Video[]> => {
   return (data ?? []).map(mapVideoRow);
 };
 
-export const fetchParticipantWatchedVideoIds = async (participantId: string): Promise<string[]> => {
+const fetchParticipantWatchedVideoIds = async (participantId: string): Promise<string[]> => {
   const { data, error } = await supabase
     .from('survey_responses')
     .select('video_id')

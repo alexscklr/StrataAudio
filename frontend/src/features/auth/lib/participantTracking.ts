@@ -90,7 +90,7 @@ export const getStoredParticipantId = (): string | null => {
   return localStorage.getItem(PARTICIPANT_ID_STORAGE_KEY);
 };
 
-export const getStoredUserHash = (): string | null => {
+const getStoredUserHash = (): string | null => {
   return localStorage.getItem(USER_HASH_STORAGE_KEY);
 };
 

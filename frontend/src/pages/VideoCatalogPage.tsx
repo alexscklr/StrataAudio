@@ -1,7 +1,6 @@
 import { useVideoCatalog } from "@/shared/hooks/useVideoCatalog";
 import styles from "./styles/VideoCatalogPage.module.css";
 import mainPageStyles from "./styles/MainPageStyle.module.css";
-import CatalogItem from "@/shared/components/CatalogItem/CatalogItem";
 import ProgressBar from "@/shared/components/ProgressBar/ProgressBar";
 import { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import type { CatalogItemStatus, VideoCatalogItem } from "@/shared/types/media";
 import { useTranslation } from 'react-i18next';
 import { PageMeta } from "@/shared/components/Seo/PageMeta";
 import { getPublicUrl } from "@/shared/utils/storage";
+import CatalogVideoList from "./components/CatalogVideoList";
 
 
 function VideoCatalogPage() {
@@ -106,26 +106,16 @@ function VideoCatalogPage() {
                             <li key={placeholderId} className={`${styles.catalogListItem} ${styles.catalogListItemLoading}`} />
                         ))}
                     </ul>
-                ) : mandatoryVideos.length > 0 ? (
-                    <ul className={styles.catalogList}>
-                        {mandatoryVideos.map((video) => (
-                            <li key={video.id} className={styles.catalogListItem}>
-                                <CatalogItem
-                                    thumbnailUrl={video.thumbnail_url}
-                                    title={video.title}
-                                    videoid={video.id}
-                                    hlsUrl={video.hls_url}
-                                    genre={video.genre}
-                                    description={video.description || undefined}
-                                    status={getVideoStatus(video)}
-                                    duration={video.duration_seconds ?? undefined}
-                                    prioritizeImage={video.id === firstVisibleVideo?.id}
-                                />
-                            </li>
-                        ))}
-                    </ul>
                 ) : (
-                    <p className={styles.emptyState}>{t('videoCatalog.mandatoryEmpty')}</p>
+                    <CatalogVideoList
+                        videos={mandatoryVideos}
+                        firstVisibleVideoId={firstVisibleVideo?.id}
+                        getStatus={(video) => getVideoStatus(video)}
+                        listClassName={styles.catalogList}
+                        listItemClassName={styles.catalogListItem}
+                        emptyMessage={t('videoCatalog.mandatoryEmpty')}
+                        emptyClassName={styles.emptyState}
+                    />
                 )}
             </section>
 
@@ -148,26 +138,16 @@ function VideoCatalogPage() {
                             <li key={`optional-${placeholderId}`} className={`${styles.catalogListItem} ${styles.catalogListItemLoading}`} />
                         ))}
                     </ul>
-                ) : optionalVideos.length > 0 ? (
-                    <ul className={styles.catalogList}>
-                        {optionalVideos.map((video) => (
-                            <li key={video.id} className={styles.catalogListItem}>
-                                <CatalogItem
-                                    thumbnailUrl={video.thumbnail_url}
-                                    title={video.title}
-                                    videoid={video.id}
-                                    hlsUrl={video.hls_url}
-                                    genre={video.genre}
-                                    description={video.description || undefined}
-                                    status={getVideoStatus(video, !optionalUnlocked)}
-                                    duration={video.duration_seconds ?? undefined}
-                                    prioritizeImage={video.id === firstVisibleVideo?.id}
-                                />
-                            </li>
-                        ))}
-                    </ul>
                 ) : (
-                    <p className={styles.emptyState}>{t('videoCatalog.optionalEmpty')}</p>
+                    <CatalogVideoList
+                        videos={optionalVideos}
+                        firstVisibleVideoId={firstVisibleVideo?.id}
+                        getStatus={(video) => getVideoStatus(video, !optionalUnlocked)}
+                        listClassName={styles.catalogList}
+                        listItemClassName={styles.catalogListItem}
+                        emptyMessage={t('videoCatalog.optionalEmpty')}
+                        emptyClassName={styles.emptyState}
+                    />
                 )}
             </section>
 
@@ -182,26 +162,16 @@ function VideoCatalogPage() {
 
                 {isLoading ? (
                     <div className={styles.watchedLoadingSpacer} aria-hidden="true" />
-                ) : watchedVideos.length > 0 ? (
-                    <ul className={styles.catalogList}>
-                        {watchedVideos.map((video) => (
-                            <li key={video.id} className={styles.catalogListItem}>
-                                <CatalogItem
-                                    thumbnailUrl={video.thumbnail_url}
-                                    title={video.title}
-                                    videoid={video.id}
-                                    hlsUrl={video.hls_url}
-                                    genre={video.genre}
-                                    description={video.description || undefined}
-                                    status={getVideoStatus(video)}
-                                    duration={video.duration_seconds ?? undefined}
-                                    prioritizeImage={video.id === firstVisibleVideo?.id}
-                                />
-                            </li>
-                        ))}
-                    </ul>
                 ) : (
-                    <p className={styles.emptyState}>{t('videoCatalog.watchedEmpty')}</p>
+                    <CatalogVideoList
+                        videos={watchedVideos}
+                        firstVisibleVideoId={firstVisibleVideo?.id}
+                        getStatus={(video) => getVideoStatus(video)}
+                        listClassName={styles.catalogList}
+                        listItemClassName={styles.catalogListItem}
+                        emptyMessage={t('videoCatalog.watchedEmpty')}
+                        emptyClassName={styles.emptyState}
+                    />
                 )}
             </section>
         </section>
