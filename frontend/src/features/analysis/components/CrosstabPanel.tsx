@@ -44,6 +44,10 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
                     <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>n = {group.count}</span>
                   </div>
 
+                  <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
+                    SUS n = {group.susCount} · NPS n = {group.npsCount} · Aktivität n = {group.deltaVolCount}
+                  </p>
+
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.4rem" }}>
                     <div style={{ textAlign: "center", padding: "0.3rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
                       <p style={{ fontSize: "0.6rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.1rem" }}>SUS</p>
@@ -52,14 +56,14 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
                         fontWeight: "bold",
                         color: (group.avgSus ?? 0) > 68 ? "var(--audio-wave)" : "inherit"
                       }}>
-                        {group.avgSus ? group.avgSus.toFixed(1) : "—"}
+                        {group.avgSus !== null && group.avgSus !== undefined ? group.avgSus.toFixed(1) : "—"}
                       </span>
                     </div>
                     
                     <div style={{ textAlign: "center", padding: "0.3rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
-                      <p style={{ fontSize: "0.6rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.1rem" }}>NPS (Ø)</p>
+                      <p style={{ fontSize: "0.6rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.1rem" }}>Empfehlungswert (Ø 0-10)</p>
                       <span style={{ fontSize: "0.85rem", fontWeight: "bold" }}>
-                        {group.avgNps ? group.avgNps.toFixed(1) : "—"}
+                        {group.avgNps !== null && group.avgNps !== undefined ? group.avgNps.toFixed(1) : "—"}
                       </span>
                     </div>
 
@@ -70,7 +74,7 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
                         fontWeight: "bold",
                         color: (group.avgDeltaVol ?? 0) > 15 ? "var(--strata-accent)" : "inherit"
                       }}>
-                        {group.avgDeltaVol ? `${Math.round(group.avgDeltaVol)}%` : "—"}
+                        {group.avgDeltaVol !== null && group.avgDeltaVol !== undefined ? `${Math.round(group.avgDeltaVol)}%` : "—"}
                       </span>
                     </div>
                   </div>

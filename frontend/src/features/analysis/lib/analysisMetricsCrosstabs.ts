@@ -37,6 +37,9 @@ export const buildCrosstabs = (
     const susScores: number[] = [];
     const npsRatings: number[] = [];
     const activityDeltas: number[] = [];
+    let susCount = 0;
+    let npsCount = 0;
+    let deltaVolCount = 0;
     let count = 0;
 
     for (const participantId of participantIds) {
@@ -57,15 +60,17 @@ export const buildCrosstabs = (
 
           if (sus1 !== null && sus2 !== null && sus3 !== null && sus4 !== null) {
             const s1 = (sus1 - 1) / 6;
-            const s2 = (7 - sus2) / 6;
+            const s2 = (sus2 - 1) / 6;
             const s3 = (sus3 - 1) / 6;
-            const s4 = (7 - sus4) / 6;
+            const s4 = (sus4 - 1) / 6;
             susScores.push(((s1 + s2 + s3 + s4) / 4) * 100);
+            susCount += 1;
           }
 
           const nps = getNumericAnswer(answers["nps-1"]);
           if (nps !== null) {
             npsRatings.push(nps);
+            npsCount += 1;
           }
         }
 
@@ -83,6 +88,7 @@ export const buildCrosstabs = (
 
         if (participantTrackCount > 0) {
           activityDeltas.push((participantDeltaTotal / participantTrackCount) * 100);
+          deltaVolCount += 1;
         }
       }
     }
@@ -92,6 +98,9 @@ export const buildCrosstabs = (
       avgSus: mean(susScores),
       avgNps: mean(npsRatings),
       avgDeltaVol: mean(activityDeltas),
+      susCount,
+      npsCount,
+      deltaVolCount,
       count,
     };
   };

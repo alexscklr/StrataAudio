@@ -112,13 +112,13 @@ export function AnalysisDashboard() {
               <strong>Interpretation Completion Rate:</strong> Je höher, desto belastbarer sind die Ergebnisse. Sehr niedrige Werte deuten oft auf Abbrüche, Unklarheiten im Flow oder technische Probleme hin.
             </p>
             <p>
-              <strong>SUS-4 Kurzindex (0-100):</strong> Interner Vergleichswert auf Basis von 4 SUS-Items. Höher bedeutet bessere wahrgenommene Bedienbarkeit. Am besten zwischen Versionen/Iterationen vergleichen.
+              <strong>4-Item Usability Index (0-100):</strong> Interner Vergleichswert auf Basis von 4 positiv formulierten Usability-Items. Höher bedeutet bessere wahrgenommene Bedienbarkeit. Das ist kein klassischer SUS mit invertierten Items, sondern ein Mittelwert der normierten Zustimmung.
             </p>
             <p>
-              <strong>Deutung SUS-4:</strong> Unter 50 = klarer Handlungsbedarf, 50-65 = mittel, 65-80 = gut, über 80 = sehr gut. Wichtiger als ein fixer Grenzwert ist die Entwicklung über mehrere Messungen.
+              <strong>Deutung:</strong> Unter 50 = eher schwach, 50-65 = mittel, 65-80 = gut, über 80 = sehr gut. Wichtiger als ein fixer Grenzwert ist die Entwicklung über mehrere Messungen.
             </p>
             <p>
-              <strong>NPS Score (-100 bis +100):</strong> Die Antworten werden für die NPS-Auswertung auf eine 0-10-Logik normiert. Unter 0 = kritisch, ab 0 = eher positiv, ab 30 = gut, ab 50 = sehr stark.
+              <strong>NPS Score (-100 bis +100):</strong> Standard-NPS auf Basis der Endsurvey-Antworten. Antworten auf der 1-10-Skala werden für die Berechnung auf 0-10 normiert; Promoter sind 9-10, Passive 7-8, Detraktoren 0-6. Der Score ist Promoter-% minus Detraktor-%.
             </p>
             <p>
               <strong>UEQ Gesamt (-3 bis +3):</strong> Unter 0 = eher negative Experience, 0 bis 0,8 = neutral bis leicht positiv, über 0,8 = deutlich positiv.
@@ -148,6 +148,25 @@ export function AnalysisDashboard() {
             </p>
             <p>
               Für den Vergleich gilt: Unterschiede zwischen Gruppen sind wichtiger als der absolute Einzelwert.
+            </p>
+          </div>
+
+          <div className={styles.explanationItem}>
+            <h4>Methodik & Grenzen</h4>
+            <p>
+              Die Kreuztabellen zeigen neben der Gruppengröße auch die effektiven Nenner je Kennzahl, weil SUS, NPS und Aktivität nicht immer auf denselben Fällen beruhen.
+            </p>
+            <p>
+              Es werden hier bewusst keine p-Werte, Konfidenzintervalle oder Effektgrößen angezeigt. Für kleine Gruppen sind die Werte daher nur explorativ und nicht als Signifikanznachweis zu lesen.
+            </p>
+            <p>
+              Einige Kennzahlen werden gerundet dargestellt, damit das Dashboard lesbar bleibt. Für exakte Reproduktionen sind die zugrunde liegenden Rohwerte und die Berechnungslogik maßgeblich.
+            </p>
+            <p>
+              Bias-Flags werden im Teilnehmer-Drilldown manuell gepflegt. Das Ausschlusskriterium ist aktuell ein boolean-Flag; die inhaltlichen Setzregeln sollten separat dokumentiert werden.
+            </p>
+            <p>
+              Zeitstempel zeigen den Aktualitätsstand der Daten, ersetzen aber keine vollständige Reproduzierbarkeitsanleitung mit Rohdatenzugang und Berechnungsskripten.
             </p>
           </div>
 
@@ -216,7 +235,7 @@ export function AnalysisDashboard() {
             <p>ueq-4: Phantasielos ↔ Kreativ</p>
             <p>ueq-5: Herkömmlich ↔ Neuartig</p>
             <p><strong>NPS/Feedback (Endsurvey):</strong></p>
-            <p>nps-1: Weiterempfehlungsbereitschaft (1-10)</p>
+            <p>nps-1: Weiterempfehlungsbereitschaft (1-10, für NPS auf 0-10 normiert)</p>
             <p>feedback-1: Offenes Freitext-Feedback</p>
           </div>
         </div>

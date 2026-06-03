@@ -15,8 +15,8 @@ const KpiGrid = ({ kpis }: KpiGridProps) => {
     { label: "Video-Survey Responses", value: String(kpis.videoSurveyCount) },
     { label: "Endsurvey Responses", value: String(kpis.endSurveyCount) },
     { label: "Completion Rate", value: valueOrDash(kpis.completionRate, "%") },
-    { label: "SUS-4 Kurzindex (0-100)", value: valueOrDash(kpis.susScore) },
-    { label: "NPS", value: valueOrDash(kpis.npsScore) },
+    { label: "4-Item Usability Index (0-100)", value: valueOrDash(kpis.susScore) },
+    { label: "NPS-Score", value: valueOrDash(kpis.npsScore) },
     { label: "UEQ Gesamtqualität", value: valueOrDash(kpis.ueqScore) },
     { label: "Empfehlungswert (Ø 0-10)", value: valueOrDash(kpis.averageNpsRating) },
     {

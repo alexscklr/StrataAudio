@@ -212,6 +212,9 @@ export interface CrosstabData {
     avgSus: number | null;
     avgNps: number | null;
     avgDeltaVol: number | null; // Average absolute volume deviation (activity)
+    susCount: number;
+    npsCount: number;
+    deltaVolCount: number;
     count: number;
   }>;
 }

@@ -27,10 +27,10 @@ const calculateSUS = (endResponses: EndSurveyResponseRow[]): number | null => {
       }
 
       const pos1 = (sus1 - 1) / 6;
-      const neg2 = (7 - sus2) / 6;
+      const pos2 = (sus2 - 1) / 6;
       const pos3 = (sus3 - 1) / 6;
-      const neg4 = (7 - sus4) / 6;
-      return ((pos1 + neg2 + pos3 + neg4) / 4) * 100;
+      const pos4 = (sus4 - 1) / 6;
+      return ((pos1 + pos2 + pos3 + pos4) / 4) * 100;
     })
     .filter((value): value is number => value !== null);
 
@@ -68,6 +68,7 @@ const calculateNPS = (endResponses: EndSurveyResponseRow[]): number | null => {
   const promoterPercent = (promoters / values.length) * 100;
   const detractorPercent = (detractors / values.length) * 100;
 
+  // Standard-NPS: Promoter-% minus Detraktor-% auf der normierten 0-10-Skala.
   return round(promoterPercent - detractorPercent);
 };
 
