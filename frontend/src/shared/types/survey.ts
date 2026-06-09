@@ -20,12 +20,6 @@ export interface Question {
     maxDescription?: string; // Nur für linearRating
 }
 
-interface Answer {
-    questionId: string;
-    participantId: string;
-    value: string | number; // Je nach Fragetyp entweder String (optionSelect, textAnswer) oder Zahl (linearRating)
-}
-
 export interface SurveySection {
     id: string;
     title: string;

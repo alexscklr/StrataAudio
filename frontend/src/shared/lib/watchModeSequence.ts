@@ -125,10 +125,6 @@ const clearAudioConfigurationSnapshots = (videoId: string): void => {
     localStorage.removeItem(getAudioConfigurationStorageKey(videoId));
 };
 
-const clearWatchModeProgress = (videoId: string): void => {
-    localStorage.removeItem(getProgressStorageKey(videoId));
-};
-
 export const clearWatchModeState = (videoId: string): void => {
     localStorage.removeItem(getProgressStorageKey(videoId));
     localStorage.removeItem(getSequenceStorageKey(videoId));

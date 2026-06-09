@@ -26,12 +26,3 @@ export async function signOut() {
   const { error } = await supabase.auth.signOut({ scope: 'global' });
   if (error) throw error;
 }
-
-/**
- * Holt die aktuelle Session
- */
-async function getSession() {
-  const { data, error } = await supabase.auth.getSession();
-  if (error) throw error;
-  return data;
-}

@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   getOrCreateAudioContext,
-  closeAudioContext,
 } from "../contexts/audioContext";
 import {
   type AudioNodes,
   createTrackAudioNodes,
   getOrCreateMasterNodes,
   getMasterPannerNode,
-  resetAudioNodes,
 } from "../utils/audioNodeManagement";
 
 interface AudioContextProps {
@@ -60,11 +58,6 @@ export function useAudioContext(): AudioContextProps {
     createAudioNodes,
     masterPannerNode: getMasterPannerNode(),
   };
-}
-
-function resetAudioContext() {
-  closeAudioContext();
-  resetAudioNodes();
 }
 
 export type { AudioContextProps };

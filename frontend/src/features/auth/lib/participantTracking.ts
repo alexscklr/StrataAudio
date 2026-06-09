@@ -90,10 +90,6 @@ export const getStoredParticipantId = (): string | null => {
   return localStorage.getItem(PARTICIPANT_ID_STORAGE_KEY);
 };
 
-const getStoredUserHash = (): string | null => {
-  return localStorage.getItem(USER_HASH_STORAGE_KEY);
-};
-
 export const getClientEnvironmentInfo = (): ClientEnvironmentInfo => {
   const userAgent = navigator.userAgent;
   const { browserName, browserVersion } = parseBrowserInfo(userAgent);
