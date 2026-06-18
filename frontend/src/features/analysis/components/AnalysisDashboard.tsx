@@ -6,6 +6,7 @@ import { CrosstabPanel } from "./CrosstabPanel";
 import { LikertBoxPlotPanel } from "./LikertBoxPlotPanel";
 import { ParticipantDetailPanel } from "./ParticipantDetailPanel";
 import { PreferencePanel } from "./PreferencePanel";
+import { InferencePanel } from "./InferencePanel";
 import { useAnalysisDashboard } from "@/features/analysis/hooks/useAnalysisDashboard";
 import styles from "./AnalysisDashboard.module.css";
 
@@ -84,6 +85,8 @@ export function AnalysisDashboard() {
 
         <CrosstabPanel data={derived.crosstabs} />
 
+        <InferencePanel items={derived.withinSubjectInference} />
+
         <LikertBoxPlotPanel 
           items={derived.likertBoxPlots} 
           disturbances={derived.audioDisturbances}
@@ -157,7 +160,7 @@ export function AnalysisDashboard() {
               Die Kreuztabellen zeigen neben der Gruppengröße auch die effektiven Nenner je Kennzahl, weil SUS, NPS und Aktivität nicht immer auf denselben Fällen beruhen.
             </p>
             <p>
-              Es werden hier bewusst keine p-Werte, Konfidenzintervalle oder Effektgrößen angezeigt. Für kleine Gruppen sind die Werte daher nur explorativ und nicht als Signifikanznachweis zu lesen.
+              Für die Within-Subjects-Vergleiche (Mixer vs. Standard) werden nun im Frontend gepaarte Tests mit p-Werten, Konfidenzintervallen und Effektgrößen berechnet. Kleine Stichproben bleiben trotz Signifikanztests nur eingeschränkt interpretierbar.
             </p>
             <p>
               Einige Kennzahlen werden gerundet dargestellt, damit das Dashboard lesbar bleibt. Für exakte Reproduktionen sind die zugrunde liegenden Rohwerte und die Berechnungslogik maßgeblich.

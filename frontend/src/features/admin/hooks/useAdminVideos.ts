@@ -1,10 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import {
-  createUploadInvite,
-  deleteVideo,
-  fetchManagedVideos,
-} from "@/shared/lib/videos";
+import { createUploadInvite } from "@/features/auth/lib/uploadInvites";
+import { deleteVideo } from "@/features/upload/lib/videoDeletion";
+import { fetchManagedVideos } from "@/features/upload/lib/videoManagement";
 
 export function useAdminVideos() {
   const queryClient = useQueryClient();

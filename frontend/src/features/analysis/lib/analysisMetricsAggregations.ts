@@ -11,3 +11,4 @@ export {
 export { buildKpis } from "@/features/analysis/lib/analysisMetricsKpis";
 export { buildParticipantDetails } from "@/features/analysis/lib/analysisMetricsParticipants";
 export { buildCrosstabs } from "@/features/analysis/lib/analysisMetricsCrosstabs";
+export { buildWithinSubjectInference } from "@/features/analysis/lib/analysisMetricsInference";

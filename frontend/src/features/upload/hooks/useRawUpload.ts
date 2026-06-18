@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { uploadRawSourcePackage } from "@/shared/lib/videos";
+import { uploadRawSourcePackage } from "@/features/upload/lib/videoRawUpload";
 
 interface UseRawUploadOptions {
   resetUploadForm: () => void;

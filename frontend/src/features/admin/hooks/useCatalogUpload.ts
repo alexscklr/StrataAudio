@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { uploadVideo } from "@/shared/lib/videos";
+import { uploadVideo } from "@/features/upload/lib/videoCatalogUpload";
 
 interface UseCatalogUploadOptions {
   resetUploadForm: () => void;

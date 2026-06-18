@@ -614,3 +614,70 @@
   max-height: 320px;
   overflow: auto;
 }
+
+.inferenceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.inferenceCard {
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.95rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.inferenceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.2rem;
+}
+
+.inferenceHeader h4 {
+  margin: 0;
+  color: var(--strata-accent);
+  font-size: 0.95rem;
+}
+
+.inferenceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-size: 0.84rem;
+}
+
+.inferenceRow span {
+  color: var(--text-muted);
+}
+
+.inferenceRow strong {
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.inferenceDivider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 0.35rem 0;
+}
+
+.inferenceMethod {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--audio-wave);
+  font-weight: 600;
+}
+
+.inferenceSubheading {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}

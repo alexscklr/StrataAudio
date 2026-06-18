@@ -219,6 +219,49 @@ export interface CrosstabData {
   }>;
 }
 
+export type InferencePrimaryTest = "paired-t" | "wilcoxon" | "insufficient-data";
+
+export interface NormalityDiagnostic {
+  method: "jarque-bera";
+  pValue: number | null;
+  skewness: number | null;
+  excessKurtosis: number | null;
+}
+
+export interface PairedTTestResult {
+  tStatistic: number;
+  degreesOfFreedom: number;
+  pValue: number;
+  meanDifference: number;
+  ci95Lower: number;
+  ci95Upper: number;
+  cohenDz: number;
+}
+
+export interface WilcoxonSignedRankResult {
+  wPlus: number;
+  wMinus: number;
+  zStatistic: number;
+  pValue: number;
+  rankBiserialCorrelation: number;
+}
+
+export interface WithinSubjectInferenceMetric {
+  metricId: string;
+  metricLabel: string;
+  pairs: number;
+  meanStandard: number;
+  meanMixer: number;
+  meanDifferenceMixerMinusStandard: number;
+  medianDifferenceMixerMinusStandard: number;
+  normality: NormalityDiagnostic;
+  pairedT: PairedTTestResult | null;
+  wilcoxon: WilcoxonSignedRankResult | null;
+  primaryTest: InferencePrimaryTest;
+  primaryPValue: number | null;
+  holmAdjustedPrimaryPValue: number | null;
+}
+
 export interface AnalysisDerivedData {
   filters: AnalysisFilters;
   availableVideoOptions: Array<{ id: string; label: string }>;
@@ -236,6 +279,7 @@ export interface AnalysisDerivedData {
   audioDisturbances: { yes: number; no: number };
   ueqResults: UeqResult[];
   crosstabs: CrosstabData[];
+  withinSubjectInference: WithinSubjectInferenceMetric[];
   videoLabelMap: Record<string, string>;
   audioLabelMap: Record<string, string>;
 }

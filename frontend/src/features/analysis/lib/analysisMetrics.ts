@@ -13,6 +13,7 @@ import {
   buildPreferenceBreakdown,
   buildTrackDeviations,
   buildUeqResults,
+  buildWithinSubjectInference,
 } from "@/features/analysis/lib/analysisMetricsAggregations";
 import {
   collectParticipantIdsByFilter,
@@ -127,6 +128,7 @@ export const buildAnalysisDerivedData = (
       filteredSurveyResponses,
       normalizedConfigurations,
     ),
+    withinSubjectInference: buildWithinSubjectInference(filteredSurveyResponses),
     videoLabelMap: Object.fromEntries(videoLabelMap),
     audioLabelMap: Object.fromEntries(audioLabelMap),
   };
