@@ -155,21 +155,43 @@ export function AnalysisDashboard() {
           </div>
 
           <div className={styles.explanationItem}>
+            <h4>Within-Subjects Inferenzstatistik</h4>
+            <p>
+              Pro Skala werden die Antworten jedes Teilnehmers im Modus Standard und Modus Mixer gemittelt und dann als Differenz (Mixer − Standard) gepaart verglichen.
+            </p>
+            <p>
+              <strong>Testentscheid:</strong> Bei weniger als 8 Paaren oder bei verletzter Normalverteilung der Differenzen (Jarque-Bera p &lt; 0.05) wird der Wilcoxon-Vorzeichen-Rangtest als Primärtest gewählt; bei ausreichender Stichprobengröße und Normalverteilung der gepaarte t-Test.
+            </p>
+            <p>
+              <strong>Interpretation p-Wert:</strong> p &lt; 0.05 bedeutet, der beobachtete Unterschied wäre bei keinem echten Effekt unwahrscheinlich. p ≥ 0.05 bedeutet nicht, dass kein Effekt existiert — bei kleinen Stichproben ist die Teststärke gering.
+            </p>
+            <p>
+              <strong>Holm-Korrektur:</strong> Da vier Skalen gleichzeitig getestet werden, werden die p-Werte mit der Holm-Methode angepasst, um die familienweise Fehlerrate zu kontrollieren. Entscheidend ist der Holm-korrigierte p-Wert.
+            </p>
+            <p>
+              <strong>Effektgrößen:</strong> Cohen dz (t-Test) = Mittelwert der Differenzen geteilt durch deren Standardabweichung. Faustregeln: dz ≈ 0.2 klein, ≈ 0.5 mittel, ≈ 0.8 groß. Rank-biserialer r (Wilcoxon): r ≈ 0.1 klein, ≈ 0.3 mittel, ≈ 0.5 groß. Positive Werte bedeuten: Mixer wurde höher bewertet.
+            </p>
+            <p>
+              <strong>95%-KI Delta (t-Test):</strong> Schätzt den wahren Mittelwertunterschied (Mixer − Standard) mit 95% Konfidenz. Enthält das Intervall die 0, ist der Effekt statistisch nicht gesichert.
+            </p>
+            <p>
+              <strong>Grenzen:</strong> Mit kleinen Stichproben (n &lt; 15) sind alle Signifikanztests nur explorativ einzuordnen. Normalverteilung der Differenzen ist bei Likert-Daten oft nicht gegeben; der Wilcoxon-Test ist daher robuster.
+            </p>
+          </div>
+
+          <div className={styles.explanationItem}>
             <h4>Methodik & Grenzen</h4>
             <p>
               Die Kreuztabellen zeigen neben der Gruppengröße auch die effektiven Nenner je Kennzahl, weil SUS, NPS und Aktivität nicht immer auf denselben Fällen beruhen.
             </p>
             <p>
-              Für die Within-Subjects-Vergleiche (Mixer vs. Standard) werden nun im Frontend gepaarte Tests mit p-Werten, Konfidenzintervallen und Effektgrößen berechnet. Kleine Stichproben bleiben trotz Signifikanztests nur eingeschränkt interpretierbar.
+              Für die Within-Subjects-Vergleiche (Mixer vs. Standard) werden gepaarte Tests mit p-Werten, Konfidenzintervallen und Effektgrößen berechnet. Kleine Stichproben bleiben trotz Signifikanztests nur eingeschränkt interpretierbar.
             </p>
             <p>
               Einige Kennzahlen werden gerundet dargestellt, damit das Dashboard lesbar bleibt. Für exakte Reproduktionen sind die zugrunde liegenden Rohwerte und die Berechnungslogik maßgeblich.
             </p>
             <p>
               Bias-Flags werden im Teilnehmer-Drilldown manuell gepflegt. Das Ausschlusskriterium ist aktuell ein boolean-Flag; die inhaltlichen Setzregeln sollten separat dokumentiert werden.
-            </p>
-            <p>
-              Zeitstempel zeigen den Aktualitätsstand der Daten, ersetzen aber keine vollständige Reproduzierbarkeitsanleitung mit Rohdatenzugang und Berechnungsskripten.
             </p>
           </div>
 
