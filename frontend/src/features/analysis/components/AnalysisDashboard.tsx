@@ -1,6 +1,6 @@
 import { AnalysisFiltersPanel } from "./AnalysisFiltersPanel";
-import { InteractionTimelinePanel } from "./InteractionTimelinePanel";
 import KpiGrid from "./KpiGrid";
+import { InteractionDensityPanel } from "./InteractionDensityPanel";
 import { UeqPanel } from "./UeqPanel";
 import { CrosstabPanel } from "./CrosstabPanel";
 import { LikertBoxPlotPanel } from "./LikertBoxPlotPanel";
@@ -87,15 +87,15 @@ export function AnalysisDashboard() {
 
         <InferencePanel items={derived.withinSubjectInference} />
 
-        <LikertBoxPlotPanel 
-          items={derived.likertBoxPlots} 
+        <LikertBoxPlotPanel
+          items={derived.likertBoxPlots}
           disturbances={derived.audioDisturbances}
         />
         <PreferencePanel
           preference={derived.preferenceBreakdown}
           trackDeviations={derived.trackDeviations}
         />
-        <InteractionTimelinePanel points={derived.interactionTimeline} />
+        <InteractionDensityPanel points={derived.interactionDensity} />
         <ParticipantDetailPanel 
           participants={derived.participantDetails} 
           videoLabelMap={derived.videoLabelMap}
@@ -223,9 +223,12 @@ export function AnalysisDashboard() {
           </div>
 
           <div className={styles.explanationItem}>
-            <h4>Interaction Trends</h4>
+            <h4>Interaktions-Dichte</h4>
             <p>
-              Zeigt den durchschnittlichen Lautstärkeverlauf über die Videodauer. Spitzen markieren Zeitpunkte mit besonders aktiver Anpassung, ruhige Abschnitte eher stabile Mischung.
+              Zeigt die kumulierte Anzahl aller Interaktionen pro Zeitfenster (standardmaessig 5 Sekunden). Hohe Balken markieren Aufmerksamkeits-Hotspots im Video.
+            </p>
+            <p>
+              Bei Videos ueber 120 Sekunden mit erstem Modus Standard wird die zweite Videohaelfte (nach Midpoint-Switch auf Mixer) auf t=0 normalisiert; Interaktionen aus der ersten Haelfte werden fuer diese Kurve nicht beruecksichtigt.
             </p>
           </div>
 

@@ -6,7 +6,7 @@ import type {
 import {
   buildAudioDisturbances,
   buildCrosstabs,
-  buildInteractionTimeline,
+  buildInteractionDensity,
   buildKpis,
   buildLikertItems,
   buildParticipantDetails,
@@ -110,7 +110,7 @@ export const buildAnalysisDerivedData = (
     ),
     likertBoxPlots: buildLikertItems(filteredSurveyResponses),
     preferenceBreakdown,
-    interactionTimeline: buildInteractionTimeline(normalizedConfigurations, audioLabelMap),
+    interactionDensity: buildInteractionDensity(normalizedConfigurations),
     trackDeviations: buildTrackDeviations(normalizedConfigurations, audioLabelMap),
     participantDetails: buildParticipantDetails(
       filteredParticipants,

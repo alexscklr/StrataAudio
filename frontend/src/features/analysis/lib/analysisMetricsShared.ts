@@ -148,6 +148,19 @@ export const median = (values: number[]): number | null => {
   return quantile(sorted, 0.5);
 };
 
+export const stdDev = (values: number[]): number | null => {
+  if (values.length < 2) {
+    return null;
+  }
+  const avg = mean(values);
+  if (avg === null) {
+    return null;
+  }
+  const squaredDifferences = values.map((value) => (value - avg) ** 2);
+  const variance = squaredDifferences.reduce((acc, diff) => acc + diff, 0) / (values.length - 1);
+  return Math.sqrt(variance);
+};
+
 export const round = (value: number | null, digits = 2): number | null => {
   if (value === null || !Number.isFinite(value)) {
     return null;

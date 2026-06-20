@@ -15,10 +15,10 @@ const KpiGrid = ({ kpis }: KpiGridProps) => {
     { label: "Video-Survey Responses", value: String(kpis.videoSurveyCount) },
     { label: "Endsurvey Responses", value: String(kpis.endSurveyCount) },
     { label: "Completion Rate", value: valueOrDash(kpis.completionRate, "%") },
-    { label: "4-Item Usability Index (0-100)", value: valueOrDash(kpis.susScore) },
-    { label: "NPS-Score", value: valueOrDash(kpis.npsScore) },
-    { label: "UEQ Gesamtqualität", value: valueOrDash(kpis.ueqScore) },
-    { label: "Empfehlungswert (Ø 0-10)", value: valueOrDash(kpis.averageNpsRating) },
+    { label: "4-Item Usability Index (0-100)", value: valueOrDash(kpis.susScore), stdDev: kpis.susScoreStdDev },
+    { label: "NPS-Score", value: valueOrDash(kpis.npsScore), stdDev: kpis.npsScoreStdDev },
+    { label: "UEQ Gesamtqualität", value: valueOrDash(kpis.ueqScore), stdDev: kpis.ueqScoreStdDev },
+    { label: "Empfehlungswert (Ø 0-10)", value: valueOrDash(kpis.averageNpsRating), stdDev: kpis.averageNpsRatingStdDev },
     {
       label: "Mixer-Präferenz",
       value: valueOrDash(kpis.mixerPreferencePercent, "%"),
@@ -26,6 +26,7 @@ const KpiGrid = ({ kpis }: KpiGridProps) => {
     {
       label: "Median Time-to-Mix",
       value: valueOrDash(kpis.medianTimeToFirstInteractionSec, " s"),
+      stdDev: kpis.medianTimeToFirstInteractionSecStdDev,
     },
   ];
 
@@ -37,6 +38,11 @@ const KpiGrid = ({ kpis }: KpiGridProps) => {
           <article key={card.label} className={styles.kpiCard}>
             <p className={styles.kpiLabel}>{card.label}</p>
             <p className={styles.kpiValue}>{card.value}</p>
+            {card.stdDev !== undefined && card.stdDev !== null && (
+              <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginTop: "0.3rem" }}>
+                σ = {card.stdDev.toFixed(2)}
+              </p>
+            )}
           </article>
         ))}
       </div>

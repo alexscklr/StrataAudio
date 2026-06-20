@@ -161,11 +161,16 @@ export interface KpiSummary {
   endSurveyCount: number;
   completionRate: number;
   susScore: number | null;
+  susScoreStdDev: number | null;
   npsScore: number | null;
+  npsScoreStdDev: number | null;
   ueqScore: number | null;
+  ueqScoreStdDev: number | null;
   averageNpsRating: number | null;
+  averageNpsRatingStdDev: number | null;
   mixerPreferencePercent: number | null;
   medianTimeToFirstInteractionSec: number | null;
+  medianTimeToFirstInteractionSecStdDev: number | null;
 }
 
 export interface PreferenceBreakdown {
@@ -173,13 +178,14 @@ export interface PreferenceBreakdown {
   standardCount: number;
 }
 
-export interface InteractionTimelinePoint {
-  second: number;
-  count: number;
-  muteCount: number;
-  panCount: number;
-  volumeCount: number;
-  trackVolumes: Record<string, number>;
+export interface InteractionDensityPoint {
+  windowStart: number; // Seconds
+  windowEnd: number; // Seconds
+  totalInteractions: number; // Total slider/control events in this window
+  volumeInteractions: number;
+  muteInteractions: number;
+  panInteractions: number;
+  participantCount: number; // Number of unique participants with interactions in this window
 }
 
 export interface TrackDeviationItem {
@@ -273,7 +279,7 @@ export interface AnalysisDerivedData {
   kpis: KpiSummary;
   likertBoxPlots: LikertBoxPlotItem[];
   preferenceBreakdown: PreferenceBreakdown;
-  interactionTimeline: InteractionTimelinePoint[];
+  interactionDensity: InteractionDensityPoint[];
   trackDeviations: TrackDeviationItem[];
   participantDetails: ParticipantDetail[];
   audioDisturbances: { yes: number; no: number };

@@ -168,29 +168,81 @@ export const normalizeTimeToMixConfigurations = (
   );
 
   return configurations.map((configuration) => {
-    if (!isFiniteNumber(configuration.time_to_mix_ms)) {
-      return configuration;
-    }
-
     const key = `${configuration.participant_id}::${configuration.video_id}`;
     const matchingSurvey = latestSurveyByParticipantVideo.get(key);
-
-    if (matchingSurvey?.first_watch_mode !== "standard") {
-      return configuration;
-    }
-
     const videoDurationMs = videoDurationMsById.get(configuration.video_id);
-    if (!videoDurationMs || videoDurationMs <= 120_000) {
-      return configuration;
+    const appliesMidpointSwitch =
+      matchingSurvey?.first_watch_mode === "standard" &&
+      typeof videoDurationMs === "number" &&
+      videoDurationMs > 120_000;
+
+    if (!appliesMidpointSwitch) {
+      const boundedInteractionLog = (configuration.interaction_log ?? [])
+        .filter((entry) => {
+          if (!isFiniteNumber(entry?.t)) {
+            return false;
+          }
+
+          const timestamp = Number(entry.t);
+          if (timestamp < 0) {
+            return false;
+          }
+
+          if (typeof videoDurationMs === "number") {
+            return timestamp <= videoDurationMs;
+          }
+
+          return true;
+        })
+        .map((entry) => ({
+          ...entry,
+          t: Number(entry.t),
+        }));
+
+      if (boundedInteractionLog.length === (configuration.interaction_log ?? []).length) {
+        return configuration;
+      }
+
+      return {
+        ...configuration,
+        interaction_log: boundedInteractionLog,
+      };
     }
 
-    if (configuration.time_to_mix_ms < videoDurationMs / 2) {
-      return configuration;
+    const midpointMs = videoDurationMs / 2;
+
+    const normalizedInteractionLog = (configuration.interaction_log ?? [])
+      .filter((entry) => {
+        if (!isFiniteNumber(entry?.t)) {
+          return false;
+        }
+
+        const timestamp = Number(entry.t);
+        return timestamp >= midpointMs && timestamp <= videoDurationMs;
+      })
+      .map((entry) => ({
+        ...entry,
+        t: Math.max(0, Number(entry.t) - midpointMs),
+      }));
+
+    if (!isFiniteNumber(configuration.time_to_mix_ms)) {
+      return {
+        ...configuration,
+        interaction_log: normalizedInteractionLog,
+      };
+    }
+
+    if (configuration.time_to_mix_ms < midpointMs) {
+      return {
+        ...configuration,
+        interaction_log: normalizedInteractionLog,
+      };
     }
 
     return {
       ...configuration,
-      time_to_mix_ms: Math.max(0, configuration.time_to_mix_ms - videoDurationMs / 2),
+      interaction_log: normalizedInteractionLog,
+      time_to_mix_ms: Math.max(0, configuration.time_to_mix_ms - midpointMs),
     };
   });
 };

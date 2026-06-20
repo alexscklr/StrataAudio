@@ -5,7 +5,7 @@ export {
   buildUeqResults,
 } from "@/features/analysis/lib/analysisMetricsSurvey";
 export {
-  buildInteractionTimeline,
+  buildInteractionDensity,
   buildTrackDeviations,
 } from "@/features/analysis/lib/analysisMetricsAudio";
 export { buildKpis } from "@/features/analysis/lib/analysisMetricsKpis";
