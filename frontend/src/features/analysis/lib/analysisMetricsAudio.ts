@@ -4,7 +4,6 @@ import type {
   TrackDeviationItem,
 } from "@/features/analysis/types/analysis";
 import {
-  getNumericAnswer,
   getTrackVolume,
   median,
   toBoxPlotStats,

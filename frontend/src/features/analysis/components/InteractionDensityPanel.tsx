@@ -78,7 +78,13 @@ export function InteractionDensityPanel({ points }: InteractionDensityPanelProps
                   panInteractions: "Pan",
                   participantCount: "Teilnehmer",
                 };
-                return [value, labels[String(name)] || String(name)];
+
+                const normalizedValue =
+                  typeof value === "number" || typeof value === "string"
+                    ? value
+                    : String(value ?? "");
+
+                return [normalizedValue, labels[String(name)] || String(name)] as const;
               }}
             />
             <Legend
