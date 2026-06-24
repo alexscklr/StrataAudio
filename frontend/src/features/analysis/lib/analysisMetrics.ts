@@ -58,7 +58,12 @@ export const buildAnalysisDerivedData = (
     raw.participants.map((participant) => participant.browser_name),
   );
 
-  const allowedParticipantIds = collectParticipantIdsByFilter(raw, raw.demographics, filters);
+  const allowedParticipantIds = collectParticipantIdsByFilter(
+    raw,
+    raw.demographics,
+    filters,
+    videoGenreMap,
+  );
   const filteredParticipants = participants.filter((participant) =>
     allowedParticipantIds.has(participant.id),
   );

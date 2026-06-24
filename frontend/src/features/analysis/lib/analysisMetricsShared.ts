@@ -17,6 +17,7 @@ export const DEFAULT_FILTERS: AnalysisFilters = {
   disturbanceMax: 7,
   maxDisturbanceSharePercent: 105,
   excludeNoVideos: false,
+  includeOnlyPairedParticipants: false,
   syncDisturbance: "all",
   excludeBiasedParticipants: true,
 };

@@ -137,6 +137,35 @@ export function AnalysisFiltersPanel({
         Nur Teilnehmer mit Videos
       </label>
 
+      <label
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          cursor: "pointer",
+          gap: "0.8rem",
+          marginTop: "0.1rem",
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={filters.includeOnlyPairedParticipants}
+          onChange={(event) => {
+            const next = event.target.checked;
+            setFilters((current) => ({
+              ...current,
+              includeOnlyPairedParticipants: next,
+            }));
+          }}
+          style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }}
+        />
+        Nur Teilnehmer mit numerischen Inferenzwerten
+      </label>
+      <span className={styles.muted}>
+        Hinweis: Die Inferenz nutzt numerische Antworten im aktuellen Filter
+        und verwendet first_watch_mode nicht als Ausschlusskriterium.
+        Ist dieser Schalter aus, bleiben auch Teilnehmer ohne numerische Inferenzwerte enthalten.
+      </span>
+
       <label>
         Technische Störungen (Sync-2)
         <select

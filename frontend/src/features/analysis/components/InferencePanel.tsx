@@ -5,11 +5,22 @@ interface InferencePanelProps {
   items: WithinSubjectInferenceMetric[];
 }
 
-const formatNumber = (value: number | null, digits = 3): string => {
-  if (value === null || !Number.isFinite(value)) {
+const formatValue = (value: number | string | null): string => {
+  if (value === null) {
     return "—";
   }
-  return value.toFixed(digits);
+  if (typeof value === "string") {
+    return value;
+  }
+  if (!Number.isFinite(value)) {
+    return "—";
+  }
+
+  if (value >= 0 && value <= 1) {
+    return value.toFixed(3);
+  }
+
+  return value.toFixed(2);
 };
 
 const formatPValue = (value: number | null): string => {
@@ -22,23 +33,63 @@ const formatPValue = (value: number | null): string => {
   return value.toFixed(3);
 };
 
-const getPrimaryLabel = (test: WithinSubjectInferenceMetric["primaryTest"]): string => {
-  if (test === "paired-t") {
-    return "Primär: gepaarter t-Test";
+const findNumericSummaryValue = (
+  item: WithinSubjectInferenceMetric,
+  label: string,
+): number | null => {
+  const row = item.summaryRows.find((entry) => entry.label === label);
+  if (!row || typeof row.value !== "number" || !Number.isFinite(row.value)) {
+    return null;
   }
-  if (test === "wilcoxon") {
-    return "Primär: Wilcoxon-Vorzeichen-Rangtest";
+  return row.value;
+};
+
+const buildInterpretation = (item: WithinSubjectInferenceMetric): string => {
+  const adjustedP = item.holmAdjustedPrimaryPValue;
+  const isSignificant = adjustedP !== null && adjustedP < 0.05;
+
+  if (item.testKind === "likert-midpoint") {
+    const delta = findNumericSummaryValue(item, "Delta zu 4 (Mean)");
+    const magnitude = delta === null ? "unbekannt" : Math.abs(delta) < 0.2 ? "sehr klein" : Math.abs(delta) < 0.5 ? "klein bis mittel" : "deutlich";
+    const direction = delta === null ? "" : delta > 0 ? "oberhalb des Neutralpunkts" : delta < 0 ? "unterhalb des Neutralpunkts" : "genau am Neutralpunkt";
+
+    if (adjustedP === null) {
+      return `Keine belastbare Signifikanzbewertung moeglich (n=${item.sampleSize}).`;
+    }
+
+    return isSignificant
+      ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Der Wert liegt ${direction}. Effektstaerke im Mittel ${magnitude}.`
+      : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Tendenz ${direction}, aber statistisch nicht abgesichert.`;
   }
-  return "Primär: unzureichende Daten";
+
+  if (item.testKind === "binomial-preference") {
+    const share = findNumericSummaryValue(item, "Mixer-Anteil");
+    const percent = share === null ? null : Math.round(share * 100);
+    if (adjustedP === null) {
+      return `Keine belastbare Signifikanzbewertung moeglich (n=${item.sampleSize}).`;
+    }
+    return isSignificant
+      ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Die Praeferenz weicht von 50/50 ab${percent === null ? "" : ` (Mixer ${percent}%).`}`
+      : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Keine klare Abweichung von einer 50/50-Praeferenz${percent === null ? "." : ` (Mixer ${percent}%).`}`;
+  }
+
+  const share = findNumericSummaryValue(item, "Stoerungsanteil");
+  const percent = share === null ? null : Math.round(share * 100);
+  if (adjustedP === null) {
+    return `Keine belastbare Signifikanzbewertung moeglich (n=${item.sampleSize}).`;
+  }
+  return isSignificant
+    ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Der Stoerungsanteil weicht von 50% ab${percent === null ? "." : ` (${percent}%).`}`
+    : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Kein klarer Hinweis auf Abweichung von 50%${percent === null ? "." : ` (${percent}%).`}`;
 };
 
 export function InferencePanel({ items }: InferencePanelProps) {
   return (
     <section className={styles.panel}>
-      <h3>Within-Subjects Inferenzstatistik</h3>
+      <h3>Inferenzstatistik</h3>
       <p className={styles.muted}>
-        Für jede Skala werden Teilnehmer-Mittelwerte pro Modus gepaart verglichen (Differenz = Mixer - Standard).
-        Primärtest: bei kleinen Stichproben oder verletzter Normalität Wilcoxon, sonst gepaarter t-Test.
+        Der Abschnitt nutzt datenpassende Tests: Likert-Items gegen den Neutralpunkt 4,
+        Moduspräferenz per exaktem Binomialtest und Störungsanteile mit Binomialtest und 95%-Konfidenzintervall.
         p-Werte werden zusätzlich mit Holm korrigiert.
       </p>
 
@@ -47,29 +98,27 @@ export function InferencePanel({ items }: InferencePanelProps) {
           <article key={item.metricId} className={styles.inferenceCard}>
             <header className={styles.inferenceHeader}>
               <h4>{item.metricLabel}</h4>
-              <span className={styles.badgeBlue}>Paare: {item.pairs}</span>
+              <span className={styles.badgeBlue}>n: {item.sampleSize}</span>
             </header>
 
+            <p className={styles.inferenceSubheading}>Test</p>
             <div className={styles.inferenceRow}>
-              <span>Mean Standard</span>
-              <strong>{formatNumber(item.meanStandard, 2)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>Mean Mixer</span>
-              <strong>{formatNumber(item.meanMixer, 2)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>Delta Mean (M-S)</span>
-              <strong>{formatNumber(item.meanDifferenceMixerMinusStandard, 3)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>Delta Median (M-S)</span>
-              <strong>{formatNumber(item.medianDifferenceMixerMinusStandard, 3)}</strong>
+              <span>Primärtest</span>
+              <strong>{item.primaryTestLabel}</strong>
             </div>
 
             <div className={styles.inferenceDivider} />
 
-            <p className={styles.inferenceMethod}>{getPrimaryLabel(item.primaryTest)}</p>
+            <p className={styles.inferenceSubheading}>Ergebnisse</p>
+            {item.summaryRows.map((row) => (
+              <div key={`${item.metricId}-${row.label}`} className={styles.inferenceRow}>
+                <span>{row.label}</span>
+                <strong>{formatValue(row.value)}</strong>
+              </div>
+            ))}
+
+            <div className={styles.inferenceDivider} />
+
             <div className={styles.inferenceRow}>
               <span>Primär p</span>
               <strong>{formatPValue(item.primaryPValue)}</strong>
@@ -80,64 +129,7 @@ export function InferencePanel({ items }: InferencePanelProps) {
             </div>
 
             <div className={styles.inferenceDivider} />
-
-            <p className={styles.inferenceSubheading}>Normalitätsdiagnostik (Jarque-Bera)</p>
-            <div className={styles.inferenceRow}>
-              <span>p</span>
-              <strong>{formatPValue(item.normality.pValue)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>Schiefe</span>
-              <strong>{formatNumber(item.normality.skewness, 3)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>Exzess-Kurtosis</span>
-              <strong>{formatNumber(item.normality.excessKurtosis, 3)}</strong>
-            </div>
-
-            <div className={styles.inferenceDivider} />
-
-            <p className={styles.inferenceSubheading}>Gepaarter t-Test</p>
-            <div className={styles.inferenceRow}>
-              <span>t (df)</span>
-              <strong>
-                {item.pairedT
-                  ? `${formatNumber(item.pairedT.tStatistic, 3)} (${item.pairedT.degreesOfFreedom})`
-                  : "—"}
-              </strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>p</span>
-              <strong>{formatPValue(item.pairedT?.pValue ?? null)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>95% CI Delta</span>
-              <strong>
-                {item.pairedT
-                  ? `[${formatNumber(item.pairedT.ci95Lower, 3)}, ${formatNumber(item.pairedT.ci95Upper, 3)}]`
-                  : "—"}
-              </strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>Cohen dz</span>
-              <strong>{formatNumber(item.pairedT?.cohenDz ?? null, 3)}</strong>
-            </div>
-
-            <div className={styles.inferenceDivider} />
-
-            <p className={styles.inferenceSubheading}>Wilcoxon</p>
-            <div className={styles.inferenceRow}>
-              <span>z</span>
-              <strong>{formatNumber(item.wilcoxon?.zStatistic ?? null, 3)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>p</span>
-              <strong>{formatPValue(item.wilcoxon?.pValue ?? null)}</strong>
-            </div>
-            <div className={styles.inferenceRow}>
-              <span>r biserial</span>
-              <strong>{formatNumber(item.wilcoxon?.rankBiserialCorrelation ?? null, 3)}</strong>
-            </div>
+            <p className={styles.inferenceMethod}>{buildInterpretation(item)}</p>
           </article>
         ))}
       </div>

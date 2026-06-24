@@ -15,6 +15,9 @@ The focus is on:
 - Internationalization: i18next + react-i18next
 - Metadata/SEO: react-helmet-async
 - Video playback: HLS.js
+- Charts: Recharts
+- CAPTCHA: hCaptcha (react-hcaptcha)
+- Icons: react-icons
 - Backend: local Supabase (Postgres, Storage, RLS, SQL migrations)
 
 ## Repository Structure
@@ -37,12 +40,14 @@ frontend/
     src/
         api/
         assets/
+        config/
         constants/
         features/
         layout/
         locales/
         pages/
         shared/
+        test/
 
 packages/
     video-multitrack-player/

@@ -6,16 +6,26 @@ import type {
   SurveyResponseRow,
 } from "@/features/analysis/types/analysis";
 import {
+  extractAnswers,
   buildLatestSurveyResponseByParticipantVideo,
+  getNumericAnswer,
   getParticipantIdUniverse,
   getSyncDisturbanceValue,
   isFiniteNumber,
 } from "@/features/analysis/lib/analysisMetricsShared";
 
+const INFERENCE_METRIC_IDS = ["sync-1", "experience-1", "pan-1", "pan-2"] as const;
+
+const hasNumericInferenceAnswer = (response: SurveyResponseRow): boolean => {
+  const answers = extractAnswers(response.responses);
+  return INFERENCE_METRIC_IDS.some((metricId) => getNumericAnswer(answers[metricId]) !== null);
+};
+
 export const collectParticipantIdsByFilter = (
   raw: AnalysisRawData,
   demographics: DemographicsRow[],
   filters: AnalysisFilters,
+  videoGenreMap: Map<string, string>,
 ): Set<string> => {
   const participantIds = getParticipantIdUniverse(raw);
   const demographicsByParticipant = new Map(
@@ -86,6 +96,39 @@ export const collectParticipantIdsByFilter = (
         if (disturbanceSharePercent >= filters.maxDisturbanceSharePercent) {
           return false;
         }
+      }
+    }
+
+    if (filters.includeOnlyPairedParticipants) {
+      const hasInferentialResponse = raw.surveyResponses.some((response) => {
+        if (response.participant_id !== participantId) {
+          return false;
+        }
+
+        const genreMatch =
+          filters.genre === "all" || videoGenreMap.get(response.video_id) === filters.genre;
+        if (!genreMatch) {
+          return false;
+        }
+
+        const videoMatch = filters.videoId === "all" || response.video_id === filters.videoId;
+        if (!videoMatch) {
+          return false;
+        }
+
+        const syncDisturbanceValue = getSyncDisturbanceValue(response);
+        const syncMatch =
+          filters.syncDisturbance === "all" ||
+          syncDisturbanceValue === filters.syncDisturbance;
+        if (!syncMatch) {
+          return false;
+        }
+
+        return hasNumericInferenceAnswer(response);
+      });
+
+      if (!hasInferentialResponse) {
+        return false;
       }
     }
 

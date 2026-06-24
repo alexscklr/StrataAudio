@@ -1,8 +1,5 @@
 import type {
-  InferencePrimaryTest,
-  PairedTTestResult,
   SurveyResponseRow,
-  WilcoxonSignedRankResult,
   WithinSubjectInferenceMetric,
 } from "@/features/analysis/types/analysis";
 import {
@@ -15,6 +12,30 @@ import {
 interface MetricConfig {
   id: string;
   label: string;
+}
+
+type InferencePrimaryTest = "paired-t" | "wilcoxon" | "insufficient-data";
+
+interface PairedTTestResult {
+  tStatistic: number;
+  degreesOfFreedom: number;
+  pValue: number;
+  meanDifference: number;
+  ci95Lower: number;
+  ci95Upper: number;
+  cohenDz: number;
+}
+
+interface WilcoxonSignedRankResult {
+  wPlus: number;
+  wMinus: number;
+  zStatistic: number;
+  pValue: number;
+  rankBiserialCorrelation: number;
+}
+
+interface NormalityDiagnostic {
+  pValue: number | null;
 }
 
 const METRICS: MetricConfig[] = [
@@ -207,23 +228,17 @@ const sampleVariance = (values: number[]): number | null => {
   return squared / (values.length - 1);
 };
 
-const calculateNormalityDiagnostics = (differences: number[]) => {
+const calculateNormalityDiagnostics = (differences: number[]): NormalityDiagnostic => {
   if (differences.length < 3) {
     return {
-      method: "jarque-bera" as const,
       pValue: null,
-      skewness: null,
-      excessKurtosis: null,
     };
   }
 
   const avg = mean(differences);
   if (avg === null) {
     return {
-      method: "jarque-bera" as const,
       pValue: null,
-      skewness: null,
-      excessKurtosis: null,
     };
   }
 
@@ -233,10 +248,7 @@ const calculateNormalityDiagnostics = (differences: number[]) => {
 
   if (m2 <= 0) {
     return {
-      method: "jarque-bera" as const,
       pValue: 1,
-      skewness: 0,
-      excessKurtosis: -3,
     };
   }
 
@@ -249,10 +261,7 @@ const calculateNormalityDiagnostics = (differences: number[]) => {
   const pValue = Math.exp(-jarqueBera / 2);
 
   return {
-    method: "jarque-bera" as const,
     pValue,
-    skewness,
-    excessKurtosis,
   };
 };
 
@@ -410,53 +419,112 @@ const decidePrimaryTest = (
   return "wilcoxon";
 };
 
+const logCombination = (n: number, k: number): number =>
+  logGamma(n + 1) - logGamma(k + 1) - logGamma(n - k + 1);
+
+const exactBinomialTwoSidedPValue = (successes: number, trials: number): number | null => {
+  if (trials <= 0 || successes < 0 || successes > trials) {
+    return null;
+  }
+
+  const logPObserved = logCombination(trials, successes) - trials * Math.log(2);
+  let sum = 0;
+
+  for (let k = 0; k <= trials; k += 1) {
+    const logPk = logCombination(trials, k) - trials * Math.log(2);
+    if (logPk <= logPObserved + 1e-12) {
+      sum += Math.exp(logPk);
+    }
+  }
+
+  return clamp01(sum);
+};
+
+const wilsonInterval95 = (successes: number, trials: number): { lower: number; upper: number } | null => {
+  if (trials <= 0) {
+    return null;
+  }
+
+  const z = 1.959963984540054;
+  const pHat = successes / trials;
+  const denominator = 1 + (z * z) / trials;
+  const center = pHat + (z * z) / (2 * trials);
+  const margin = z * Math.sqrt((pHat * (1 - pHat)) / trials + (z * z) / (4 * trials * trials));
+
+  return {
+    lower: clamp01((center - margin) / denominator),
+    upper: clamp01((center + margin) / denominator),
+  };
+};
+
+const parsePreference = (value: unknown): "standard" | "mixer" | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "standard") {
+    return "standard";
+  }
+  if (normalized === "mixer") {
+    return "mixer";
+  }
+  return null;
+};
+
+const parseSyncDisturbance = (value: unknown): "ja" | "nein" | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "ja" || normalized === "yes") {
+    return "ja";
+  }
+  if (normalized === "nein" || normalized === "no") {
+    return "nein";
+  }
+  return null;
+};
+
 export const buildWithinSubjectInference = (
   surveyResponses: SurveyResponseRow[],
 ): WithinSubjectInferenceMetric[] => {
-  const rows = METRICS.map((metric) => {
-    const byParticipant = new Map<
-      string,
-      { standard: number[]; mixer: number[] }
-    >();
+  const likertMidpoint = 4;
+
+  const likertRows = METRICS.map((metric) => {
+    const participantsSeen = new Set<string>();
+    const byParticipant = new Map<string, number[]>();
 
     for (const response of surveyResponses) {
-      const mode = response.first_watch_mode;
-      if (mode !== "standard" && mode !== "mixer") {
-        continue;
-      }
+      participantsSeen.add(response.participant_id);
 
       const value = getNumericAnswer(extractAnswers(response.responses)[metric.id]);
       if (value === null) {
         continue;
       }
 
-      const current = byParticipant.get(response.participant_id) ?? {
-        standard: [],
-        mixer: [],
-      };
-      current[mode].push(value);
+      const current = byParticipant.get(response.participant_id) ?? [];
+      current.push(value);
       byParticipant.set(response.participant_id, current);
     }
 
-    const standardMeans: number[] = [];
     const mixerMeans: number[] = [];
     const differences: number[] = [];
 
-    for (const participantValues of byParticipant.values()) {
-      if (participantValues.standard.length === 0 || participantValues.mixer.length === 0) {
+    for (const participantId of participantsSeen) {
+      const participantValues = byParticipant.get(participantId);
+      if (!participantValues || participantValues.length === 0) {
         continue;
       }
 
-      const standardMean = mean(participantValues.standard);
-      const mixerMean = mean(participantValues.mixer);
-
-      if (standardMean === null || mixerMean === null) {
+      const participantMean = mean(participantValues);
+      if (participantMean === null) {
         continue;
       }
 
-      standardMeans.push(standardMean);
-      mixerMeans.push(mixerMean);
-      differences.push(mixerMean - standardMean);
+      mixerMeans.push(participantMean);
+      differences.push(participantMean - likertMidpoint);
     }
 
     const pairs = differences.length;
@@ -472,22 +540,99 @@ export const buildWithinSubjectInference = (
           ? wilcoxon?.pValue ?? null
           : null;
 
+    const primaryTestLabel =
+      primaryTest === "paired-t"
+        ? "Ein-Stichproben t-Test gegen 4"
+        : primaryTest === "wilcoxon"
+          ? "Wilcoxon Signed-Rank gegen 4"
+          : "Unzureichende Daten";
+
     return {
       metricId: metric.id,
       metricLabel: metric.label,
-      pairs,
-      meanStandard: mean(standardMeans) ?? 0,
-      meanMixer: mean(mixerMeans) ?? 0,
-      meanDifferenceMixerMinusStandard: mean(differences) ?? 0,
-      medianDifferenceMixerMinusStandard: median(differences) ?? 0,
-      normality,
-      pairedT,
-      wilcoxon,
-      primaryTest,
+      testKind: "likert-midpoint" as const,
+      sampleSize: pairs,
+      primaryTestLabel,
+      summaryRows: [
+        { label: "Mittelwert", value: mean(mixerMeans) },
+        { label: "Median", value: median(mixerMeans) },
+        { label: "Delta zu 4 (Mean)", value: mean(differences) },
+        { label: "Delta zu 4 (Median)", value: median(differences) },
+      ],
       primaryPValue,
       holmAdjustedPrimaryPValue: null,
     } as WithinSubjectInferenceMetric;
   });
+
+  let preferenceMixer = 0;
+  let preferenceStandard = 0;
+  for (const response of surveyResponses) {
+    const answers = extractAnswers(response.responses);
+    const preference = parsePreference(answers["experience-2"]);
+    if (preference === "mixer") {
+      preferenceMixer += 1;
+    }
+    if (preference === "standard") {
+      preferenceStandard += 1;
+    }
+  }
+
+  const preferenceN = preferenceMixer + preferenceStandard;
+  const preferenceP = exactBinomialTwoSidedPValue(preferenceMixer, preferenceN);
+  const preferenceCi = wilsonInterval95(preferenceMixer, preferenceN);
+
+  const preferenceRow: WithinSubjectInferenceMetric = {
+    metricId: "experience-2",
+    metricLabel: "Moduspräferenz (Standard vs Mixer)",
+    testKind: "binomial-preference",
+    sampleSize: preferenceN,
+    primaryTestLabel: "Exakter Binomialtest (zweiseitig, p0 = 0.5)",
+    summaryRows: [
+      { label: "Mixer", value: preferenceMixer },
+      { label: "Standard", value: preferenceStandard },
+      { label: "Mixer-Anteil", value: preferenceN > 0 ? preferenceMixer / preferenceN : null },
+      { label: "95%-KI Mixer-Anteil unten", value: preferenceCi?.lower ?? null },
+      { label: "95%-KI Mixer-Anteil oben", value: preferenceCi?.upper ?? null },
+    ],
+    primaryPValue: preferenceP,
+    holmAdjustedPrimaryPValue: null,
+  };
+
+  let disturbanceYes = 0;
+  let disturbanceNo = 0;
+  for (const response of surveyResponses) {
+    const answers = extractAnswers(response.responses);
+    const disturbance = parseSyncDisturbance(answers["sync-2"]);
+    if (disturbance === "ja") {
+      disturbanceYes += 1;
+    }
+    if (disturbance === "nein") {
+      disturbanceNo += 1;
+    }
+  }
+
+  const disturbanceN = disturbanceYes + disturbanceNo;
+  const disturbanceP = exactBinomialTwoSidedPValue(disturbanceYes, disturbanceN);
+  const disturbanceCi = wilsonInterval95(disturbanceYes, disturbanceN);
+
+  const disturbanceRow: WithinSubjectInferenceMetric = {
+    metricId: "sync-2",
+    metricLabel: "Technische Störungen (Ja/Nein)",
+    testKind: "binomial-proportion",
+    sampleSize: disturbanceN,
+    primaryTestLabel: "Exakter Binomialtest (zweiseitig, p0 = 0.5)",
+    summaryRows: [
+      { label: "Ja", value: disturbanceYes },
+      { label: "Nein", value: disturbanceNo },
+      { label: "Störungsanteil", value: disturbanceN > 0 ? disturbanceYes / disturbanceN : null },
+      { label: "95%-KI Anteil unten", value: disturbanceCi?.lower ?? null },
+      { label: "95%-KI Anteil oben", value: disturbanceCi?.upper ?? null },
+    ],
+    primaryPValue: disturbanceP,
+    holmAdjustedPrimaryPValue: null,
+  };
+
+  const rows = [...likertRows, preferenceRow, disturbanceRow];
 
   const validPrimaryRows = rows
     .map((row, index) => ({ index, pValue: row.primaryPValue }))
