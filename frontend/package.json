@@ -14,6 +14,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@strata/video-multitrack-player": "file:../packages/video-multitrack-player",
     "@hcaptcha/react-hcaptcha": "^1.11.0",
     "@supabase/supabase-js": "^2.97.0",
     "@tanstack/react-query": "^5.90.21",

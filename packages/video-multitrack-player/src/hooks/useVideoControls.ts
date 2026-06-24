@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import Hls from 'hls.js';
-import type { VideoControlPermissions } from '@/shared/types/media';
+import type { VideoControlPermissions } from '../types/media';
 
 interface VideoControlsProps {
     videoId: string;

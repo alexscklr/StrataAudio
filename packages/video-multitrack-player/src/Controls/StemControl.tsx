@@ -1,11 +1,11 @@
-import type { Audio } from "@/shared/types/media";
+import type { Audio } from "../types/media";
 import styles from "./styles/AudioControls.module.css";
-import VolumeSlider from "../../../shared/components/UI/VolumeSlider/VolumeSlider";
-import PanSlider from "../../../shared/components/UI/PanSlider/PanSlider";
-import { getPublicUrl } from "@/shared/utils/storage";
-import type { AudioTrackState } from "@/shared/types/mixer";
+import VolumeSlider from "../components/UI/VolumeSlider/VolumeSlider";
+import PanSlider from "../components/UI/PanSlider/PanSlider";
+import type { AudioTrackState } from "../types/mixer";
 import { LuSlash } from "react-icons/lu";
 import { useTranslation } from 'react-i18next';
+import type { ResolvePublicUrl } from "../utils/publicUrlResolver";
 
 interface StemControlProps {
     audio: Audio;
@@ -16,9 +16,10 @@ interface StemControlProps {
     onPanChange: (id: string, val: number) => void;
     onPanCommit: (id: string, val: number) => void;
     onToggleMute: (id: string) => void;
+    resolvePublicUrl: ResolvePublicUrl;
 }
 
-function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, onVolumeCommit, onPanChange, onPanCommit, onToggleMute }: StemControlProps) {
+function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, onVolumeCommit, onPanChange, onPanCommit, onToggleMute, resolvePublicUrl }: StemControlProps) {
     const { t } = useTranslation();
 
     return (
@@ -36,7 +37,7 @@ function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, o
                 title={audio.title}
                 onClick={() => { onToggleMute(audio.id); }}
             >
-                <img className={styles.icon} src={getPublicUrl(`icons/${audio.icon_url}`, "system")} alt={audio.title} width={32} height={32} />
+                <img className={styles.icon} src={resolvePublicUrl(`icons/${audio.icon_url}`, "system")} alt={audio.title} width={32} height={32} />
                 <LuSlash className={styles.muteIcon} style={{ display: trackState.isMuted ? 'block' : 'none' }} color="red" />
             </button>
             {isAudioControlsOpen && <span className={styles.audioTrackLabel}>{audio.title}</span>}

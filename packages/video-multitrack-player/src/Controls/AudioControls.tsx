@@ -1,12 +1,13 @@
 import { useMemo } from "react";
-import type { Audio, VideoWatchMode } from "@/shared/types/media";
+import type { Audio, VideoWatchMode } from "../types/media";
 import styles from "./styles/AudioControls.module.css";
 import StemControl from "./StemControl";
-import type { MixerState } from "@/shared/types/mixer";
-import VolumeSlider from "../../../shared/components/UI/VolumeSlider/VolumeSlider";
-import PanSlider from "../../../shared/components/UI/PanSlider/PanSlider";
+import type { MixerState } from "../types/mixer";
+import VolumeSlider from "../components/UI/VolumeSlider/VolumeSlider";
+import PanSlider from "../components/UI/PanSlider/PanSlider";
 import { LuVolume2 } from "react-icons/lu";
 import { useTranslation } from 'react-i18next';
+import type { ResolvePublicUrl } from "../utils/publicUrlResolver";
 
 
 interface AudioControlsProps {
@@ -24,9 +25,10 @@ interface AudioControlsProps {
     onMuteToggle: (id: string) => void;
     watchMode: VideoWatchMode;
     isExpanded: boolean;
+    resolvePublicUrl: ResolvePublicUrl;
 }
 
-function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, onPanChange, onPanCommit, onMasterPanChange, onMasterPanCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode, isExpanded }: AudioControlsProps) {
+function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, onPanChange, onPanCommit, onMasterPanChange, onMasterPanCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode, isExpanded, resolvePublicUrl }: AudioControlsProps) {
     const { t } = useTranslation();
 
     const shouldRenderTracks = watchMode !== 'standard';
@@ -79,6 +81,7 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
                         audio={audio}
                         isAudioControlsOpen={isExpanded}
                         trackState={mixerState.trackstates[audio.id] ?? { volume: 1, isMuted: false, pan: 0 }}
+                        resolvePublicUrl={resolvePublicUrl}
                         onVolumeChange={onVolumeChange}
                         onVolumeCommit={onVolumeCommit}
                         onPanChange={onPanChange}

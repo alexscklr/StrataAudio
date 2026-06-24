@@ -43,6 +43,12 @@ frontend/
         locales/
         pages/
         shared/
+
+packages/
+    video-multitrack-player/
+        package.json
+        src/
+        dist/
 ```
 
 ## User Flow
@@ -55,6 +61,29 @@ frontend/
 6. End survey (after all mandatory videos)
 
 Route guards enforce consent/demographics order.
+
+## Extracted Player Package
+
+The video player is extracted into a reusable React package:
+
+- package: `@strata/video-multitrack-player`
+- source: `packages/video-multitrack-player`
+- frontend integration: `frontend/src/pages/WatchPage.tsx`
+
+Important integration note:
+
+- The package CSS must be imported by the consuming app (for example in `main.tsx`):
+
+```ts
+import '@strata/video-multitrack-player/styles.css';
+```
+
+Without this stylesheet import, overlay controls and mixer layout will appear unstyled or misplaced.
+
+Midpoint switching note:
+
+- Midpoint mode switching is implemented in application logic (Watch page), not inside the package.
+- You can run mixer-only mode by keeping `watchMode="mixer"` and omitting midpoint switch handling.
 
 ## Prerequisites
 
@@ -257,6 +286,11 @@ Frontend runs on the URL printed by Vite (usually `http://localhost:5173`).
 - `npm run build`: run TypeScript build and production bundle
 - `npm run lint`: run ESLint
 - `npm run preview`: preview production build
+
+### Player Package (`packages/video-multitrack-player/package.json`)
+
+- `npm run check`: run TypeScript typecheck for the package
+- `npm run build`: build library output (`dist`) and declarations
 
 ## Database and Storage
 

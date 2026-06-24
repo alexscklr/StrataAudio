@@ -1,0 +1,68 @@
+name: video-multitrack-player
+
+on:
+  pull_request:
+    paths:
+      - packages/video-multitrack-player/**
+      - .github/workflows/video-multitrack-player-ci.yml
+  push:
+    branches:
+      - main
+    paths:
+      - packages/video-multitrack-player/**
+      - .github/workflows/video-multitrack-player-ci.yml
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/video-multitrack-player
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/video-multitrack-player/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run check
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+  changeset-status:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/video-multitrack-player
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/video-multitrack-player/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify changeset exists for package changes
+        run: npx changeset status

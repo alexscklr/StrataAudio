@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useVideo } from "@/shared/hooks/useVideo";
-import VideoPlayer from "@/features/Player/components/VideoPlayer";
+import { VideoPlayer } from "@strata/video-multitrack-player";
+import '@strata/video-multitrack-player/styles.css'
 import { getPublicUrl } from "@/shared/utils/storage";
 import { useAudio } from "@/shared/hooks/useAudio";
 import WarningPopup from "@/shared/components/UI/WarningPopup/WarningPopup";
@@ -182,6 +183,7 @@ function WatchPage() {
                     <VideoPlayer
                         videoId={videoid!}
                         videoUrl={getPublicUrl(`${videoid}/${video.hls_url}`, "videos")}
+                        resolvePublicUrl={getPublicUrl}
                         title={video.title}
                         audios={audios}
                         key={shouldSwitchAtMidpoint ? `${videoid}-single-pass` : `${videoid}-${currentMode}`}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Audio, VideoControlPermissions } from '@/shared/types/media';
+import type { Audio, VideoControlPermissions } from '../types/media';
 import styles from './VideoPlayer.module.css';
 import { PlayPauseButton } from '../Controls/PlayPauseButton';
 import VideoTimeDisplay from '../Controls/VideoTimeDisplay';
@@ -10,10 +10,14 @@ import AudioEngine from './AudioEngine';
 import AudioControls from '../Controls/AudioControls';
 import { useVideoControls } from '../hooks/useVideoControls';
 import useMixer from '../hooks/useMixer';
-import type { AudioConfigurationSnapshot } from '@/shared/types/mixer';
-import type { VideoWatchMode } from '@/shared/types/media';
+import type { AudioConfigurationSnapshot } from '../types/mixer';
+import type { VideoWatchMode } from '../types/media';
+import {
+    passthroughPublicUrlResolver,
+    type ResolvePublicUrl,
+} from '../utils/publicUrlResolver';
 
-interface VideoPlayerProps {
+export interface VideoPlayerProps {
     videoId: string;
     videoUrl: string;
     title: string;
@@ -24,9 +28,10 @@ interface VideoPlayerProps {
     onMidpointReached?: (snapshot: AudioConfigurationSnapshot) => void;
     onAudioConfigurationReady?: (snapshot: AudioConfigurationSnapshot) => void;
     watchMode: VideoWatchMode;
+    resolvePublicUrl?: ResolvePublicUrl;
 }
 
-function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canControlVideo, onVideoEnd, onMidpointReached, onAudioConfigurationReady, watchMode }: VideoPlayerProps) {
+function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canControlVideo, onVideoEnd, onMidpointReached, onAudioConfigurationReady, watchMode, resolvePublicUrl = passthroughPublicUrlResolver }: VideoPlayerProps) {
     const FULLSCREEN_CONTROLS_TIMEOUT_MS = 2200;
 
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -175,6 +180,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
                 calculateEffectiveVolume={calculateEffectiveVolume}
                 calculateEffectivePan={calculateEffectivePan}
                 masterPan={mixerState.masterPan}
+                resolvePublicUrl={resolvePublicUrl}
             />
 
             
@@ -214,6 +220,7 @@ function VideoPlayer({ videoId, videoUrl, title, autoplay = false, audios, canCo
                 onMuteToggle={handleMuteToggle}
                 watchMode={watchMode}
                 isExpanded={isAudioControlsExpanded}
+                resolvePublicUrl={resolvePublicUrl}
             />
         </div>
     );

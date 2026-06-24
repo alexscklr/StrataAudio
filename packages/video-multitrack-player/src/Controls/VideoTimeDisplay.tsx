@@ -1,4 +1,4 @@
-import { formatDuration } from "@/shared/utils/timeFormating";
+import { formatDuration } from "../utils/formatDuration";
 
 
 interface VideoTimeDisplayProps {

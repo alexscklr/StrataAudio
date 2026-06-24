@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Audio } from '@/shared/types/media';
-import type { AudioConfigurationSnapshot, MixerInteractionEntry, MixerState } from '@/shared/types/mixer';
+import type { Audio } from '../types/media';
+import type { AudioConfigurationSnapshot, MixerInteractionEntry, MixerState } from '../types/mixer';
 
 const DEFAULT_TRACK_STATE = { volume: 1, isMuted: false, pan: 0 };
 
