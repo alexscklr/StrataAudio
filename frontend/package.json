@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm --prefix ../packages/video-multitrack-player ci && npm --prefix ../packages/video-multitrack-player run build",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

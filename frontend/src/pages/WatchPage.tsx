@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useVideo } from "@/shared/hooks/useVideo";
 import { VideoPlayer } from "@strata/video-multitrack-player";
+import '@strata/video-multitrack-player/styles.css'
 import { getPublicUrl } from "@/shared/utils/storage";
 import { useAudio } from "@/shared/hooks/useAudio";
 import WarningPopup from "@/shared/components/UI/WarningPopup/WarningPopup";
