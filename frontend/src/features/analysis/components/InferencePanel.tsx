@@ -44,22 +44,64 @@ const findNumericSummaryValue = (
   return row.value;
 };
 
+const findFirstNumericSummaryValue = (
+  item: WithinSubjectInferenceMetric,
+  labels: string[],
+): number | null => {
+  for (const label of labels) {
+    const value = findNumericSummaryValue(item, label);
+    if (value !== null) {
+      return value;
+    }
+  }
+  return null;
+};
+
+const getEffectSizeMagnitude = (value: number | null): string => {
+  if (value === null) {
+    return "unbekannt";
+  }
+
+  const absolute = Math.abs(value);
+  if (absolute < 0.2) {
+    return "sehr klein";
+  }
+  if (absolute < 0.5) {
+    return "klein";
+  }
+  if (absolute < 0.8) {
+    return "mittel";
+  }
+  return "gross";
+};
+
 const buildInterpretation = (item: WithinSubjectInferenceMetric): string => {
   const adjustedP = item.holmAdjustedPrimaryPValue;
   const isSignificant = adjustedP !== null && adjustedP < 0.05;
+  const effectSize = findFirstNumericSummaryValue(item, [
+    "Effektstärke (Cohen's dz)",
+    "Effektstärke (Rang-biseriales r)",
+    "Effektstärke (Cohen's h)",
+    "Effektstärke",
+  ]);
+  const effectMagnitude = getEffectSizeMagnitude(effectSize);
 
   if (item.testKind === "likert-midpoint") {
     const delta = findNumericSummaryValue(item, "Delta zu 4 (Mean)");
-    const magnitude = delta === null ? "unbekannt" : Math.abs(delta) < 0.2 ? "sehr klein" : Math.abs(delta) < 0.5 ? "klein bis mittel" : "deutlich";
     const direction = delta === null ? "" : delta > 0 ? "oberhalb des Neutralpunkts" : delta < 0 ? "unterhalb des Neutralpunkts" : "genau am Neutralpunkt";
+    const effectLabel = item.primaryTestLabel.includes("Wilcoxon")
+      ? "rang-biseriales r"
+      : item.primaryTestLabel.includes("t-Test")
+        ? "Cohen's dz"
+        : "Effektstärke";
 
     if (adjustedP === null) {
       return `Keine belastbare Signifikanzbewertung moeglich (n=${item.sampleSize}).`;
     }
 
     return isSignificant
-      ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Der Wert liegt ${direction}. Effektstaerke im Mittel ${magnitude}.`
-      : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Tendenz ${direction}, aber statistisch nicht abgesichert.`;
+      ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Der Wert liegt ${direction}. ${effectLabel}=${formatValue(effectSize)} weist auf einen ${effectMagnitude}en Effekt hin.`
+      : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Tendenz ${direction}, ${effectLabel}=${formatValue(effectSize)} (${effectMagnitude}er Effekt), aber statistisch nicht abgesichert.`;
   }
 
   if (item.testKind === "binomial-preference") {
@@ -69,8 +111,8 @@ const buildInterpretation = (item: WithinSubjectInferenceMetric): string => {
       return `Keine belastbare Signifikanzbewertung moeglich (n=${item.sampleSize}).`;
     }
     return isSignificant
-      ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Die Praeferenz weicht von 50/50 ab${percent === null ? "" : ` (Mixer ${percent}%).`}`
-      : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Keine klare Abweichung von einer 50/50-Praeferenz${percent === null ? "." : ` (Mixer ${percent}%).`}`;
+      ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Die Praeferenz weicht von 50/50 ab${percent === null ? "" : ` (Mixer ${percent}%).`} Cohen's h=${formatValue(effectSize)} zeigt einen ${effectMagnitude}en Effekt.`
+      : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Keine klare Abweichung von einer 50/50-Praeferenz${percent === null ? "." : ` (Mixer ${percent}%).`} Cohen's h=${formatValue(effectSize)} (${effectMagnitude}er Effekt).`;
   }
 
   const share = findNumericSummaryValue(item, "Stoerungsanteil");
@@ -79,8 +121,8 @@ const buildInterpretation = (item: WithinSubjectInferenceMetric): string => {
     return `Keine belastbare Signifikanzbewertung moeglich (n=${item.sampleSize}).`;
   }
   return isSignificant
-    ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Der Stoerungsanteil weicht von 50% ab${percent === null ? "." : ` (${percent}%).`}`
-    : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Kein klarer Hinweis auf Abweichung von 50%${percent === null ? "." : ` (${percent}%).`}`;
+    ? `Signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Der Stoerungsanteil weicht von 50% ab${percent === null ? "." : ` (${percent}%).`} Cohen's h=${formatValue(effectSize)} zeigt einen ${effectMagnitude}en Effekt.`
+    : `Nicht signifikant (Holm-korr. p=${formatPValue(adjustedP)}): Kein klarer Hinweis auf Abweichung von 50%${percent === null ? "." : ` (${percent}%).`} Cohen's h=${formatValue(effectSize)} (${effectMagnitude}er Effekt).`;
 };
 
 export function InferencePanel({ items }: InferencePanelProps) {
@@ -90,7 +132,7 @@ export function InferencePanel({ items }: InferencePanelProps) {
       <p className={styles.muted}>
         Der Abschnitt nutzt datenpassende Tests: Likert-Items gegen den Neutralpunkt 4,
         Moduspräferenz per exaktem Binomialtest und Störungsanteile mit Binomialtest und 95%-Konfidenzintervall.
-        p-Werte werden zusätzlich mit Holm korrigiert.
+        Neben p-Werten werden passende Effektstärken ausgewiesen; p-Werte werden zusätzlich mit Holm korrigiert.
       </p>
 
       <div className={styles.inferenceGrid}>

@@ -171,6 +171,11 @@ export function AnalysisDashboard() {
             <p>
               <strong>Signifikanz:</strong> Entscheidend ist der Holm-korrigierte p-Wert.
               p &lt; 0.05 = statistisch abgesicherter Hinweis, p ≥ 0.05 = kein abgesicherter Unterschied.
+              Der p-Wert allein belegt aber keine praktische Relevanz; deshalb zeigen die Karten zusätzlich Effektstärken.
+            </p>
+            <p>
+              <strong>Effektstärken:</strong> Bei Likert-Items wird je nach Primärtest Cohen&apos;s dz oder rang-biseriales r ausgewiesen,
+              bei Anteilen Cohen&apos;s h. Als grobe Orientierung gelten etwa 0.2 = klein, 0.5 = mittel, 0.8 = gross.
             </p>
             <p>
               <strong>Bewertung in den Karten:</strong> Jede Karte enthaelt eine automatische Deutung,

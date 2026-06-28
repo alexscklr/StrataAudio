@@ -457,6 +457,21 @@ const wilsonInterval95 = (successes: number, trials: number): { lower: number; u
   };
 };
 
+const calculateCohensH = (proportion: number, referenceProportion = 0.5): number | null => {
+  if (
+    !Number.isFinite(proportion) ||
+    !Number.isFinite(referenceProportion) ||
+    proportion < 0 ||
+    proportion > 1 ||
+    referenceProportion < 0 ||
+    referenceProportion > 1
+  ) {
+    return null;
+  }
+
+  return 2 * Math.asin(Math.sqrt(proportion)) - 2 * Math.asin(Math.sqrt(referenceProportion));
+};
+
 const parsePreference = (value: unknown): "standard" | "mixer" | null => {
   if (typeof value !== "string") {
     return null;
@@ -558,6 +573,20 @@ export const buildWithinSubjectInference = (
         { label: "Median", value: median(mixerMeans) },
         { label: "Delta zu 4 (Mean)", value: mean(differences) },
         { label: "Delta zu 4 (Median)", value: median(differences) },
+        {
+          label:
+            primaryTest === "paired-t"
+              ? "Effektstärke (Cohen's dz)"
+              : primaryTest === "wilcoxon"
+                ? "Effektstärke (Rang-biseriales r)"
+                : "Effektstärke",
+          value:
+            primaryTest === "paired-t"
+              ? pairedT?.cohenDz ?? null
+              : primaryTest === "wilcoxon"
+                ? wilcoxon?.rankBiserialCorrelation ?? null
+                : null,
+        },
       ],
       primaryPValue,
       holmAdjustedPrimaryPValue: null,
@@ -580,6 +609,9 @@ export const buildWithinSubjectInference = (
   const preferenceN = preferenceMixer + preferenceStandard;
   const preferenceP = exactBinomialTwoSidedPValue(preferenceMixer, preferenceN);
   const preferenceCi = wilsonInterval95(preferenceMixer, preferenceN);
+  const preferenceShare = preferenceN > 0 ? preferenceMixer / preferenceN : null;
+  const preferenceEffectSize =
+    preferenceShare === null ? null : calculateCohensH(preferenceShare, 0.5);
 
   const preferenceRow: WithinSubjectInferenceMetric = {
     metricId: "experience-2",
@@ -590,9 +622,10 @@ export const buildWithinSubjectInference = (
     summaryRows: [
       { label: "Mixer", value: preferenceMixer },
       { label: "Standard", value: preferenceStandard },
-      { label: "Mixer-Anteil", value: preferenceN > 0 ? preferenceMixer / preferenceN : null },
+      { label: "Mixer-Anteil", value: preferenceShare },
       { label: "95%-KI Mixer-Anteil unten", value: preferenceCi?.lower ?? null },
       { label: "95%-KI Mixer-Anteil oben", value: preferenceCi?.upper ?? null },
+      { label: "Effektstärke (Cohen's h)", value: preferenceEffectSize },
     ],
     primaryPValue: preferenceP,
     holmAdjustedPrimaryPValue: null,
@@ -614,6 +647,9 @@ export const buildWithinSubjectInference = (
   const disturbanceN = disturbanceYes + disturbanceNo;
   const disturbanceP = exactBinomialTwoSidedPValue(disturbanceYes, disturbanceN);
   const disturbanceCi = wilsonInterval95(disturbanceYes, disturbanceN);
+  const disturbanceShare = disturbanceN > 0 ? disturbanceYes / disturbanceN : null;
+  const disturbanceEffectSize =
+    disturbanceShare === null ? null : calculateCohensH(disturbanceShare, 0.5);
 
   const disturbanceRow: WithinSubjectInferenceMetric = {
     metricId: "sync-2",
@@ -624,9 +660,10 @@ export const buildWithinSubjectInference = (
     summaryRows: [
       { label: "Ja", value: disturbanceYes },
       { label: "Nein", value: disturbanceNo },
-      { label: "Störungsanteil", value: disturbanceN > 0 ? disturbanceYes / disturbanceN : null },
+      { label: "Störungsanteil", value: disturbanceShare },
       { label: "95%-KI Anteil unten", value: disturbanceCi?.lower ?? null },
       { label: "95%-KI Anteil oben", value: disturbanceCi?.upper ?? null },
+      { label: "Effektstärke (Cohen's h)", value: disturbanceEffectSize },
     ],
     primaryPValue: disturbanceP,
     holmAdjustedPrimaryPValue: null,

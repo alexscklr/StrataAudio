@@ -57,6 +57,13 @@ describe("buildWithinSubjectInference", () => {
     for (const metric of likertRows) {
       expect(metric.sampleSize).toBe(10);
       expect(metric.summaryRows.some((row) => row.label === "Delta zu 4 (Mean)")).toBe(true);
+      expect(
+        metric.summaryRows.some(
+          (row) =>
+            row.label === "Effektstärke (Cohen's dz)" ||
+            row.label === "Effektstärke (Rang-biseriales r)",
+        ),
+      ).toBe(true);
       expect(metric.primaryPValue).not.toBeNull();
       expect(metric.holmAdjustedPrimaryPValue).not.toBeNull();
       expect(metric.holmAdjustedPrimaryPValue ?? 0).toBeGreaterThanOrEqual(metric.primaryPValue ?? 0);
@@ -68,12 +75,14 @@ describe("buildWithinSubjectInference", () => {
     expect(preference?.testKind).toBe("binomial-preference");
     expect(preference?.sampleSize).toBe(10);
     expect(preference?.primaryPValue).not.toBeNull();
+    expect(preference?.summaryRows.some((row) => row.label === "Effektstärke (Cohen's h)")).toBe(true);
 
     const disturbance = results.find((row) => row.metricId === "sync-2");
     expect(disturbance).toBeDefined();
     expect(disturbance?.testKind).toBe("binomial-proportion");
     expect(disturbance?.sampleSize).toBe(10);
     expect(disturbance?.primaryPValue).not.toBeNull();
+    expect(disturbance?.summaryRows.some((row) => row.label === "Effektstärke (Cohen's h)")).toBe(true);
   });
 
   it("uses non-parametric primary label for small samples", () => {
