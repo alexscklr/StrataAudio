@@ -15,12 +15,22 @@ const scale = (value: number, min: number, max: number): number => {
   return ((value - min) / (max - min)) * 100;
 };
 
+const formatTick = (value: number): string => {
+  const rounded = Math.round(value * 100) / 100;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+};
+
 export function BoxPlotChart({
   label,
   stats,
   minScale = 1,
   maxScale = 7,
 }: BoxPlotChartProps) {
+  const ticks = Array.from({ length: 5 }, (_, index) => {
+    const ratio = index / 4;
+    return minScale + (maxScale - minScale) * ratio;
+  });
+
   if (!stats) {
     return (
       <article className={styles.chartCard}>
@@ -53,9 +63,9 @@ export function BoxPlotChart({
         <line x1={maxX} y1={16} x2={maxX} y2={28} className={styles.boxCap} />
       </svg>
       <div className={styles.boxPlotScale}>
-        <span>{minScale}</span>
-        <span>{Math.round((minScale + maxScale) / 2)}</span>
-        <span>{maxScale}</span>
+        {ticks.map((tick) => (
+          <span key={tick}>{formatTick(tick)}</span>
+        ))}
       </div>
       <p className={styles.muted}>
         Min {stats.min.toFixed(2)} | Q1 {stats.q1.toFixed(2)} | Median {stats.median.toFixed(2)} | Q3 {stats.q3.toFixed(2)} | Max {stats.max.toFixed(2)}

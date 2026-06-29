@@ -1,7 +1,21 @@
 .analysisPage {
+  --bg-dark: #f4f7fb;
+  --bg-card: #ffffff;
+  --text-main: #17263c;
+  --text-muted: #5c6b82;
+  --strata-accent: #5b6de8;
+  --border-color: #d5dfeb;
+  --shadow-card: 0 10px 24px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 14px 32px rgba(15, 23, 42, 0.14);
+  --analysis-page-bg: #f4f7fb;
+  --analysis-page-bg-accent: #e9f4ff;
+  --analysis-surface-subtle: #f7fbff;
+  --analysis-track-bg: #e7eef6;
+  --analysis-warning-bg: #fff7ed;
   padding: 0;
   margin: 0;
   width: 100%;
   min-height: 100vh;
-  background: var(--bg-dark);
+  background: linear-gradient(180deg, var(--analysis-page-bg-accent) 0%, var(--analysis-page-bg) 18%, #eef3f8 100%);
+  color: var(--text-main);
 }

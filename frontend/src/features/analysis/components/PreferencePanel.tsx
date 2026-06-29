@@ -40,7 +40,7 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
         </div>
       </div>
 
-      <div className={styles.trackGrid} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
+      <div className={styles.trackGrid} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 20rem), 20rem))", justifyContent: "start", gap: "1rem" }}>
         {trackDeviations.slice(0, 8).map((track) => {
           const relationText =
             track.medianVolumeDifference === 0
@@ -50,7 +50,7 @@ export function PreferencePanel({ preference, trackDeviations }: PreferencePanel
                 : `${track.primaryTrackId} ist im Schnitt leiser als ${track.secondaryTrackId}.`;
           
           return (
-            <div key={track.pairId} className={styles.logSummary} style={{ padding: "1.2rem", background: "rgba(255,255,255,0.03)", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+            <div key={track.pairId} className={styles.logSummary} style={{ padding: "1.2rem", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <span style={{ fontWeight: 700, fontSize: "0.95rem", lineHeight: "1.3", color: "var(--text-main)" }}>
                   {track.primaryTrackId} vs. {track.secondaryTrackId}

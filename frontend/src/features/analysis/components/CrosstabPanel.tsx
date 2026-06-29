@@ -25,7 +25,7 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
               color: "var(--strata-accent)", 
               marginBottom: "1rem",
               fontSize: "0.95rem",
-              borderBottom: "1px solid #333",
+              borderBottom: "1px solid var(--border-color)",
               paddingBottom: "0.4rem"
             }}>
               {table.attribute}
@@ -34,10 +34,10 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
             <div style={{ display: "grid", gap: "0.75rem" }}>
               {table.groups.map((group) => (
                 <div key={group.name} style={{ 
-                  background: "rgba(255,255,255,0.02)", 
+                  background: "var(--analysis-surface-subtle)", 
                   padding: "0.6rem 0.8rem", 
                   borderRadius: "6px",
-                  border: "1px solid rgba(255,255,255,0.05)"
+                  border: "1px solid var(--border-color)"
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.6rem", alignItems: "baseline" }}>
                     <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>{group.name}</span>
@@ -49,7 +49,7 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
                   </p>
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.4rem" }}>
-                    <div style={{ textAlign: "center", padding: "0.3rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                    <div style={{ textAlign: "center", padding: "0.3rem", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "4px" }}>
                       <p style={{ fontSize: "0.6rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.1rem" }}>SUS</p>
                       <span style={{
                         fontSize: "0.85rem",
@@ -60,14 +60,14 @@ export function CrosstabPanel({ data }: CrosstabPanelProps) {
                       </span>
                     </div>
                     
-                    <div style={{ textAlign: "center", padding: "0.3rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                    <div style={{ textAlign: "center", padding: "0.3rem", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "4px" }}>
                       <p style={{ fontSize: "0.6rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.1rem" }}>Empfehlungswert (Ø 0-10)</p>
                       <span style={{ fontSize: "0.85rem", fontWeight: "bold" }}>
                         {group.avgNps !== null && group.avgNps !== undefined ? group.avgNps.toFixed(1) : "—"}
                       </span>
                     </div>
 
-                    <div style={{ textAlign: "center", padding: "0.3rem", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                    <div style={{ textAlign: "center", padding: "0.3rem", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "4px" }}>
                       <p style={{ fontSize: "0.6rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.1rem" }}>Aktivität</p>
                       <span style={{ 
                         fontSize: "0.85rem", 

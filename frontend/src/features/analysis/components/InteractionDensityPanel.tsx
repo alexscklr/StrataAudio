@@ -63,7 +63,7 @@ export function InteractionDensityPanel({ points }: InteractionDensityPanelProps
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#232323",
+                backgroundColor: "var(--bg-card)",
                 border: "1px solid var(--border-color)",
                 borderRadius: "var(--radius)",
                 fontSize: "12px",
@@ -129,7 +129,7 @@ export function InteractionDensityPanel({ points }: InteractionDensityPanelProps
         </ResponsiveContainer>
       </div>
 
-      <div style={{ marginTop: "1.5rem", padding: "1rem", background: "rgba(0,0,0,0.1)", borderRadius: "var(--radius)" }}>
+      <div style={{ marginTop: "1.5rem", padding: "1rem", background: "var(--analysis-surface-subtle)", border: "1px solid var(--border-color)", borderRadius: "var(--radius)" }}>
         <h4 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Statistik</h4>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", fontSize: "0.9rem" }}>
           <div>
