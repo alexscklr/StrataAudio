@@ -23,7 +23,7 @@ const VideoSurveyDisplay = ({
   videoLabelMap: Record<string, string> 
 }) => {
   const answers = response.responses?.answers ?? {};
-  const label = videoLabelMap[response.video_id] || response.video_id.slice(0, 8);
+  const label = videoLabelMap[response.video_id] || (response.video_id ? response.video_id.slice(0, 8) : "N/A");
   return (
     <div className={styles.logSummary}>
       <span className={styles.badgeBlue}>Video: {label}</span>
@@ -188,7 +188,6 @@ export function ParticipantDetailPanel({
                   resize: "vertical",
                   borderRadius: "8px",
                   border: "1.5px solid var(--border-color)",
-                  background: "#232323",
                   color: "var(--text-main)",
                   padding: "0.55rem 0.65rem",
                   fontSize: "0.9rem",
@@ -234,7 +233,7 @@ export function ParticipantDetailPanel({
           <article className={styles.detailCard}>
             <h4>Endsurvey</h4>
             {selected.endSurveyResponse ? (
-              <div style={{ background: "#232323", padding: "0.8rem", borderRadius: "8px" }}>
+              <div style={{ padding: "0.8rem", borderRadius: "8px" }}>
                 {Object.entries(selected.endSurveyResponse.responses?.answers ?? {}).map(([key, val]) => (
                   <div key={key} style={{ marginBottom: "0.4rem" }}>
                     <span className={styles.dataLabel} style={{ minWidth: "120px", display: "inline-block" }}>{key}:</span>
@@ -251,7 +250,7 @@ export function ParticipantDetailPanel({
               {selected.configurations.map((config, i) => (
                 <div key={i} className={styles.logSummary}>
                   <span className={styles.badgeBlue}>
-                    Video: {videoLabelMap[config.video_id] || config.video_id.slice(0, 8)}
+                    Video: {videoLabelMap[config.video_id] || (config.video_id ? config.video_id.slice(0, 8) : "N/A")}
                   </span>
                   <span className={styles.badgeGreen}>Interaktionen: {config.total_interactions}</span>
                   <span className={styles.badge}>Zeit: {(config.time_to_mix_ms ?? 0) / 1000}s</span>
