@@ -208,7 +208,8 @@ const enPages = {
     updateButton: "Update final survey",
     rewardPopup: {
       title: "Thank you for your participation",
-      thanks: "Your answers help improve the audio experience in web videos. You can still go back to the video catalog and watch more videos if you like.",
+      thanks:
+        "Your answers help improve the audio experience in web videos. You can still go back to the video catalog and watch more videos if you like.",
       codeText: "Here is your code to redeem points:",
       codeAria: "SurveyCircle code",
       copyButton: "Copy code",
@@ -257,6 +258,12 @@ const enPages = {
         "Raw data is not shared with third parties. Results are published in aggregated form (statistics/charts) within the bachelor thesis.",
       consentTitle: "Consent",
       consentText: "By clicking [I agree], I confirm that I:",
+    },
+    skipModal: {
+      title: "Skip to video section",
+      text: "You can directly skip the survey and move on to the video section to view the available videos.",
+      button: "Go to Videos",
+      cancelButton: "Start with the survey",
     },
     bullets: {
       dataTypes: [
@@ -326,7 +333,8 @@ const enPages = {
       "Technical metadata: Browser type and device type (e.g., smartphone/PC).",
       "Anonymization: No IP addresses or directly identifiable data (names, emails) are stored permanently. A technical user hash is used to avoid multiple participations.",
     ],
-    retentionTitle: "Hosting, Infrastructure and Content Delivery Network (CDN)",
+    retentionTitle:
+      "Hosting, Infrastructure and Content Delivery Network (CDN)",
     hostingIntro:
       "For the secure, high-performance, and GDPR-compliant delivery of this research application, services from specialized third-party providers are used as data processors on the basis of Art. 6(1)(f) GDPR (legitimate interest in a technically stable, secure, and reliable online presence). Data processing agreements (DPAs) according to Art. 28 GDPR have been concluded with all providers.",
 

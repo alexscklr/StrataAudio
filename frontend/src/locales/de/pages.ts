@@ -269,6 +269,12 @@ const dePages = {
       consentText:
         "Durch das Klicken auf [Ich stimme zu] bestätige ich, dass ich:",
     },
+    skipModal: {
+        title: "Zum Video-Bereich springen",
+        text: "Du kannst direkt zum Video-Bereich springen und die Umfrage überspringen, um die verfügbaren Videos anzusehen.",
+        button: "Zu den Videos",
+        cancelButton: "Mit der Umfrage fortfahren"
+      },
     bullets: {
       dataTypes: [
         "Demografische Daten: Alter, Geschlecht sowie Angaben zu deiner Erfahrung im Umgang mit Audiotechnik.",

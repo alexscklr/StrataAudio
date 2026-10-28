@@ -41,12 +41,12 @@ function App() {
         <Routes>
           <Route path="/" element={<ConsentPage />} />
           <Route path="/demografie" element={<ProtectedRoute><DemographicsPage /></ProtectedRoute>} />
-          <Route path="/videos" element={<ProtectedRoute><DemographicsRequiredRoute><VideoCatalogPage /></DemographicsRequiredRoute></ProtectedRoute>} />
+          <Route path="/videos" element={<VideoCatalogPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/upload" element={<AdminOrInvitedRoute inviteStorageKey="upload-invite-token"><UploadPage /></AdminOrInvitedRoute>} />
           <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           <Route path="/analysis" element={<AdminRoute><AnalysisPage /></AdminRoute>} />
-          <Route path="/videos/:videoid" element={<ProtectedRoute><DemographicsRequiredRoute><WatchPage /></DemographicsRequiredRoute></ProtectedRoute>} />
+          <Route path="/videos/:videoid" element={<WatchPage />} />
           <Route path="/endumfrage" element={<ProtectedRoute><DemographicsRequiredRoute><EndSurveyRequiredRoute><EndSurveyPage /></EndSurveyRequiredRoute></DemographicsRequiredRoute></ProtectedRoute>} />
           <Route path="/impressum" element={<ImprintPage />} />
           <Route path="/datenschutz" element={<PrivacyPolicyPage />} />

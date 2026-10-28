@@ -31,11 +31,15 @@ const isValidAudioConfigurationSnapshot = (value: unknown): value is AudioConfig
 };
 
 const createRandomModeSequence = (): WatchMode[] => {
+
+    return [VideoWatchMode.Mixer, VideoWatchMode.Standard];
+
+    /* following only for actual randomization of mode sequence
     return Math.random() < 0.5
         ? [VideoWatchMode.Mixer, VideoWatchMode.Standard]
         : [VideoWatchMode.Standard, VideoWatchMode.Mixer];
+    */
 };
-
 export const getOrCreateWatchModeSequence = (videoId: string): WatchMode[] => {
     const storageKey = getSequenceStorageKey(videoId);
     const rawSequence = localStorage.getItem(storageKey);
