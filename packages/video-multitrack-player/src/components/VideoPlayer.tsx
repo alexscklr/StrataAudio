@@ -16,6 +16,7 @@ import {
     passthroughPublicUrlResolver,
     type ResolvePublicUrl,
 } from '../utils/publicUrlResolver';
+import '../../i18n';
 
 export interface VideoPlayerProps {
     videoId: string;

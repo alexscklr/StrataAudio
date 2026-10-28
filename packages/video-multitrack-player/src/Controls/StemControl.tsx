@@ -33,7 +33,7 @@ function StemControl({ audio, isAudioControlsOpen, trackState, onVolumeChange, o
             <button
                 type="button"
                 className={'normal ' +styles.audioIconButton}
-                aria-label={t('player.trackVolume', { title: audio.title })}
+                aria-label={t('trackVolume', { title: audio.title })}
                 title={audio.title}
                 onClick={() => { onToggleMute(audio.id); }}
             >

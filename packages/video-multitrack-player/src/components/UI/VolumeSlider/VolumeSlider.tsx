@@ -18,7 +18,7 @@ function VolumeSlider({ audioId, volume, onVolumeChange, onVolumeCommit, orienta
 
     return (
         <div className={styles.sliderContainer}>
-            <label htmlFor={`slider-${audioId}`} className={styles.srOnly}>{t('common.volume')}</label>
+            <label htmlFor={`slider-${audioId}`} className={styles.srOnly}>{t('volume')}</label>
             <input
                 className={`${styles.slider} ${orientation === 'horizontal' ? styles.sliderHorizontal : styles.sliderVertical}`}
                 id={`slider-${audioId}`}

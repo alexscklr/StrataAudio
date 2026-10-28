@@ -22,7 +22,7 @@ function PanSlider({ audioId, pan, onPanChange, onPanCommit, orientation = 'hori
 
     return (
         <div className={containerClassName}>
-            <label htmlFor={`pan-slider-${audioId}`} className={styles.srOnly}>{t('common.pan')}</label>
+            <label htmlFor={`pan-slider-${audioId}`} className={styles.srOnly}>{t('pan')}</label>
             <div className={styles.sliderFrame}>
                 <span className={styles.railLabel}>L</span>
                 <input

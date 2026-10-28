@@ -30,7 +30,6 @@ interface AudioControlsProps {
 
 function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, onMasterVolumeCommit, onPanChange, onPanCommit, onMasterPanChange, onMasterPanCommit, mixerState, audios, isFullscreen, onMuteToggle, watchMode, isExpanded, resolvePublicUrl }: AudioControlsProps) {
     const { t } = useTranslation();
-
     const shouldRenderTracks = watchMode !== 'standard';
     const panelClassName = useMemo(() => {
         return [
@@ -65,12 +64,12 @@ function AudioControls({ onVolumeChange, onVolumeCommit, onMasterVolumeChange, o
                     <button
                         type="button"
                         className={'normal ' + styles.audioIconButton}
-                        aria-label={t('player.masterVolume')}
-                        title={t('player.masterVolume')}
+                        aria-label={t('master')}
+                        title={t('master')}
                     >
                         <LuVolume2 className={styles.masterIcon} />
                     </button>
-                    {isExpanded && <span className={styles.audioTrackLabel}>{t('player.masterVolume')}</span>}
+                    {isExpanded && <span className={styles.audioTrackLabel}>{t('master')}</span>}
                 </div>
 
                 {shouldRenderTracks && <div className={styles.trackDivider} />}
